@@ -954,6 +954,7 @@ The sample data will be grouped by general health condition and sex, using the `
 
 ```{r q3c, fig.width=12, fig.asp=0.6, warning=FALSE}
 # Relationship between physical activity and BMI grouped by health condition and sex
+# fig.width=12, fig.asp=0.6
 df_q3_sampled %>% 
   ggplot(aes(x = pa1min_, y = bmi))+
   geom_point(alpha=0.1, color="blue") +
