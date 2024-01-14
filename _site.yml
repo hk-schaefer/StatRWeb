@@ -1,12 +1,22 @@
-name: "my-website"
+name: "Statistics with R"
 output_dir: "docs"
 navbar:
-  title: "My Website"
+  title: "Portfolio: Statistics with R"
   left:
-    - text: "Home"
-      href: index.html
     - text: "About"
-      href: about.html
+      href: index.html
+    - text: "Project 1"
+      href: project1.html
+    - text: "LinkedIn"
+      icon: fab fa-linkedin
+      href: https://www.linkedin.com/in/hartmut-schaefer
+      output:
 output:
-  html_document:
-    theme : flatly
+ html_document:
+    theme: flatly
+    highlight: zenburn
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+

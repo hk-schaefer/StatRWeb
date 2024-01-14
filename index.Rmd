@@ -1,47 +1,67 @@
 ---
-title: "My Website"
-subtitle: "Trial_001"
-author: "Hartmut"
-output:
+title: "Statistical mastery of data analysis with R"
+author: "Hartmut Schaefer"
+date: "2024-01-13"
+output: 
   html_document:
-    theme: flatly
-    toc: TRUE
-    toc_float: TRUE
+    toc: FALSE
 ---
-
-## copied from temp to new project My website
-
-Hello, Website!
-
-For more information about simple R Markdown websites, please read the documentation at https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html.
-
-Please also note that simple R Markdown sites are _not_ based on **blogdown**. They are probably good for websites with only a few Rmd documents. For larger-scale and more sophisticated websites (such as blogs), you may want to use **blogdown** instead: https://github.com/rstudio/blogdown.
-
-# My first website
-
-## Example
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+\
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+# [Project Portfolio: Data Analysis with R Specialization](https://www.coursera.org/specializations/statistics)
+#### Duke University - Hosted by Coursera
+\
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+### Skills gained:
 
-```{r cars}
-summary(cars)
-```
+`Probability and Statistics`, `Correlation and Dependence`, `Data Analysis`, `Exploratory Data Analysis`, `Statistical Inference`, `Statistical Hyopthesis Testing`, `Linear Regression`, `Regression Analysis`, `R Programming`, `Rstudio`, `Data Visualization`\
+\
 
-## Including Plots
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+###  Specialization - 3 course series
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+1. Introduction to Probability and Data with R\
+2. Inferential Statistics\
+3. Linear Regression and Modeling\
+\
+\
+
+### Projects
+
+This website contains three projects to statistical analysis with R:\
+\
+
+**[Project 1:](project1.html)** Probability and Data Wrangling with R\
+
+For this project the data set "BRFSS (Behavioral Risk Factor Surveillance System) 2013" is used. The data set contains 330 variables and about 500,000 observations. The data set and data variable information can be found in my GitHub Repo ["StatRWeb"](https://github.com/hk-schaefer/StatRWeb).\
+
+The objective of this project is to query 3 meaningful research questions from the data set. Question 1 with two variables and question 2 and 3 with at least 3 variables:\
+
+**Research question 1:** Is the income level correlated with general health?\
+**Research question 2:** Is general health correlated with physical activity by gender?\
+**Research question 3:** Is physical activity and BMI correlated, and is there a difference by general health and gender?
+\
+
+Demonstrates proficiency in:\
+
+- Calculating conditional probability from contingency tables, finding relations between 2 categorical variables by mosaic plots\
+- Calculating summary statistics and probability distribution, removing outliers, finding correlation between 1 numerical and 2 categorical variables
+- Sampling, data wrangling, finding correlations between 2 numerical variables by scatter plots, grouping by 2 categorical variables
+
+All steps are documented in R Markdown with the relevant R codes. All codes are executable from the R Markdown documents available on GitHub [Link](https://github.com/hk-schaefer/StatRWeb).\
+\
+
+**Project 2:** Inferential Statistics (planned)\
+
+**Project 3:** Linear Regression and Modeling (planned)\
+\
+
+
+
+
