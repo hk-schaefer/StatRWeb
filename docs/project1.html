@@ -471,6 +471,8 @@ div.tocify {
 </div>
 
 
+<p><br />
+</p>
 <div id="setup" class="section level2">
 <h2>Setup</h2>
 <div id="load-packages" class="section level3">
@@ -738,7 +740,7 @@ will proceed with the investigation.<br />
 <span id="cb16-31"><a href="#cb16-31" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb16-32"><a href="#cb16-32" tabindex="-1"></a>        <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>())<span class="sc">+</span></span>
 <span id="cb16-33"><a href="#cb16-33" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;RdYlBu&quot;</span>)</span></code></pre></div>
-<p><img src="project1_files/figure-html/make%20mosaic%20plot-1.png" width="672" /><br />
+<p><img src="project1_files/figure-html/make%20mosaic%20plot-1.png" width="1152" /><br />
 </p>
 <p>Conclusion:<br />
 </p>
@@ -827,7 +829,7 @@ Health “Less good” and “More than good”.</p>
 <span id="cb20-23"><a href="#cb20-23" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb20-24"><a href="#cb20-24" tabindex="-1"></a>        <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>())<span class="sc">+</span></span>
 <span id="cb20-25"><a href="#cb20-25" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;below median&quot;</span> <span class="ot">=</span> <span class="st">&quot;red&quot;</span>, <span class="st">&quot;above median&quot;</span> <span class="ot">=</span> <span class="st">&quot;blue&quot;</span>))</span></code></pre></div>
-<p><img src="project1_files/figure-html/make%20mosaic%20plot%202-1.png" width="672" /><br />
+<p><img src="project1_files/figure-html/make%20mosaic%20plot%202-1.png" width="960" /><br />
 </p>
 <p>Conclusion:<br />
 </p>
@@ -1214,7 +1216,7 @@ variable <code>genhlth</code> using box-plots</p>
 <span id="cb51-7"><a href="#cb51-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribution: Physical activities by general health&quot;</span>)<span class="sc">+</span></span>
 <span id="cb51-8"><a href="#cb51-8" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Physical Activity [min/week]&quot;</span>)<span class="sc">+</span></span>
 <span id="cb51-9"><a href="#cb51-9" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;General Health&quot;</span>)</span></code></pre></div>
-<p><img src="project1_files/figure-html/box%20plot%20q2b-1.png" width="672" /><br />
+<p><img src="project1_files/figure-html/box%20plot%20q2b-1.png" width="768" /><br />
 </p>
 <p>Conclusion:<br />
 </p>
@@ -1253,7 +1255,7 @@ visualize this by a 2-dimensional box-plot</p>
 <span id="cb52-9"><a href="#cb52-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribution: Physical activities by general health and sex&quot;</span>)<span class="sc">+</span></span>
 <span id="cb52-10"><a href="#cb52-10" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Physical Activity [min/week]&quot;</span>)<span class="sc">+</span></span>
 <span id="cb52-11"><a href="#cb52-11" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;General Health&quot;</span>)</span></code></pre></div>
-<p><img src="project1_files/figure-html/box%20plot%20q2c-1.png" width="672" /><br />
+<p><img src="project1_files/figure-html/box%20plot%20q2c-1.png" width="1152" /><br />
 </p>
 <p>Conclusion:<br />
 </p>
@@ -1460,7 +1462,7 @@ points to 15K (i.e. 5%) by random sampling function
 <span id="cb65-9"><a href="#cb65-9" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Data sampled by 5% from original, n = 14,825&quot;</span>)<span class="sc">+</span></span>
 <span id="cb65-10"><a href="#cb65-10" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Physical Activity in log10 [min/week]&quot;</span>)<span class="sc">+</span></span>
 <span id="cb65-11"><a href="#cb65-11" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;BMI&quot;</span>)</span></code></pre></div>
-<p><img src="project1_files/figure-html/scatter%20plot%20q3b-1.png" width="672" /><br />
+<p><img src="project1_files/figure-html/scatter%20plot%20q3b-1.png" width="960" /><br />
 </p>
 <p>Calculating the correlation coefficient between both variables
 <code>pa1min_</code> and <code>bmi</code></p>
@@ -1497,7 +1499,7 @@ using the <code>facet_grid()</code> function.</p>
 <span id="cb68-8"><a href="#cb68-8" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Sub Grouping: General Health Status (horizontal), Gender (vertical)&quot;</span>)<span class="sc">+</span></span>
 <span id="cb68-9"><a href="#cb68-9" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Physical Activity in log10 [min/week]&quot;</span>)<span class="sc">+</span></span>
 <span id="cb68-10"><a href="#cb68-10" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;BMI&quot;</span>)</span></code></pre></div>
-<p><img src="project1_files/figure-html/q3c-1.png" width="672" /><br />
+<p><img src="project1_files/figure-html/q3c-1.png" width="1152" /><br />
 Conclusion:<br />
 </p>
 <ul>

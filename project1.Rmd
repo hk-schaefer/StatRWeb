@@ -10,6 +10,12 @@ output:
     code_folding: hide
 ---
 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+\
+
 ## Setup
 
 ### Load packages
@@ -220,7 +226,7 @@ tb_cont_table1_q1
 
 **Visualize the contingency table** as mosaic plot:
 
-```{r make mosaic plot, fig.asp=0.6, warning=FALSE}
+```{r make mosaic plot, fig.width=12, fig.asp=0.6, warning=FALSE}
 
 # change format from table to data frame (tibble)
 df_cont_table1_q1 <- as_tibble(tb_cont_table1_q1)
@@ -313,7 +319,7 @@ tb_cont_table2_agg_q1
 
 **Visualize the contingency table** as mosaic plot:
 
-```{r make mosaic plot 2, fig.asp=0.5}
+```{r make mosaic plot 2, fig.width=10, fig.asp=0.5}
 
 # change from table to data frame
 df_cont_table1_agg_q1 <- as_tibble(tb_cont_table1_agg_q1)
@@ -692,7 +698,7 @@ This cleaned data set is plausible and will be used to answer the next questions
 
 Comparing numerical variable `pa1min-` by categorical variable `genhlth` using box-plots
 
-```{r box plot q2b}
+```{r box plot q2b, fig.width=8, fig.asp=0.6}
 # box plot for physical activity (numerical) by general health (factor)
 df_q2_cleaned %>% 
   ggplot()+
@@ -719,7 +725,7 @@ However, we can not conclude from the data that more physical activity causes an
 Finally, we like to investigate if there is a significant difference between male and female in respect of physical activity and general health. We will introduce a third variable `sex` and visualize this by a 2-dimensional box-plot
 
 
-```{r box plot q2c}
+```{r box plot q2c, fig.width=12, fig.asp=0.6}
 # box plot for physical activity (numerical) by general health (factor) and sex (factor)
 
 df_q2_cleaned %>% 
@@ -912,7 +918,7 @@ df_q3_sampled <- df_q3_cleaned[sample(nrow(df_q3_cleaned), nrow(df_q3_cleaned)*0
 
 Scatter plot:
 
-```{r scatter plot q3b, warning=FALSE}
+```{r scatter plot q3b, fig.width=10, fig.asp=0.6, warning=FALSE}
 # create scatter plot 
 # use log10 for pa1min_
 
@@ -946,7 +952,7 @@ Conclusion:\
 
 The sample data will be grouped by general health condition and sex, using the `facet_grid()` function.
 
-```{r q3c, warning=FALSE}
+```{r q3c, fig.width=12, fig.asp=0.6, warning=FALSE}
 # Relationship between physical activity and BMI grouped by health condition and sex
 df_q3_sampled %>% 
   ggplot(aes(x = pa1min_, y = bmi))+
