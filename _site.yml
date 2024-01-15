@@ -3,13 +3,14 @@ output_dir: "docs"
 navbar:
   title: "Portfolio: Statistics with R"
   left:
-    - text: "About"
+    - text: "Home"
       href: index.html
+    - text: "ABOUT Project 1"
+      href: about1.html
     - text: "Project 1"
       href: project1.html
-    - text: "LinkedIn"
-      icon: fab fa-linkedin
-      href: https://www.linkedin.com/in/hartmut-schaefer
+    - text: "BRFSS Data Codebook"
+      href: brfss_codebook.htm
       output:
 output:
  html_document:

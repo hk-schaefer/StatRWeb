@@ -1,7 +1,7 @@
 ---
 title: "Statistical mastery of data analysis with R"
 author: "Hartmut Schaefer"
-date: "2024-01-13"
+date: "2024-01-15"
 output: 
   html_document:
     toc: FALSE
@@ -26,41 +26,46 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ###  Specialization - 3 course series
 
+This specialization course consists of 3 courses:
+
 1. Introduction to Probability and Data with R\
 2. Inferential Statistics\
 3. Linear Regression and Modeling\
+
+Each course is ending with a project in R to demonstrate the skills gained.
 \
 \
+
 
 ### Projects
 
 This website contains three projects to statistical analysis with R:\
 \
 
-**[Project 1:](project1.html)** Probability and Data Wrangling with R\
+**Project 1:** Probability and Data Wrangling with R\
 
-For this project the data set "BRFSS (Behavioral Risk Factor Surveillance System) 2013" is used. The data set contains 330 variables and about 500,000 observations. The data set and data variable information can be found in my GitHub Repo ["StatRWeb"](https://github.com/hk-schaefer/StatRWeb).\
+- [A "Step-by-step" guide can be found in the ABOUT section](about1.html)\
+- [The R codes can be found in the Project 1 section](project1.html)\
 
-The objective of this project is to query 3 meaningful research questions from the data set. Question 1 with two variables and question 2 and 3 with at least 3 variables:\
 
-**Research question 1:** Is the income level correlated with general health?\
-**Research question 2:** Is general health correlated with physical activity by gender?\
-**Research question 3:** Is physical activity and BMI correlated, and is there a difference by general health and gender?
+**Project 2:** Inferential Statistics\
+
+- planned\
+
+**Project 3:** Linear Regression and Modeling 
+
+- planned\
 \
-
-Demonstrates proficiency in:\
-
-- Calculating conditional probability from contingency tables, finding relations between 2 categorical variables by mosaic plots\
-- Calculating summary statistics and probability distribution, removing outliers, finding correlation between 1 numerical and 2 categorical variables
-- Sampling, data wrangling, finding correlations between 2 numerical variables by scatter plots, grouping by 2 categorical variables
 
 All steps are documented in R Markdown with the relevant R codes. All codes are executable from the R Markdown documents available on GitHub [Link](https://github.com/hk-schaefer/StatRWeb).\
 \
-
-**Project 2:** Inferential Statistics (planned)\
-
-**Project 3:** Linear Regression and Modeling (planned)\
 \
+
+### Contact:
+
+[LinkedIn page](https://www.linkedin.com/in/hartmut-schaefer)
+
+
 
 
 

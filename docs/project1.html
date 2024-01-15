@@ -36,8 +36,6 @@
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
-<link href="site_libs/font-awesome-6.4.0/css/all.min.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-6.4.0/css/v4-shims.min.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -432,17 +430,16 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">About</a>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about1.html">ABOUT Project 1</a>
 </li>
 <li>
   <a href="project1.html">Project 1</a>
 </li>
 <li>
-  <a href="https://www.linkedin.com/in/hartmut-schaefer">
-    <span class="fab fa-linkedin"></span>
-     
-    LinkedIn
-  </a>
+  <a href="brfss_codebook.htm">BRFSS Data Codebook</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -485,7 +482,7 @@ div.tocify {
 <div id="load-data" class="section level3">
 <h3>Load data</h3>
 <p>Load data set</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;brfss2013.RData&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;~/R/StatRWeb/data/brfss2013.RData&quot;</span>)</span></code></pre></div>
 <p><br />
 </p>
 </div>
@@ -534,7 +531,7 @@ dependent?<br />
 </li>
 </ol>
 <p><strong>Research question 2:</strong></p>
-<p>Is general health (<code>genhth</code>) correlated with physical
+<p>Is general health (<code>genhlth</code>) correlated with physical
 activity (<code>pa1min_</code>) and how does it change by gender
 (<code>sex</code>)?<br />
 </p>
@@ -567,7 +564,7 @@ health and gender?</li>
 <div id="research-question-1" class="section level3">
 <h3>Research question 1:</h3>
 <p>Is the income level (<code>income2</code>) correlated with general
-health (<code>genhth</code>)?<br />
+health (<code>genhlth</code>)?<br />
 </p>
 <ol style="list-style-type: lower-alpha">
 <li>What is the probability of good health given a high income?<br />
@@ -740,7 +737,7 @@ will proceed with the investigation.<br />
 <span id="cb16-31"><a href="#cb16-31" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb16-32"><a href="#cb16-32" tabindex="-1"></a>        <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>())<span class="sc">+</span></span>
 <span id="cb16-33"><a href="#cb16-33" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;RdYlBu&quot;</span>)</span></code></pre></div>
-<p><img src="project1_files/figure-html/make%20mosaic%20plot-1.png" width="1152" /><br />
+<p><img src="project1_files/figure-html/make%20mosaic%20plot-1.png" width="768" /><br />
 </p>
 <p>Conclusion:<br />
 </p>
@@ -795,12 +792,11 @@ Health “Less good” and “More than good”.</p>
 <span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>tb_cont_table1_agg_q1 <span class="ot">&lt;-</span> <span class="fu">table</span>(df_cont_table1_agg_q1)</span>
 <span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a></span>
 <span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>tb_cont_table2_agg_q1 <span class="ot">&lt;-</span> <span class="fu">addmargins</span>(tb_cont_table1_agg_q1)</span>
-<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>tb_cont_table2_agg_q1</span></code></pre></div>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>tb_cont_table1_agg_q1</span></code></pre></div>
 <pre><code>##               genhlth
-## income2        more than good less good    Sum
-##   below median          92440    145719 238159
-##   above median         120061     60700 180761
-##   Sum                  212501    206419 418920</code></pre>
+## income2        more than good less good
+##   below median          92440    145719
+##   above median         120061     60700</code></pre>
 <p><br />
 </p>
 <p><strong>Visualize the contingency table</strong> as mosaic plot:</p>
@@ -829,7 +825,7 @@ Health “Less good” and “More than good”.</p>
 <span id="cb20-23"><a href="#cb20-23" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb20-24"><a href="#cb20-24" tabindex="-1"></a>        <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>())<span class="sc">+</span></span>
 <span id="cb20-25"><a href="#cb20-25" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;below median&quot;</span> <span class="ot">=</span> <span class="st">&quot;red&quot;</span>, <span class="st">&quot;above median&quot;</span> <span class="ot">=</span> <span class="st">&quot;blue&quot;</span>))</span></code></pre></div>
-<p><img src="project1_files/figure-html/make%20mosaic%20plot%202-1.png" width="960" /><br />
+<p><img src="project1_files/figure-html/make%20mosaic%20plot%202-1.png" width="768" /><br />
 </p>
 <p>Conclusion:<br />
 </p>
@@ -1255,7 +1251,7 @@ visualize this by a 2-dimensional box-plot</p>
 <span id="cb52-9"><a href="#cb52-9" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Distribution: Physical activities by general health and sex&quot;</span>)<span class="sc">+</span></span>
 <span id="cb52-10"><a href="#cb52-10" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Physical Activity [min/week]&quot;</span>)<span class="sc">+</span></span>
 <span id="cb52-11"><a href="#cb52-11" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;General Health&quot;</span>)</span></code></pre></div>
-<p><img src="project1_files/figure-html/box%20plot%20q2c-1.png" width="1152" /><br />
+<p><img src="project1_files/figure-html/box%20plot%20q2c-1.png" width="768" /><br />
 </p>
 <p>Conclusion:<br />
 </p>
@@ -1451,7 +1447,7 @@ points to 15K (i.e. 5%) by random sampling function
 <p><br />
 </p>
 <p>Scatter plot:</p>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a><span class="co"># create scatter plot </span></span>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a><span class="co"># create scatter plot - sampled</span></span>
 <span id="cb65-2"><a href="#cb65-2" tabindex="-1"></a><span class="co"># use log10 for pa1min_</span></span>
 <span id="cb65-3"><a href="#cb65-3" tabindex="-1"></a></span>
 <span id="cb65-4"><a href="#cb65-4" tabindex="-1"></a>df_q3_sampled <span class="sc">%&gt;%</span> </span>
@@ -1459,10 +1455,10 @@ points to 15K (i.e. 5%) by random sampling function
 <span id="cb65-6"><a href="#cb65-6" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span><span class="fl">0.1</span>, <span class="at">color=</span><span class="st">&quot;blue&quot;</span>) <span class="sc">+</span></span>
 <span id="cb65-7"><a href="#cb65-7" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
 <span id="cb65-8"><a href="#cb65-8" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Relationship between Physical Activity and BMI&quot;</span>,</span>
-<span id="cb65-9"><a href="#cb65-9" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Data sampled by 5% from original, n = 14,825&quot;</span>)<span class="sc">+</span></span>
+<span id="cb65-9"><a href="#cb65-9" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Data sampled by 5% from original, n_sampled = 14,825&quot;</span>)<span class="sc">+</span></span>
 <span id="cb65-10"><a href="#cb65-10" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Physical Activity in log10 [min/week]&quot;</span>)<span class="sc">+</span></span>
 <span id="cb65-11"><a href="#cb65-11" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;BMI&quot;</span>)</span></code></pre></div>
-<p><img src="project1_files/figure-html/scatter%20plot%20q3b-1.png" width="960" /><br />
+<p><img src="project1_files/figure-html/scatter%20plot%20q3b-1.png" width="768" /><br />
 </p>
 <p>Calculating the correlation coefficient between both variables
 <code>pa1min_</code> and <code>bmi</code></p>
@@ -1500,7 +1496,7 @@ using the <code>facet_grid()</code> function.</p>
 <span id="cb68-9"><a href="#cb68-9" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">&quot;Sub Grouping: General Health Status (horizontal), Gender (vertical)&quot;</span>)<span class="sc">+</span></span>
 <span id="cb68-10"><a href="#cb68-10" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Physical Activity in log10 [min/week]&quot;</span>)<span class="sc">+</span></span>
 <span id="cb68-11"><a href="#cb68-11" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;BMI&quot;</span>)</span></code></pre></div>
-<p><img src="project1_files/figure-html/q3c-1.png" width="1152" /><br />
+<p><img src="project1_files/figure-html/q3c-1.png" width="768" /><br />
 Conclusion:<br />
 </p>
 <ul>
@@ -1582,7 +1578,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeCodeFolding("hide" === "show");
+  window.initializeCodeFolding("show" === "show");
 });
 </script>
 

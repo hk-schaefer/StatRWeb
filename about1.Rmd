@@ -1,0 +1,462 @@
+---
+title: "Project 1: Step-by-Step Guide"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# Probability and Data Wrangling in R
+\
+\
+
+## Objective
+
+Objective of this project was to apply the learned contents of this course:\
+
+- sampling methods\
+- data exploration of categorical and numerical variables\
+- center of tendency\
+- statistical inferences\
+- conditional probability\
+- probability distribution\
+\
+
+## The data set
+
+For this project the public data set ["BRFSS (Behavioral Risk Factor Surveillance System) 2013"](brfss_codebook.htm) was used, provided by the course.
+
+The objective of BRFSS data collection is to determine behavioral risk factors to chronic diseases in adults in the US. The data are annually updated via telephone interviews throughout the US. This data set contains 330 variables and 491,775 observations. Three meaningful research questions had to be formulated and answered by statistical analysis. The variables were explored and a subset of five variables was selected.\
+\
+
+## Reserach question 1:
+
+Is income level (**income2**) correlated with general health (**genhlth**)?\
+
+a. What is the probability of **good health** given a **high income**?\
+b. What is the probability of **high income** given a **good health**?\
+c. Are the variables "income level" and "general health" independent or dependent?\
+\
+
+### The variables
+
+**General health**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_03.png")
+)
+```
+\
+
+**Income level**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_04.png")
+)
+```
+\
+
+
+### Data exploration
+
+Both variables are categorical. Categorical variables are compared best by a contingency table. The contingency table shows the count of for each category from **genhlth** horizontally and from **income2** vertically.\
+
+**Contingency table (all categories):**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_01_01.png")
+)
+```
+\
+\
+
+The proportion of each category can be visualized best by a mosaic plot.\
+
+**Mosaic plot:**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_01_02.png")
+)
+```
+\
+
+Conclusion: \
+
+- the higher the "income" level the better the  the "general health" level\
+- the lower the "income" level the poorer the "general health" level\
+
+For ease of understanding the categories in each variable were aggregated to high and low levels.\
+\
+
+**Contingency table (aggregated):**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold',out.width="50%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_01_03.png")
+)
+```
+
+**Mosaic plot:**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_01_04.png")
+)
+```
+\
+
+Conclusion: \
+
+- the health condition is clearly correlated with income level\
+- lower income shows less good health conditions\
+- higher income shows better than good health conditions\
+\
+
+
+### Research question 1a:
+
+**a. What is the probability of "good health" given a "high income"?**\
+
+To calculate the different probabilities a contingency table with margins (sums of each category) is helpful.\
+
+**Contingency table with margins (aggregated):**
+
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_01_05.png")
+)
+```
+\
+
+Result: P(good health | high income) = 0.6641975 or 66.4%\
+\
+
+
+### Research question 1b:
+
+**b. What is the probability of "high income" given a "good health?**\
+
+This can be derived directly from the contingency table or indirectly calculated by Bayes Theorem: P(B|A) = (P(A|B) * P(B)) / P(A).\
+
+Result: P(high income | good health) = 0.5649903 or 56.5%\
+\
+
+### Research question 1c:
+
+**c. Are the variables "income level" and "general health" independent or dependent?**\
+\
+
+To proof that event A (health) and B (income) are independent the following condition must hold true:
+P(A|B) = P(A) or P(good health | high income) = P(good health)\
+
+Result: P(good health | high income)= 0.6641975 and P(good health) = 0.5072591. They are not equal and therefore the variables are dependent.\
+
+\
+
+### Conclusion 1
+
+In this question we utilized two categorical variables: income and general health. From contingency tables we found that income and general health are correlated. We visualized the relationship by mosaic plots in detail and in aggregated form.\
+
+From an aggregated contingency table we calculated conditional probabilities and proofed dependency.\
+\
+
+
+## Research question 2
+
+Is general health (**genhlth**) correlated with physical activity (**pa1min_**) and how does it change by gender (**sex**)?\
+
+a. Describe physical activity statistically\
+b. Find the relationship between general health and physical activity\
+c. Is there a difference in this relationship (b) in respect to gender?\
+\
+
+### The variables
+
+**General health**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_03.png")
+)
+```
+\
+
+**Physical Activity in minutes per week**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_01.png")
+)
+```
+\
+
+**Gender**
+
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_05.png")
+)
+```
+\
+
+### Data exploration
+
+**Physical activity** is a numerical variable, **General health** and **Sex** are categorical variables. Exploration of numerical variable **General health** can be done best by histogram.
+
+**Histogram (original data)**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_02_01.png")
+)
+```
+\
+
+The histogram shows highly right-skewed distribution. This indicates the existence of extreme values on the right. From the summary statistics the maximal whisker was used as threshold to remove outliers, resulting in a cleaned data set.\
+\
+
+**Histogram (cleaned data)**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_02_02.png")
+)
+```
+\
+
+### Research question 2a:
+
+**a. Describe physical activity statistically**\
+
+For descriptive statistics of **Physical Activity** a summary statistics, and box-plot were used.\
+
+**Summary statistics of Physical Activity:**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_02_05.png")
+)
+```
+\
+
+**Box-plot**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_02_06.png")
+)
+```
+
+Result:\
+
+The distribution is right skewed and the statistics is best described by median (233) and IQR or Inter Quartile Range (345)\
+\
+
+
+### Research question 2b
+
+**b. Find the relationship between general health and physical activity**\
+
+Numerical variable (**Physical Activity**) and categorical variable (**General Health**) can be compared best by side-by-side box-plots.\
+
+**Side-by-side box-plots**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_02_03.png")
+)
+```
+
+Conclusion:\
+
+- The plot shows correlation between both variables\
+- More physical activity is related to a better health status\
+\
+
+
+### Research question 2c
+
+**c. Is there a difference in this relationship (b) in respect to gender?**\
+
+Numerical variable (**Physical Activity**) and 2 categorical variables (**General Health**, **Sex**) can be compared best by 2-dimensional side-by-side box-plots\
+\
+
+**Side-by-side box-plots**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_02_04.png")
+)
+```
+\
+
+Conclusion:\
+
+- No difference in trend (activity vs health) between male and female group\
+- The male group show slightly more physical activity than the female group\
+\
+
+
+### Conclusion 2:
+
+In this questions we utilized three variables: one numerical variable and two categorical variables. The numerical data had some implausible data (outliers) which were removed. The comparison of all variables was done with box-plots which allow an easy comparison over multiple categories.\
+
+- **Physical activity** and **General Health** are correlated in both groups female and male\
+\
+\
+
+
+## Research question 3
+
+Is physical activity (**pa1min_**) correlated with BMI (Body Mass Index) (**X_bmi5**) and how does it change with general health (**genhlth**) and gender (**sex**)?\
+
+a. Describe BMI statistically\
+b. Find the relationship between physical activity and BMI\
+c. Is there a difference in this relationship (b) in respect to general health and gender?\
+\
+
+### The variables
+
+**Body Mass Index (BMI)**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_02.png")
+)
+```
+\
+The BMI values in variable `X_bmi5` includes 2 decimals and is therefore divided by 100 to follow the convention.\
+
+
+**Physical Activity** (see section 2)\
+**General Health** (see section 2)\
+**Sex** (see section 2)\
+\
+
+
+### Data exploration
+
+**Physical activity** and **BMI** are numerical variable, **General health** and **Sex** are categorical variables. Exploration of numerical variable **BMI** can be done best by histogram.\
+
+**Histogram**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_03_01.png")
+)
+```
+
+The BMI is slightly right-skewed with some extreme values on the right\
+\
+
+### Research question 3a
+
+**a. Describe BMI statistically**\
+
+For descriptive statistics of **BMI** a summary statistics, and box-plot were used.\
+
+**Summary statistics:**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_03_00.png")
+)
+```
+\
+
+**Box-plot**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_03_001.png")
+)
+```
+\
+Result:\ 
+
+- almost normal distributed with some extreme values up to BMI=95\
+- statistics can be described by mean = 27.4 and sd = 5.7\
+\
+
+### Research question 3b
+
+**b. What is the relationship between physical activity and BMI?**\
+
+For comparison of two numerical variables a scatter plot is best to show relationships.\
+
+**Scatter plot**
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_03_02a.png")
+)
+```
+\
+
+The scatter plot is "over-exposed" with too many data points (n = 296,506). To make the relationship more visible the data were reduced by random sampling to 5% (n_sample =14,825).\
+\
+
+**Scatter plot (sampled data)**
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_03_02.png")
+)
+```
+\
+Conclusion:\
+
+- The scatter plot does not show any correlation (R is near 0)\
+\
+
+
+### Research question 3c
+
+**c. Is there a difference in this relationship (b) in respect to general health and gender?**\
+
+The scatter plots were grouped in categories **general health** and **sex**.\
+
+
+**Scatter plot**
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_03_03.png")
+)
+```
+\
+Conclusion:\
+
+- Non of the group shows a correlation between Physical Activity and BMI\
+- The better the health condition the smaller the spread around the center (BMI average and Physical Activity average)\
+- The female groups show a slightly larger spread in BMI around the average than male\
+\
+
+### Conclusion 3:
+
+- In this questions we utilized four variables, which are two numerical variables "physical activity" and "BMI" and two categorical variables "general health" and "sex". For the comparison of two numerical variable a scatter plot was used. For better data visualization the data amount had to be reduced using a random sampling function from R. Furthermore, the x scale "physical activity" had to be transformed by LOG10 function.\
+- The data set does not show correlation between the numerical variables in any category.\
+- However, in the category of "Excellent Health Condition" the "Physical Activity" and "BMI" data are less spread around the center value.\
+\
+\
+
+
+
+## Lessons learned
+
+### Data Exploration: 
+
+Data exploration took about 1/3 of the project time. At first I jumped into the analysis too soon, without a deeper exploration resulting in meaningless results. In a second approach I analysed the data variables and data types more thoroughly by creating a csv-file for the variables for Excel. This helped a lot to understand the data and to navigate through the 330 variables without getting lost.
+
+Since I have no deep background in the health domain, I selected more well-known variables such as physical activity and BMI index.
+
+### Data Cleaning:
+
+At first I wanted to calculate sports activity from two variables `exeroft1` (times of sport per month) and `exerhmm1` (duration in hhmm per activity). However, the data description in the codebook was somehow ambiguous and I had to drop this idea. Instead I choose the calculated variable `pa1min_`, but it doesn't specify the type of activity.\
+
+Another important topic was the treatment of potential outliers. I calculated a threshold for outliers from the maximum whisker formula and added a margin that seamed to be reasonable. Since the data set was very large the effect of removing outliers had no large impact on the results. For small data sets the decision for outlier would however require a deeper investigation.
+
+### Statistical Analysis:
+
+The course laid the foundation for how to describe categorical and numerical variables statistically and how to find relation between those variables. Throughout the project I could gain further practice and experience.
+
+### Using R:
+
+I had already some background in statistics and R and it didn't take much effort to finish the project. My biggest challenge was to create this webpage in RStudio and post it on GitHub.
+To use R in this project requires some more skills than the course provides. Therefore, the course should make it clear that it is not for beginners with R.
+
+
+
+
+
+
+
+
+
+
+
