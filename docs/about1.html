@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Project 1: Step-by-Step Guide</title>
+
+<script src="site_libs/header-attrs-2.22/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Portfolio: Statistics with R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about1.html">ABOUT Project 1</a>
+</li>
+<li>
+  <a href="project1.html">Project 1</a>
+</li>
+<li>
+  <a href="brfss_codebook.htm">BRFSS Data Codebook</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Project 1: Step-by-Step Guide</h1>
+
+</div>
+
+
+<div id="probability-and-data-wrangling-in-r" class="section level1">
+<h1>Probability and Data Wrangling in R</h1>
+<p><br />
+<br />
+<img src="images/stat_0_0.png" width="50%" style="display: block; margin: auto;" /><br />
+</p>
+<div id="objective" class="section level2">
+<h2>Objective</h2>
+<p>Objective of this project was to apply the learned contents of this
+course:<br />
+</p>
+<ul>
+<li>sampling methods<br />
+</li>
+<li>data exploration of categorical and numerical variables<br />
+</li>
+<li>center of tendency<br />
+</li>
+<li>statistical inferences<br />
+</li>
+<li>conditional probability<br />
+</li>
+<li>probability distribution<br />
+<br />
+</li>
+</ul>
+</div>
+<div id="the-data-set" class="section level2">
+<h2>The data set</h2>
+<p>For this project the public data set <a
+href="brfss_codebook.htm">“BRFSS (Behavioral Risk Factor Surveillance
+System) 2013”</a> was used, provided by the course.</p>
+<p>The objective of BRFSS data collection is to determine behavioral
+risk factors to chronic diseases in adults in the US. The data are
+annually updated via telephone interviews throughout the US. This data
+set contains 330 variables and 491,775 observations. Three meaningful
+research questions had to be formulated and answered by statistical
+analysis. The variables were explored and a subset of five variables was
+selected.<br />
+<br />
+</p>
+</div>
+<div id="reserach-question-1" class="section level2">
+<h2>Reserach question 1:</h2>
+<p>Is income level (<strong>income2</strong>) correlated with general
+health (<strong>genhlth</strong>)?<br />
+</p>
+<ol style="list-style-type: lower-alpha">
+<li>What is the probability of <strong>good health</strong> given a
+<strong>high income</strong>?<br />
+</li>
+<li>What is the probability of <strong>high income</strong> given a
+<strong>good health</strong>?<br />
+</li>
+<li>Are the variables “income level” and “general health” independent or
+dependent?<br />
+<br />
+</li>
+</ol>
+<div id="the-variables" class="section level3">
+<h3>The variables</h3>
+<p><strong>General health</strong></p>
+<p><img src="images/stat_03.png" width="100%" style="display: block; margin: auto;" /><br />
+</p>
+<p><strong>Income level</strong></p>
+<p><img src="images/stat_04.png" width="100%" style="display: block; margin: auto;" /><br />
+</p>
+</div>
+<div id="data-exploration" class="section level3">
+<h3>Data exploration</h3>
+<p>Both variables are categorical. Categorical variables are compared
+best by a contingency table. The contingency table shows the count of
+for each category from <strong>genhlth</strong> horizontally and from
+<strong>income2</strong> vertically.<br />
+</p>
+<p><strong>Contingency table (all categories):</strong></p>
+<p><img src="images/stat_01_01.png" width="60%" style="display: block; margin: auto;" /><br />
+<br />
+</p>
+<p>The proportion of each category can be visualized best by a mosaic
+plot.<br />
+</p>
+<p><strong>Mosaic plot:</strong></p>
+<p><img src="images/stat_01_02.png" width="100%" style="display: block; margin: auto;" /><br />
+</p>
+<p>Conclusion:<br />
+</p>
+<ul>
+<li>the higher the “income” level the better the the “general health”
+level<br />
+</li>
+<li>the lower the “income” level the poorer the “general health”
+level<br />
+</li>
+</ul>
+<p>For ease of understanding the categories in each variable were
+aggregated to high and low levels.<br />
+<br />
+</p>
+<p><strong>Contingency table (aggregated):</strong></p>
+<p><img src="images/stat_01_03.png" width="50%" style="display: block; margin: auto;" /></p>
+<p><strong>Mosaic plot:</strong></p>
+<p><img src="images/stat_01_04.png" width="100%" style="display: block; margin: auto;" /><br />
+</p>
+<p>Conclusion:<br />
+</p>
+<ul>
+<li>the health condition is clearly correlated with income level<br />
+</li>
+<li>lower income shows less good health conditions<br />
+</li>
+<li>higher income shows better than good health conditions<br />
+<br />
+</li>
+</ul>
+</div>
+<div id="research-question-1a" class="section level3">
+<h3>Research question 1a:</h3>
+<p><strong>a. What is the probability of “good health” given a “high
+income”?</strong><br />
+</p>
+<p>To calculate the different probabilities a contingency table with
+margins (sums of each category) is helpful.<br />
+</p>
+<p><strong>Contingency table with margins (aggregated):</strong></p>
+<p><img src="images/stat_01_05.png" width="50%" style="display: block; margin: auto;" /><br />
+</p>
+<p>Result: P(good health | high income) = 0.6641975 or 66.4%<br />
+<br />
+</p>
+</div>
+<div id="research-question-1b" class="section level3">
+<h3>Research question 1b:</h3>
+<p><strong>b. What is the probability of “high income” given a “good
+health?</strong><br />
+</p>
+<p>This can be derived directly from the contingency table or indirectly
+calculated by Bayes Theorem: P(B|A) = (P(A|B) * P(B)) / P(A).<br />
+</p>
+<p>Result: P(high income | good health) = 0.5649903 or 56.5%<br />
+<br />
+</p>
+</div>
+<div id="research-question-1c" class="section level3">
+<h3>Research question 1c:</h3>
+<p><strong>c. Are the variables “income level” and “general health”
+independent or dependent?</strong><br />
+<br />
+</p>
+<p>To proof that event A (health) and B (income) are independent the
+following condition must hold true: P(A|B) = P(A) or P(good health |
+high income) = P(good health)<br />
+</p>
+<p>Result: P(good health | high income)= 0.6641975 and P(good health) =
+0.5072591. They are not equal and therefore the variables are
+dependent.<br />
+</p>
+<p><br />
+</p>
+</div>
+<div id="conclusion-1" class="section level3">
+<h3>Conclusion 1</h3>
+<p>In this question we utilized two categorical variables: income and
+general health. From contingency tables we found that income and general
+health are correlated. We visualized the relationship by mosaic plots in
+detail and in aggregated form.<br />
+</p>
+<p>From an aggregated contingency table we calculated conditional
+probabilities and proofed dependency.<br />
+<br />
+</p>
+</div>
+</div>
+<div id="research-question-2" class="section level2">
+<h2>Research question 2</h2>
+<p>Is general health (<strong>genhlth</strong>) correlated with physical
+activity (<strong>pa1min_</strong>) and how does it change by gender
+(<strong>sex</strong>)?<br />
+</p>
+<ol style="list-style-type: lower-alpha">
+<li>Describe physical activity statistically<br />
+</li>
+<li>Find the relationship between general health and physical
+activity<br />
+</li>
+<li>Is there a difference in this relationship (b) in respect to
+gender?<br />
+<br />
+</li>
+</ol>
+<div id="the-variables-1" class="section level3">
+<h3>The variables</h3>
+<p><strong>General health</strong></p>
+<p><img src="images/stat_03.png" width="100%" style="display: block; margin: auto;" /><br />
+</p>
+<p><strong>Physical Activity in minutes per week</strong></p>
+<p><img src="images/stat_01.png" width="100%" style="display: block; margin: auto;" /><br />
+</p>
+<p><strong>Gender</strong></p>
+<p><img src="images/stat_05.png" width="100%" style="display: block; margin: auto;" /><br />
+</p>
+</div>
+<div id="data-exploration-1" class="section level3">
+<h3>Data exploration</h3>
+<p><strong>Physical activity</strong> is a numerical variable,
+<strong>General health</strong> and <strong>Sex</strong> are categorical
+variables. Exploration of numerical variable <strong>General
+health</strong> can be done best by histogram.</p>
+<p><strong>Histogram (original data)</strong></p>
+<p><img src="images/stat_02_01.png" width="100%" style="display: block; margin: auto;" /><br />
+</p>
+<p>The histogram shows highly right-skewed distribution. This indicates
+the existence of extreme values on the right. From the summary
+statistics the maximal whisker was used as threshold to remove outliers,
+resulting in a cleaned data set.<br />
+<br />
+</p>
+<p><strong>Histogram (cleaned data)</strong></p>
+<p><img src="images/stat_02_02.png" width="100%" style="display: block; margin: auto;" /><br />
+</p>
+</div>
+<div id="research-question-2a" class="section level3">
+<h3>Research question 2a:</h3>
+<p><strong>a. Describe physical activity statistically</strong><br />
+</p>
+<p>For descriptive statistics of <strong>Physical Activity</strong> a
+summary statistics, and box-plot were used.<br />
+</p>
+<p><strong>Summary statistics of Physical Activity:</strong></p>
+<p><img src="images/stat_02_05.png" width="50%" style="display: block; margin: auto;" /><br />
+</p>
+<p><strong>Box-plot</strong></p>
+<p><img src="images/stat_02_06.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>Result:<br />
+</p>
+<p>The distribution is right skewed and the statistics is best described
+by median (233) and IQR or Inter Quartile Range (345)<br />
+<br />
+</p>
+</div>
+<div id="research-question-2b" class="section level3">
+<h3>Research question 2b</h3>
+<p><strong>b. Find the relationship between general health and physical
+activity</strong><br />
+</p>
+<p>Numerical variable (<strong>Physical Activity</strong>) and
+categorical variable (<strong>General Health</strong>) can be compared
+best by side-by-side box-plots.<br />
+</p>
+<p><strong>Side-by-side box-plots</strong></p>
+<p><img src="images/stat_02_03.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>Conclusion:<br />
+</p>
+<ul>
+<li>The plot shows correlation between both variables<br />
+</li>
+<li>More physical activity is related to a better health status<br />
+<br />
+</li>
+</ul>
+</div>
+<div id="research-question-2c" class="section level3">
+<h3>Research question 2c</h3>
+<p><strong>c. Is there a difference in this relationship (b) in respect
+to gender?</strong><br />
+</p>
+<p>Numerical variable (<strong>Physical Activity</strong>) and 2
+categorical variables (<strong>General Health</strong>,
+<strong>Sex</strong>) can be compared best by 2-dimensional side-by-side
+box-plots<br />
+<br />
+</p>
+<p><strong>Side-by-side box-plots</strong></p>
+<p><img src="images/stat_02_04.png" width="100%" style="display: block; margin: auto;" /><br />
+</p>
+<p>Conclusion:<br />
+</p>
+<ul>
+<li>No difference in trend (activity vs health) between male and female
+group<br />
+</li>
+<li>The male group show slightly more physical activity than the female
+group<br />
+<br />
+</li>
+</ul>
+</div>
+<div id="conclusion-2" class="section level3">
+<h3>Conclusion 2:</h3>
+<p>In this questions we utilized three variables: one numerical variable
+and two categorical variables. The numerical data had some implausible
+data (outliers) which were removed. The comparison of all variables was
+done with box-plots which allow an easy comparison over multiple
+categories.<br />
+</p>
+<ul>
+<li><strong>Physical activity</strong> and <strong>General
+Health</strong> are correlated in both groups female and male<br />
+<br />
+<br />
+</li>
+</ul>
+</div>
+</div>
+<div id="research-question-3" class="section level2">
+<h2>Research question 3</h2>
+<p>Is physical activity (<strong>pa1min_</strong>) correlated with BMI
+(Body Mass Index) (<strong>X_bmi5</strong>) and how does it change with
+general health (<strong>genhlth</strong>) and gender
+(<strong>sex</strong>)?<br />
+</p>
+<ol style="list-style-type: lower-alpha">
+<li>Describe BMI statistically<br />
+</li>
+<li>Find the relationship between physical activity and BMI<br />
+</li>
+<li>Is there a difference in this relationship (b) in respect to general
+health and gender?<br />
+<br />
+</li>
+</ol>
+<div id="the-variables-2" class="section level3">
+<h3>The variables</h3>
+<p><strong>Body Mass Index (BMI)</strong></p>
+<p><img src="images/stat_02.png" width="100%" style="display: block; margin: auto;" /><br />
+The BMI values in variable <code>X_bmi5</code> includes 2 decimals and
+is therefore divided by 100 to follow the convention.<br />
+</p>
+<p><strong>Physical Activity</strong> (see section 2)<br />
+<strong>General Health</strong> (see section 2)<br />
+<strong>Sex</strong> (see section 2)<br />
+<br />
+</p>
+</div>
+<div id="data-exploration-2" class="section level3">
+<h3>Data exploration</h3>
+<p><strong>Physical activity</strong> and <strong>BMI</strong> are
+numerical variable, <strong>General health</strong> and
+<strong>Sex</strong> are categorical variables. Exploration of numerical
+variable <strong>BMI</strong> can be done best by histogram.<br />
+</p>
+<p><strong>Histogram</strong></p>
+<p><img src="images/stat_03_01.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>The BMI is slightly right-skewed with some extreme values on the
+right<br />
+<br />
+</p>
+</div>
+<div id="research-question-3a" class="section level3">
+<h3>Research question 3a</h3>
+<p><strong>a. Describe BMI statistically</strong><br />
+</p>
+<p>For descriptive statistics of <strong>BMI</strong> a summary
+statistics, and box-plot were used.<br />
+</p>
+<p><strong>Summary statistics:</strong></p>
+<p><img src="images/stat_03_00.png" width="50%" style="display: block; margin: auto;" /><br />
+</p>
+<p><strong>Box-plot</strong></p>
+<p><img src="images/stat_03_001.png" width="100%" style="display: block; margin: auto;" /><br />
+Result: </p>
+<ul>
+<li>almost normal distributed with some extreme values up to
+BMI=95<br />
+</li>
+<li>statistics can be described by mean = 27.4 and sd = 5.7<br />
+<br />
+</li>
+</ul>
+</div>
+<div id="research-question-3b" class="section level3">
+<h3>Research question 3b</h3>
+<p><strong>b. What is the relationship between physical activity and
+BMI?</strong><br />
+</p>
+<p>For comparison of two numerical variables a scatter plot is best to
+show relationships.<br />
+</p>
+<p><strong>Scatter plot</strong>
+<img src="images/stat_03_02a.png" width="100%" style="display: block; margin: auto;" /><br />
+</p>
+<p>The scatter plot is “over-exposed” with too many data points (n =
+296,506). To make the relationship more visible the data were reduced by
+random sampling to 5% (n_sample =14,825).<br />
+<br />
+</p>
+<p><strong>Scatter plot (sampled data)</strong></p>
+<p><img src="images/stat_03_02.png" width="100%" style="display: block; margin: auto;" /><br />
+Conclusion:<br />
+</p>
+<ul>
+<li>The scatter plot does not show any correlation (R is near 0)<br />
+<br />
+</li>
+</ul>
+</div>
+<div id="research-question-3c" class="section level3">
+<h3>Research question 3c</h3>
+<p><strong>c. Is there a difference in this relationship (b) in respect
+to general health and gender?</strong><br />
+</p>
+<p>The scatter plots were grouped in categories <strong>general
+health</strong> and <strong>sex</strong>.<br />
+</p>
+<p><strong>Scatter plot</strong>
+<img src="images/stat_03_03.png" width="100%" style="display: block; margin: auto;" /><br />
+Conclusion:<br />
+</p>
+<ul>
+<li>Non of the group shows a correlation between Physical Activity and
+BMI<br />
+</li>
+<li>The better the health condition the smaller the spread around the
+center (BMI average and Physical Activity average)<br />
+</li>
+<li>The female groups show a slightly larger spread in BMI around the
+average than male<br />
+<br />
+</li>
+</ul>
+</div>
+<div id="conclusion-3" class="section level3">
+<h3>Conclusion 3:</h3>
+<ul>
+<li>In this questions we utilized four variables, which are two
+numerical variables “physical activity” and “BMI” and two categorical
+variables “general health” and “sex”. For the comparison of two
+numerical variable a scatter plot was used. For better data
+visualization the data amount had to be reduced using a random sampling
+function from R. Furthermore, the x scale “physical activity” had to be
+transformed by LOG10 function.<br />
+</li>
+<li>The data set does not show correlation between the numerical
+variables in any category.<br />
+</li>
+<li>However, in the category of “Excellent Health Condition” the
+“Physical Activity” and “BMI” data are less spread around the center
+value.<br />
+<br />
+<br />
+</li>
+</ul>
+</div>
+</div>
+<div id="lessons-learned" class="section level2">
+<h2>Lessons learned</h2>
+<div id="data-exploration-3" class="section level3">
+<h3>Data Exploration:</h3>
+<p>Data exploration took about 1/3 of the project time. At first I
+jumped into the analysis too soon, without a deeper exploration
+resulting in meaningless results. In a second approach I analysed the
+data variables and data types more thoroughly by creating a csv-file for
+the variables for Excel. This helped a lot to understand the data and to
+navigate through the 330 variables without getting lost.</p>
+<p>Since I have no deep background in the health domain, I selected more
+well-known variables such as physical activity and BMI index.</p>
+</div>
+<div id="data-cleaning" class="section level3">
+<h3>Data Cleaning:</h3>
+<p>At first I wanted to calculate sports activity from two variables
+<code>exeroft1</code> (times of sport per month) and
+<code>exerhmm1</code> (duration in hhmm per activity). However, the data
+description in the codebook was somehow ambiguous and I had to drop this
+idea. Instead I choose the calculated variable <code>pa1min_</code>, but
+it doesn’t specify the type of activity.<br />
+</p>
+<p>Another important topic was the treatment of potential outliers. I
+calculated a threshold for outliers from the maximum whisker formula and
+added a margin that seamed to be reasonable. Since the data set was very
+large the effect of removing outliers had no large impact on the
+results. For small data sets the decision for outlier would however
+require a deeper investigation.</p>
+</div>
+<div id="statistical-analysis" class="section level3">
+<h3>Statistical Analysis:</h3>
+<p>The course laid the foundation for how to describe categorical and
+numerical variables statistically and how to find relation between those
+variables. Throughout the project I could gain further practice and
+experience.</p>
+</div>
+<div id="using-r" class="section level3">
+<h3>Using R:</h3>
+<p>I had already some background in statistics and R and it didn’t take
+much effort to finish the project. My biggest challenge was to create
+this webpage in RStudio and post it on GitHub. To use R in this project
+requires some more skills than the course provides. Therefore, the
+course should make it clear that it is not for beginners with R.</p>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
