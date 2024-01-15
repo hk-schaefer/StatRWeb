@@ -13,6 +13,12 @@ knitr::opts_chunk$set(echo = TRUE)
 # Probability and Data Wrangling in R
 \
 \
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_0_0.png")
+)
+```
+\
+
 
 ## Objective
 
