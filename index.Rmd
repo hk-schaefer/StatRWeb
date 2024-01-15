@@ -17,6 +17,13 @@ knitr::opts_chunk$set(echo = TRUE)
 #### Duke University - Hosted by Coursera
 \
 
+\
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/stat_0_0.png")
+)
+```
+\
+
 ### Skills gained:
 
 `Probability and Statistics`, `Correlation and Dependence`, `Data Analysis`, `Exploratory Data Analysis`, `Statistical Inference`, `Statistical Hyopthesis Testing`, `Linear Regression`, `Regression Analysis`, `R Programming`, `Rstudio`, `Data Visualization`\
