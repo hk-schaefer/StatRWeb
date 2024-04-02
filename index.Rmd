@@ -26,7 +26,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/stat_0_0.png")
 
 ### Skills gained:
 
-`Probability and Statistics`, `Correlation and Dependence`, `Data Analysis`, `Exploratory Data Analysis`, `Statistical Inference`, `Statistical Hyopthesis Testing`, `Linear Regression`, `Regression Analysis`, `R Programming`, `Rstudio`, `Data Visualization`\
+`Probability`, `Distributions`, `Descriptive Statistics`, `Exploratory Data Analysis`, `Statistical Inference`, `Statistical Hyopthesis Testing`, `Sampling`, `Linear Regression`, `Logistic Regression`, `R Programming`, `Rstudio`, `Data Visualization`\
 \
 
 
