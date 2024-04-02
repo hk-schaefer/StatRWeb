@@ -9,8 +9,6 @@ navbar:
       href: about1.html
     - text: "Project 1"
       href: project1.html
-    - text: "BRFSS Data Codebook"
-      href: brfss_codebook.htm
       output:
 output:
  html_document:

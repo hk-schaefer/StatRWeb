@@ -36,7 +36,7 @@ Objective of this project was to apply the learned contents of this course:\
 
 ## The data set
 
-For this project the public data set ["BRFSS (Behavioral Risk Factor Surveillance System) 2013"](brfss_codebook.htm) was used, provided by the course.
+For this project the public data set ["BRFSS (Behavioral Risk Factor Surveillance System) 2013"](https://www.cdc.gov/brfss/annual_data/2013/pdf/CODEBOOK13_LLCP.pdf) was used, provided by the course.
 
 The objective of BRFSS data collection is to determine behavioral risk factors to chronic diseases in adults in the US. The data are annually updated via telephone interviews throughout the US. This data set contains 330 variables and 491,775 observations. Three meaningful research questions had to be formulated and answered by statistical analysis. The variables were explored and a subset of five variables was selected.\
 \
