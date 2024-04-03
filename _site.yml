@@ -9,7 +9,10 @@ navbar:
       href: about1.html
     - text: "Project 1"
       href: project1.html
-      output:
+    - text: "ABOUT Project 2"
+      href: about2.html
+    - text: "Project 2"
+      href: project2.html
 output:
  html_document:
     theme: flatly

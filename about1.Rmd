@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 
-# Probability and Data Wrangling in R
+# DESCRIPTIVE STATISTICS
 \
 
 \

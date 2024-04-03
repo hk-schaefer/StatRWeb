@@ -1,5 +1,5 @@
 ---
-title: "Statistical mastery of data analysis with R"
+title: "Statistical mastery for data analysis with R"
 author: "Hartmut Schaefer"
 date: "2024-01-15"
 output: 
@@ -18,8 +18,8 @@ knitr::opts_chunk$set(echo = TRUE)
 \
 
 \
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/stat_0_0.png")
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="40%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/00_inference.png")
 )
 ```
 \
@@ -49,7 +49,7 @@ Each course is ending with a project in R to demonstrate the skills gained.
 This website contains three projects to statistical analysis with R:\
 \
 
-**Project 1:** Probability and Data Wrangling with R\
+**Project 1:** Descriptive Statistics with R\
 
 - [A "Step-by-step" guide can be found in the ABOUT section](about1.html)\
 - [The R codes can be found in the Project 1 section](project1.html)\
@@ -57,7 +57,8 @@ This website contains three projects to statistical analysis with R:\
 
 **Project 2:** Inferential Statistics\
 
-- planned\
+- [A "Step-by-step" guide can be found in the ABOUT section](about2.html)\
+- [The R codes can be found in the Project 2 section](project2.html)\
 
 **Project 3:** Linear Regression and Modeling 
 

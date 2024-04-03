@@ -1,5 +1,5 @@
 ---
-title: "Exploring the BRFSS data"
+title: "Descriptive statistics with the BRFSS data"
 author: "Hartmut Schaefer"
 date: 2024-01-13
 output: 
