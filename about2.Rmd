@@ -82,7 +82,7 @@ Variable `suicide1`(2 levels): Suicide if incurable disease, single variable\
 
 Distribution of categories "approved" vs. "not approved" for all years.\
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/02_suicide1.png")
 )
 ```
@@ -97,7 +97,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/02_suicide1.png")
 1. Independence of observations: Samples were taken randomly (see Part 1) => OK\
 2. Success-failure condition (SF condition): Calculate the SF conditions (SF_CI) by using the sample proportion "p_hat"\
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/03_suicide1.png")
 )
 ```
@@ -109,7 +109,7 @@ Independence and SF conditions for all samples are met. We can, therefore, concl
 
 For the confidence intervals we calculate the sample proportion (p_hat), the Standard error (SE), the critical z-value (z_star) given via the significance level, the margin of error (MOE) and the lower and upper boundary:
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/04_suicide1.png")
 )
 ```
@@ -152,14 +152,14 @@ For the hypothesis test we calculate the Standard of Error (SE), z-Statistic (Z)
 The p-value tells us how likely the observations could have occurred under the null hypothesis.
 If the p-value is smaller than the given significance level (alpha=0.05) we will reject the null hypothesis in favor of the alternative hypothesis.
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/06_suicide.png")
 )
 ```
 \
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/07_suicide1.png")
 )
 ```
@@ -174,7 +174,7 @@ In 7 out of 21 samples the data do not show strong evidence that the majority of
 
 Visualizing the trend of population attitude towards suicide between 1977 and 2012:
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="90%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/08_suicide1.png")
 )
 ```
@@ -208,7 +208,7 @@ Categorical variable `race` (3 levels): Race of respondent, explanatory variable
 **Data exploration**\
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="80%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/03_getahead.png")
 )
 ```
@@ -218,8 +218,10 @@ knitr::include_graphics(c("~/R/StatRWeb/images/03_getahead.png")
 
 - race: grouping "Black" and "Other" ->  "Non-white"\
 - getahead: grouping "Both Equally", "Luck Or Help", and "Other" -> "Other"
+\
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="80%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/04_getahead.png")
 )
 ```
@@ -233,7 +235,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/04_getahead.png")
 2. Success-failure condition (SF condition): Calculate the SF conditions (SF_CI) by using the sample proportion "p_hat_white" and "p_hat_non_white".
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="80%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="90%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/07_getahead.png")
 )
 ```
@@ -246,7 +248,7 @@ Independence and SF conditions for all samples are met. We can, therefore, concl
 For the confidence intervals we calculate the Standard error (SE), the critical z-value (z_star) given via the significance level, the margin of error (MOE) and the lower and upper boundary:
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/12_getahead.png")
 )
 ```
@@ -277,7 +279,7 @@ We will carry out a two-sided z-Test\
 2. Success-failure condition: Calculate the SF condition (SF_HT) by using the proportion "p_pool", the weighted average of "p_hat_white" and "p_hat_non_white".
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/13_getahead.png")
 )
 ```
@@ -291,13 +293,13 @@ Independence and SF conditions for all samples are met. We can, therefore, concl
 
 For the hypothesis test we calculate the Standard of Error (SE), z-Statistic (Z) and the p-value.
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/09_getahead.png")
 )
 ```
 /
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/10_getahead.png")
 )
 ```
@@ -308,12 +310,12 @@ Only in 7 out of 24 the data show a strong evidence that there is a difference i
 \
 \
 
-### 2c) Inference - Trend
+#### 2c) Inference - Trend
 
 Visualizing the trend of population attitude towards hard work between 1973 and 2012:
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="90%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/11_getahead.png")
 )
 ```
@@ -348,7 +350,7 @@ The Hypothesis test can be formulated in the form:\
 
 **Data exploration**\
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="80%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/03_party.png")
 )
 ```
@@ -357,7 +359,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/03_party.png")
 The 8 levels in category `partyid` will be regrouped into the 3 major political parties: Republican, Democrat and Independent. The relationship between education degree and preferred political party is shown the the next plot.\
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="80%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/04_party.png")
 )
 ```
@@ -366,7 +368,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/04_party.png")
 **Create a two-way table for independence test**
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="40%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/05_party.png")
 )
 ```
@@ -430,7 +432,7 @@ b) Does the data provide strong evidence that Americans with more years in educa
 
 Distribution of attitude towards space spending (too little, too much):\
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/03_space.png")
 )
 ```
@@ -440,7 +442,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/03_space.png")
 
 Summary statistics:\
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/09_space.png")
 )
 ```
@@ -448,21 +450,21 @@ knitr::include_graphics(c("~/R/StatRWeb/images/09_space.png")
 
 Distribution of years of education by attitude space spending:\
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="90%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/04_space.png")
 )
 ```
 
 Check of normality or skewness of distribution:\
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="90%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/05_space.png")
 )
 ```
 The distributions indicate some left skew. We like to calculate the skewness and decide if we can use the samples for the statistical test.\
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="40%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/10_space.png")
 )
 ```
@@ -494,7 +496,7 @@ All conditions are met and nearly normal distribution can be assumed. t-statisti
 **Calculate confidence interval**
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/07_space.png")
 )
 ```
@@ -583,7 +585,7 @@ Does the data provide strong evidence that there is a difference in the average 
 Distribution of respondent from each social class:\
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/10_child.png")
 )
 ```
@@ -603,18 +605,18 @@ knitr::include_graphics(c("~/R/StatRWeb/images/10_child.png")
 
 - Check for normal distribution and skewness\
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="65%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="90%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/03_child.png")
 )
 ```
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="65%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="90%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/04_child.png")
 )
 ```
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="30%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="40%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/05_child.png")
 )
 ```
@@ -627,7 +629,7 @@ However, there are no large numbers of extreme outliers. Therefore, we can assum
 
 - Summary statistics to compare standard deviations in each group
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="40%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/06_child.png")
 )
 ```
@@ -636,7 +638,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/06_child.png")
 - Boxplot to compare distributions in each group
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/07_child.png")
 )
 ```
@@ -672,7 +674,7 @@ k: number of classes
 
 **ANOVA Test**
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/08_child.png")
 )
 ```
