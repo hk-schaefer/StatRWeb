@@ -19,7 +19,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images//00_inference.png")
 \
 
 
-## Objective
+## Objectives
 
 Objective of the 2nd project is to apply learned contents of "inferential statistics":
 
@@ -60,6 +60,9 @@ Research question 5: Inference for differences of many means: ANOVA test\
 \
 
 ## Part 3: Categorical data
+\
+\
+
 
 ### 1. Single proportion
 #### Research Question 1: Attitude towards suicide
@@ -90,7 +93,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/02_suicide1.png")
 \
 \
 
-#### 1a) Inference - Confidence intarval for proportion
+#### 1a) Inference - Confidence interval for proportion
 
 
 **Condition check**:\
@@ -124,7 +127,7 @@ We are 95% confident that the true proportion of the American population who app
 
 Null hypothesis (H0): There is no strong evidence that the American population approves suicide in case of incurable disease.
 
-Alternative hypothesis (Ha): There is a strong evidence that the American population approves suicide in case of incurable disease.\
+Alternative hypothesis (Ha): There is strong evidence that the American population approves suicide in case of incurable disease.\
 
 This can be formulated as:\
 
@@ -263,7 +266,7 @@ We are 95% confident that the true proportion difference between White and Non-w
 
 Null hypothesis (H0): There is no strong evidence of a difference in belief between White and Non-white American population that hard work leads to success in life.\
 
-Alternative hypothesis (Ha): There is a strong evidence of a difference in belief between White and Non-white American population that hard work leads to success in life.\
+Alternative hypothesis (Ha): There is strong evidence of a difference in belief between White and Non-white American population that hard work leads to success in life.\
 
 This can be formulated as:\
 
@@ -306,7 +309,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/10_getahead.png")
 \
 **Conclusion: **
 In 17 out of 24 the data show no strong evidence that there is a difference in belief between White and Non-white Americans that hard work leads to success. In other words, we have no strong evidence that being a white American increases or reduces the belief that hard work leads to success in life.\
-Only in 7 out of 24 the data show a strong evidence that there is a difference in belief between White and Non-white Americans that hard work leads to success. In other words, we do have strong evidence that being a white American increases or reduces the belief that hard work leads to success in life\
+Only in 7 out of 24 the data show strong evidence that there is a difference in belief between White and Non-white Americans that hard work leads to success. In other words, we do have strong evidence that being a white American increases or reduces the belief that hard work leads to success in life\
 \
 \
 
@@ -333,7 +336,7 @@ Overall, the White group believes more than the Non-White group, that hard work 
 
 In this example, we want to answer the question of whether there is a relationship between the preferred political party and the level of education. Both variables are categorical variables with multiple levels. 
 
-To test for a relationship we will conduct a **Chi-square test for independence**. An introduction to this test can be found [in the text book for this course, OpenIntro Statistics, 4th edition, page 240](https://leanpub.com/os)\
+To test for a relationship, we will conduct a **Chi-square test for independence**. An introduction to this test can be found [in the text book for this course, OpenIntro Statistics, 4th edition, page 240](https://leanpub.com/os)\
 
 We will use the following variables:\
 
@@ -393,25 +396,26 @@ knitr::include_graphics(c("~/R/StatRWeb/images/05_party.png")
 All conditions are met and nearly normal distribution can be assumed. Chi-square test statistic can be applied.\
 \
 
-**Chi-square test**
+**Chi-square test**\
 
-The Hypothesis:\
+The Hypotheses:\
 
 - H0: The political party preference **is independent** from the education degree\
 - Ha: The political party preference **is not independent** from the education degree\
 - Significance level: alpha = 5%\
 
-The test statistics is comparing the observed values/proportions with expected values/proportions. The expected values can be calculated from marginal proportions\
+Chi-square statistics:\
 
-- Chi-square statistics:  X-squared = SUM ((observed  - expected)^2 / expected)\
+- X-squared = SUM ((observed  - expected)^2 / expected)\
+- The test statistics is comparing the observed values/proportions with expected values/proportions. The expected values are calculated from marginal proportions.\
 
 ```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/06_party.png")
 )
 ```
 \
-**Conclusion**
-The X-squared value is large (62.2) and the p-value is nearly zero. We can, therefore, reject H0 hypothesis. I.e. party preference is not independent from education degree.\
+**Conclusion: **
+The X-squared value is large (62.2) and the p-value is nearly zero. We can, therefore, reject H0 hypothesis. I.e. the political party preference depends on the degree of education.\
 \
 \
 
@@ -421,7 +425,7 @@ The X-squared value is large (62.2) and the p-value is nearly zero. We can, ther
 ### 4. Difference of two means
 #### Research question 4: Attitude towards space exploration spending by education
 
-One of the question in the GSS survey deals with the attitude towards government spending on space exploration (too little, too much). We want to know if there is difference in the attitude due to average years of education in 2010 to 2012. We assume that people with more years of education may think that the gov. spending is too little. To proof this claim we will conduct a hypothesis test and calculate the confidence interval by t-statistic.
+One of the questions in the GSS survey deals with the attitude towards government spending on space exploration (too little, too much). We want to know if there is difference in the attitude due to average years of education in 2010 to 2012. We assume that people with more years of education may think that the gov. spending is too little. To proof this claim we will conduct a hypothesis test and calculate the confidence interval by t-statistic.
 
 We will use the following variables:\
 
@@ -509,7 +513,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/07_space.png")
 ```
 \
 
-**Conclusion**
+**Conclusion: **
 We are 95% confident that the true difference in mean for years in education is between 1.24 and 1.98 years. \
 I.e. The American public who thinks that the spending for space exploration is too little attended in average 1.24 to 1.98 more years in education as their counterparts.\
 \
@@ -520,7 +524,7 @@ I.e. The American public who thinks that the spending for space exploration is t
 
 Null hypothesis (H0): There is no strong evidence that Americans with more years in education think that the government spending for space exploration is too little.\
 
-Alternative hypothesis (Ha): There is a strong evidence that Americans with more years in education think that the government spending for space exploration is too little.\
+Alternative hypothesis (Ha): There is strong evidence that Americans with more years in education think that the government spending for space exploration is too little.\
 
 This can be formulated as:\
 
@@ -562,8 +566,8 @@ knitr::include_graphics(c("~/R/StatRWeb/images/08_space.png")
 ```
 \
 
-**Conclusion**
-The data show a strong evidence that Americans with more years in education think that the government spending for space exploration is too little. The p-value is < 0.0001. I.e. the probability to observe a t-value of 8.60 or more extreme, given that the null hypothesis is true, is almost zero.\
+**Conclusion: **
+The data show strong evidence that Americans with more years in education think that the government spending for space exploration is too little. The p-value is < 0.0001. I.e. the probability to observe a mean difference of 1.61 or more if in fact H0 is true is less than 0.01%.\
 The results of the confidence interval and hypothesis tests agree with each other. I.e a "Reject H0" result corresponds to a confidence interval that does not include the value "zero".\
 \
 \
@@ -655,7 +659,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/07_child.png")
 - From summary statistic and from the boxplot we can assume that the variation is sufficiently consistent (sd range 1.60 to 1.92)\
 \
 
-All conditions are met and we can proceed to the ANOVA test.\
+All conditions are met, and we can proceed to the ANOVA test.\
 \
 \
 \
@@ -686,7 +690,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/08_child.png")
 )
 ```
 \
-**Conclusion:** The ANOVA test delivers a p-value of 0.004 which is less than alpha 0.05. Therefore, we reject the Null Hypothesis. I.e. there is a strong evidence that the average number of children per respondent differs at least in one pair of social classes.\
+**Conclusion: ** The ANOVA test delivers a p-value of 0.004 which is less than alpha 0.05. Therefore, we reject the Null Hypothesis. I.e. there is strong evidence that the average number of children per respondent differs at least in one pair of social classes.\
 \
 
 **Multiple comparison test (t-test)**
@@ -697,7 +701,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/09_child.png")
 )
 ```
 \
-**Conclusion:**  The multiple pairwise t-test identifies the pairs of classes with strong evidence of difference in the number of children. In this case we test against the corrected alpha value (Bonferroni correction, alpha_star = 0.0083). For the following pairs we don't have strong evidence that there is a difference in the average number of children per class:\
+**Conclusion: **  The multiple pairwise t-test identifies the pairs of classes with strong evidence of difference in the number of children. In this case we test against the corrected alpha value (Bonferroni correction, alpha_star = 0.0083). For the following pairs we don't have strong evidence that there is a difference in the average number of children per class:\
 \
 
 - Middle Class - Working Class (p-value 0.40 > 0.0083) => Fail to reject H0\
@@ -706,4 +710,4 @@ knitr::include_graphics(c("~/R/StatRWeb/images/09_child.png")
 - Upper Class - Middle Class (p-value 0.36 > 0.0083) => Fail to reject H0\
 \
 
-Only in the pairs "Working Class - Lower Class" and "Middle Class - Lower Class" we do have a strong evidence that there is a difference in the average number of children per class.\
+Only in the pairs "Working Class - Lower Class" and "Middle Class - Lower Class" we do have strong evidence that there is a difference in the average number of children per class.\

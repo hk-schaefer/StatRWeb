@@ -124,7 +124,6 @@ Proportion in sex over all samples is 56% female and 44% male. The distributions
 
 ## Part 2: Research Questions
 
-#### Objective
 
 Objective of the 2nd course project is to apply learned contents of statistical inference:
 
@@ -179,6 +178,8 @@ Research question 5: Inference for differences of many means: ANOVA test\
 \
 
 ## Part 3: Categorical data
+\
+\
 
 ### 1. Single proportion
 #### Research Question 1: Attitude towards suicide
@@ -312,7 +313,7 @@ We are 95% confident that the true proportion of the American population who app
 
 Null hypothesis (H0): There is no strong evidence that the American population approves suicide in case of incurable disease.
 
-Alternative hypothesis (Ha): There is a strong evidence that the American population approves suicide in case of incurable disease.\
+Alternative hypothesis (Ha): There is strong evidence that the American population approves suicide in case of incurable disease.\
 
 This can be formulated as:\
 
@@ -681,7 +682,7 @@ We are 95% confident that the true proportion difference between White and Non-w
 
 Null hypothesis (H0): There is no strong evidence of a difference in belief between White and Non-white American population that hard work leads to success in life.\
 
-Alternative hypothesis (Ha): There is a strong evidence of a difference in belief between White and Non-white American population that hard work leads to success in life.\
+Alternative hypothesis (Ha): There is strong evidence of a difference in belief between White and Non-white American population that hard work leads to success in life.\
 
 This can be formulated as:\
 
@@ -786,7 +787,7 @@ gss_result_02 %>%
 
 **Conclusion: **
 In 17 years out of 24 the data show no strong evidence that there is a difference in belief between White and Non-white Americans that hard work leads to success. In other words, we have no strong evidence that being a white American increases or reduces the belief that hard work leads to success in life.\
-Only in 7 years out of 24 the data show a strong evidence that there is a difference in belief between White and Non-white Americans that hard work leads to success. In other words, we do have strong evidence that being a white American increases or reduces the belief that hard work leads to success in life\
+Only in 7 years out of 24 the data show strong evidence that there is a difference in belief between White and Non-white Americans that hard work leads to success. In other words, we do have strong evidence that being a white American increases or reduces the belief that hard work leads to success in life\
 \
 \
 
@@ -1019,19 +1020,21 @@ gss_cont_table
 - each cell size > 5: OK\
 
 All conditions are met and nearly normal distribution can be assumed. Chi-square test statistic can be applied\
-
+\
+\
 
 **Chi-square test**
 
-The Hypothesis:\
+The Hypotheses:\
 
 - H0: The political party preference **is independent** from the education degree\
 - Ha: The political party preference **is not independent** from the education degree\
 - Significance level: alpha = 5%\
 
-The test statistics is comparing the observed values/proportions with expected values/proportions. The expected values can be calculated from marginal proportions\
+Chi-square statistics:\
 
-- Chi-square statistics:  X-squared = SUM ((observed  - expected)^2 / expected)\
+- X-squared = SUM ((observed  - expected)^2 / expected)\
+- The test statistics is comparing the observed values/proportions with expected values/proportions. The expected values are calculated from marginal proportions.\
 
 ```{r}
 ############################################################### Chi-square test
@@ -1039,7 +1042,6 @@ model <- chisq.test(table(gss_select_fct$degree2, gss_select_fct$partyid2))
 ```
 
 Observed values (2-way table)
-\
 ```{r}
 # Print observed values
 model$observed
@@ -1047,7 +1049,6 @@ model$observed
 \
 
 Expected values (2-way table)
-\
 ```{r}
 # Print expected values:  Calculated from obs. values by independence rule 
 # P(A & B) = P(A) * P(B)
@@ -1056,13 +1057,12 @@ model$expected
 \
 
 Test statistics
-\
 ```{r}
 model
 ```
 \
-**Conclusion**
-The X-squared value is large (62.2) and the p-value is nearly zero. We can, therefore, reject H0 hypothesis. I.e. party preference is not independent from education degree.\
+**Conclusion: **
+The X-squared value is large (62.2) and the p-value is nearly zero. We can, therefore, reject H0 hypothesis. I.e. the political party preference is depends on the degree of education.\
 
 \
 
@@ -1310,7 +1310,7 @@ stat_descript
 
 \
 
-**Conclusion**
+**Conclusion: **
 We are 95% confident that the true difference in mean for years in education is between 1.24 and 1.98 years. \
 I.e. The American public who thinks that the spending for space exploration is too little have in average 1.24 to 1.98 more years of education as their counterparts.\
 \
@@ -1320,7 +1320,7 @@ I.e. The American public who thinks that the spending for space exploration is t
 
 Null hypothesis (H0): There is no strong evidence that Americans with more years in education think that the government spending for space exploration is too little.\
 
-Alternative hypothesis (Ha): There is a strong evidence that Americans with more years in education think that the government spending for space exploration is too little.\
+Alternative hypothesis (Ha): There is strong evidence that Americans with more years in education think that the government spending for space exploration is too little.\
 
 This can be formulated as:\
 
@@ -1401,8 +1401,8 @@ stat_descript %>%
          test_result)
 ```
 \
-**Conclusion**
-The data show a strong evidence that Americans with more years in education think that the government spending for space exploration is too little. The p-value is < 0.0001. I.e. the probability to observe a mean difference of 1.61 or more if in fact H0 is true is less than 0.01%.\
+**Conclusion: **
+The data show strong evidence that Americans with more years in education think that the government spending for space exploration is too little. The p-value is < 0.0001. I.e. the probability to observe a mean difference of 1.61 or more if in fact H0 is true is less than 0.01%.\
 The results of the confidence interval and hypothesis tests agree with each other. I.e a "Reject H0" result corresponds to a confidence interval that does not include the value "zero".\
 \
 \
@@ -1586,6 +1586,7 @@ All conditions are met and we can proceed to the ANOVA test.\
 \
 
 #### Inference - ANOVA Test and Multiple Comparison Test
+\
 
 Null hypothesis (H0): There is no strong evidence that the average number of children per respondent differs between social classes.\
 \
@@ -1603,6 +1604,8 @@ mue: population mean (true mean)\
 mean: sample mean (estimate of true mean)\
 k: number of classes
 \
+\
+
 
 ANOVA and Multiple pairwise test with function `inference()` from `statsr` package:
 
@@ -1627,28 +1630,29 @@ anova_test <- inference(y = childs,
                        sig_level = 0.05)
 ```
 \
-**Conclusion 1**\
+**Conclusion 1: **\
 
-- The ANOVA test delivers a p-value of 0.004 which is less than alpha 0.05. Therefore, we reject the Null Hypothesis. I.e. there is a strong evidence that the average number of children per class differs at least in one pair.\
+- The ANOVA test delivers a p-value of 0.004 which is less than alpha 0.05. Therefore, we reject the Null Hypothesis. I.e. there is strong evidence that the average number of children per class differs at least in one pair.\
 
 \
-**Conclusion 2:** \
+**Conclusion 2: ** \
 
 - The multiple pairwise t-test identifies the pairs of classes with strong evidence of difference in the number of children. In this case we test against the corrected alpha value (Bonferroni correction, alpha_star = 0.0083). For the following pairs we don't have strong evidence that there is a difference int eht average number of children per class:\
 \
-
 -- Middle Class - Working Class (p-value 0.40 > 0.0083) => Fail to reject H0\
 -- Upper Class - Lower Class (p-value 0.25 > 0.0083) => Fail to reject H0\
 -- Upper Class - Working Class (p-value 0.55 > 0.0083) => Fail to reject H0\
 -- Upper Class - Middle Class (p-value 0.36 > 0.0083) => Fail to reject H0\
 \
 
-- Only in the pairs "Working Class - Lower Class" and "Middle Class - Lower Class" we do have a strong evidence that there is a difference in the average number of children per class.\
+- Only in the pairs "Working Class - Lower Class" and "Middle Class - Lower Class" we do have strong evidence that there is a difference in the average number of children per class.\
 \
 \
-
+\
+\
 
 #### OPTIONAL: Inference - ANOVA Test and Multiple Comparison Test (alternative 1)
+\
 
 Alternatively, we can also calculate ANOVA and Multiple Comparison Test with functions from the `stats` package:\
 
@@ -1693,6 +1697,7 @@ The p-values from the TukeyHSD tests are adjusted p-values.\
 
 
 #### OPTIONAL: Inference - ANOVA Test and Multiple Comparison Test (alternative 2)
+\
 
 Both ANOVA test functions are more or less a kind of "blackboxes". Below we wrote a code to manually calculate ANOVA and the multiple comparison t-test.\
 

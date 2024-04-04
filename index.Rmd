@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 \
 
 \
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="40%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="30%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/00_inference.png")
 )
 ```
