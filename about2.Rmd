@@ -395,6 +395,15 @@ All conditions are met and nearly normal distribution can be assumed. Chi-square
 
 **Chi-square test**
 
+The Hypothesis:\
+
+- H0: The political party preference **is independent** from the education degree\
+- Ha: The political party preference **is not independent** from the education degree\
+- Significance level: alpha = 5%\
+
+The test statistics is comparing the observed values/proportions with expected values/proportions. The expected values can be calculated from marginal proportions\
+
+- Chi-square statistics:  X-squared = SUM ((observed  - expected)^2 / expected)\
 
 ```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/06_party.png")
@@ -402,9 +411,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/06_party.png")
 ```
 \
 **Conclusion**
-The p-value is about zero. We therefore, can reject H0. I.e. party preference is not independent from education degree, with a p-value of nearly zero percent.\
-\
-\
+The X-squared value is large (62.2) and the p-value is nearly zero. We can, therefore, reject H0 hypothesis. I.e. party preference is not independent from education degree.\
 \
 \
 

@@ -993,7 +993,7 @@ gss_select_fct %>%
 ```
 \
 
-**Create a 2-way-table (contingency table)**
+**Create a 2-way-table (contingency table) for the observations**
 
 ```{r}
 # ---------------------------------------------------- Create contingency table
@@ -1023,18 +1023,47 @@ All conditions are met and nearly normal distribution can be assumed. Chi-square
 
 **Chi-square test**
 
+The Hypothesis:\
+
+- H0: The political party preference **is independent** from the education degree\
+- Ha: The political party preference **is not independent** from the education degree\
+- Significance level: alpha = 5%\
+
+The test statistics is comparing the observed values/proportions with expected values/proportions. The expected values can be calculated from marginal proportions\
+
+- Chi-square statistics:  X-squared = SUM ((observed  - expected)^2 / expected)\
+
 ```{r}
 ############################################################### Chi-square test
 model <- chisq.test(table(gss_select_fct$degree2, gss_select_fct$partyid2))
-model
+```
 
+Observed values (2-way table)
+\
+```{r}
+# Print observed values
+model$observed
+```
+\
+
+Expected values (2-way table)
+\
+```{r}
+# Print expected values:  Calculated from obs. values by independence rule 
+# P(A & B) = P(A) * P(B)
+model$expected
+```
+\
+
+Test statistics
+\
+```{r}
+model
 ```
 \
 **Conclusion**
-The p-value is about zero. We therefore, can reject H0. I.e. party preference is not independent from education degree, with a p-value of nearly zero percent.\
+The X-squared value is large (62.2) and the p-value is nearly zero. We can, therefore, reject H0 hypothesis. I.e. party preference is not independent from education degree.\
 
-P-value: Probability of an observed value or more extreme than X-squared = 62.2 given that H0 is true.  
-\
 \
 
 ```{r include=FALSE}
@@ -1373,7 +1402,7 @@ stat_descript %>%
 ```
 \
 **Conclusion**
-The data show a strong evidence that Americans with more years in education think that the government spending for space exploration is too little. The p-value is < 0.0001. I.e. the probability to observe a t-value of 8.60 or more extreme, given that the null hypothesis is true, is almost zero.\
+The data show a strong evidence that Americans with more years in education think that the government spending for space exploration is too little. The p-value is < 0.0001. I.e. the probability to observe a mean difference of 1.61 or more if in fact H0 is true is less than 0.01%.\
 The results of the confidence interval and hypothesis tests agree with each other. I.e a "Reject H0" result corresponds to a confidence interval that does not include the value "zero".\
 \
 \
