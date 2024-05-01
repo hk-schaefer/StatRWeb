@@ -27,7 +27,7 @@ Objective of the 2nd project is to apply learned contents of "inferential statis
 - Confidence interval and hypothesis testing\
 - Inference for categorical data\
 - Inference for numerical data\
-- z-test, Chi-square test, t-test, F-test, ANOVA, Bootstrap
+- z-test, Chi-square test, t-test, F-test, ANOVA
 \
 \
 

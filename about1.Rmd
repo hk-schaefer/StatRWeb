@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 \
 
 \
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="40%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/stat_0_0.png")
 )
 ```
@@ -39,7 +39,11 @@ For this project the public data set ["BRFSS (Behavioral Risk Factor Surveillanc
 The objective of BRFSS data collection is to determine behavioral risk factors to chronic diseases in adults in the US. The data are annually updated via telephone interviews throughout the US. This data set contains 330 variables and 491,775 observations. Three meaningful research questions had to be formulated and answered by statistical analysis. The variables were explored and a subset of five variables was selected.\
 \
 
-## Reserach question 1:
+
+## Research questions
+
+
+**Research question 1: Two categorical variables**
 
 Is income level (**income2**) correlated with general health (**genhlth**)?\
 
@@ -48,7 +52,39 @@ b. What is the probability of **high income** given a **good health**?\
 c. Are the variables "income level" and "general health" independent or dependent?\
 \
 
-### The variables
+**Research question 2: One numerical and two categorical variables**
+
+Is general health (**genhlth**) correlated with physical activity (**pa1min_**) and how does it change by gender (**sex**)?\
+
+a. Describe physical activity statistically\
+b. Find the relationship between general health and physical activity\
+c. Is there a difference in this relationship (b) in respect to gender?\
+\
+
+**Research question 3: Two numerical and two categorical variables**
+
+Is physical activity (**pa1min_**) correlated with BMI (Body Mass Index) (**X_bmi5**) and how does it change with general health (**genhlth**) and gender (**sex**)?\
+
+a. Describe BMI statistically\
+b. Find the relationship between physical activity and BMI\
+c. Is there a difference in this relationship (b) in respect to general health and gender?\
+\
+
+Describe the variables and their relationship statistically.
+\
+\
+
+
+## 1: Categorical variables
+
+Is income level (**income2**) correlated with general health (**genhlth**)?\
+
+a. What is the probability of **good health** given a **high income**?\
+b. What is the probability of **high income** given a **good health**?\
+c. Are the variables "income level" and "general health" independent or dependent?\
+\
+
+#### The variables
 
 **General health**
 
@@ -121,7 +157,7 @@ Conclusion: \
 \
 
 
-### Research question 1a:
+#### Research question 1a:
 
 **a. What is the probability of "good health" given a "high income"?**\
 
@@ -140,7 +176,7 @@ Result: P(good health | high income) = 0.6641975 or 66.4%\
 \
 
 
-### Research question 1b:
+#### Research question 1b:
 
 **b. What is the probability of "high income" given a "good health?**\
 
@@ -149,7 +185,7 @@ This can be derived directly from the contingency table or indirectly calculated
 Result: P(high income | good health) = 0.5649903 or 56.5%\
 \
 
-### Research question 1c:
+#### Research question 1c:
 
 **c. Are the variables "income level" and "general health" independent or dependent?**\
 \
@@ -169,7 +205,7 @@ From an aggregated contingency table we calculated conditional probabilities and
 \
 
 
-## Research question 2
+## 2: Numerical & Categorical
 
 Is general health (**genhlth**) correlated with physical activity (**pa1min_**) and how does it change by gender (**sex**)?\
 
@@ -178,7 +214,7 @@ b. Find the relationship between general health and physical activity\
 c. Is there a difference in this relationship (b) in respect to gender?\
 \
 
-### The variables
+#### The variables
 
 **General health**
 
@@ -228,7 +264,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/stat_02_02.png")
 ```
 \
 
-### Research question 2a:
+#### Research question 2a:
 
 **a. Describe physical activity statistically**\
 
@@ -255,7 +291,7 @@ The distribution is right skewed and the statistics is best described by median 
 \
 
 
-### Research question 2b
+#### Research question 2b
 
 **b. Find the relationship between general health and physical activity**\
 
@@ -275,7 +311,7 @@ Conclusion:\
 \
 
 
-### Research question 2c
+#### Research question 2c
 
 **c. Is there a difference in this relationship (b) in respect to gender?**\
 
@@ -306,7 +342,7 @@ In this questions we utilized three variables: one numerical variable and two ca
 \
 
 
-## Research question 3
+## 3: Numerical variables
 
 Is physical activity (**pa1min_**) correlated with BMI (Body Mass Index) (**X_bmi5**) and how does it change with general health (**genhlth**) and gender (**sex**)?\
 
@@ -347,7 +383,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/stat_03_01.png")
 The BMI is slightly right-skewed with some extreme values on the right\
 \
 
-### Research question 3a
+#### Research question 3a
 
 **a. Describe BMI statistically**\
 
@@ -374,7 +410,7 @@ Result:\
 - statistics can be described by mean = 27.4 and sd = 5.7\
 \
 
-### Research question 3b
+#### Research question 3b
 
 **b. What is the relationship between physical activity and BMI?**\
 
@@ -403,7 +439,7 @@ Conclusion:\
 \
 
 
-### Research question 3c
+#### Research question 3c
 
 **c. Is there a difference in this relationship (b) in respect to general health and gender?**\
 
@@ -435,27 +471,25 @@ Conclusion:\
 
 ## Lessons learned
 
-### Data Exploration: 
+#### Data Exploration: 
 
 Data exploration took about 1/3 of the project time. At first I jumped into the analysis too soon, without a deeper exploration resulting in meaningless results. In a second approach I analysed the data variables and data types more thoroughly by creating a csv-file for the variables for Excel. This helped a lot to understand the data and to navigate through the 330 variables without getting lost.
 
 Since I have no deep background in the health domain, I selected more well-known variables such as physical activity and BMI index.
 
-### Data Cleaning:
+#### Data Cleaning
 
 At first I wanted to calculate sports activity from two variables `exeroft1` (times of sport per month) and `exerhmm1` (duration in hhmm per activity). However, the data description in the codebook was somehow ambiguous and I had to drop this idea. Instead I choose the calculated variable `pa1min_`, but it doesn't specify the type of activity.\
 
 Another important topic was the treatment of potential outliers. I calculated a threshold for outliers from the maximum whisker formula and added a margin that seamed to be reasonable. Since the data set was very large the effect of removing outliers had no large impact on the results. For small data sets the decision for outlier would however require a deeper investigation.
 
-### Statistical Analysis:
+#### Statistical Analysis
 
 The course laid the foundation for how to describe categorical and numerical variables statistically and how to find relation between those variables. Throughout the project I could gain further practice and experience.
 
-### Using R:
+#### Using R:
 
 I had already some background in statistics and R and it didn't take much effort to finish the project. My biggest challenge was to create this webpage in RStudio and post it on GitHub.
-To use R in this project requires some more skills than the course provides. Therefore, the course should make it clear that it is not for beginners with R.
-
 
 
 

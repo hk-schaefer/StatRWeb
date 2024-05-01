@@ -316,16 +316,22 @@ div.tocify {
   <a href="index.html">Home</a>
 </li>
 <li>
-  <a href="about1.html">ABOUT Project 1</a>
+  <a href="about1.html">ABOUT Descriptive Stats</a>
 </li>
 <li>
-  <a href="project1.html">Project 1</a>
+  <a href="project1.html">Code: Descriptive Stats</a>
 </li>
 <li>
-  <a href="about2.html">ABOUT Project 2</a>
+  <a href="about2.html">ABOUT Inferential Stats</a>
 </li>
 <li>
-  <a href="project2.html">Project 2</a>
+  <a href="project2.html">Code: Inferential Stats</a>
+</li>
+<li>
+  <a href="about3.html">ABOUT Regression</a>
+</li>
+<li>
+  <a href="project3.html">Code: Regression</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -349,7 +355,7 @@ div.tocify {
 <p><br />
 </p>
 <p><br />
-<img src="images/stat_0_0.png" width="50%" style="display: block; margin: auto;" /><br />
+<img src="images/stat_0_0.png" width="40%" style="display: block; margin: auto;" /><br />
 </p>
 <div id="objective" class="section level2">
 <h2>Objective</h2>
@@ -385,8 +391,9 @@ selected.<br />
 <br />
 </p>
 </div>
-<div id="reserach-question-1" class="section level2">
-<h2>Reserach question 1:</h2>
+<div id="research-questions" class="section level2">
+<h2>Research questions</h2>
+<p><strong>Research question 1: Two categorical variables</strong></p>
 <p>Is income level (<strong>income2</strong>) correlated with general
 health (<strong>genhlth</strong>)?<br />
 </p>
@@ -402,8 +409,63 @@ dependent?<br />
 <br />
 </li>
 </ol>
-<div id="the-variables" class="section level3">
-<h3>The variables</h3>
+<p><strong>Research question 2: One numerical and two categorical
+variables</strong></p>
+<p>Is general health (<strong>genhlth</strong>) correlated with physical
+activity (<strong>pa1min_</strong>) and how does it change by gender
+(<strong>sex</strong>)?<br />
+</p>
+<ol style="list-style-type: lower-alpha">
+<li>Describe physical activity statistically<br />
+</li>
+<li>Find the relationship between general health and physical
+activity<br />
+</li>
+<li>Is there a difference in this relationship (b) in respect to
+gender?<br />
+<br />
+</li>
+</ol>
+<p><strong>Research question 3: Two numerical and two categorical
+variables</strong></p>
+<p>Is physical activity (<strong>pa1min_</strong>) correlated with BMI
+(Body Mass Index) (<strong>X_bmi5</strong>) and how does it change with
+general health (<strong>genhlth</strong>) and gender
+(<strong>sex</strong>)?<br />
+</p>
+<ol style="list-style-type: lower-alpha">
+<li>Describe BMI statistically<br />
+</li>
+<li>Find the relationship between physical activity and BMI<br />
+</li>
+<li>Is there a difference in this relationship (b) in respect to general
+health and gender?<br />
+<br />
+</li>
+</ol>
+<p>Describe the variables and their relationship statistically.<br />
+<br />
+</p>
+</div>
+<div id="categorical-variables" class="section level2">
+<h2>1: Categorical variables</h2>
+<p>Is income level (<strong>income2</strong>) correlated with general
+health (<strong>genhlth</strong>)?<br />
+</p>
+<ol style="list-style-type: lower-alpha">
+<li>What is the probability of <strong>good health</strong> given a
+<strong>high income</strong>?<br />
+</li>
+<li>What is the probability of <strong>high income</strong> given a
+<strong>good health</strong>?<br />
+</li>
+<li>Are the variables “income level” and “general health” independent or
+dependent?<br />
+<br />
+</li>
+</ol>
+<div id="the-variables" class="section level4">
+<h4>The variables</h4>
 <p><strong>General health</strong></p>
 <p><img src="images/stat_03.png" width="100%" style="display: block; margin: auto;" /><br />
 </p>
@@ -458,9 +520,8 @@ aggregated to high and low levels.<br />
 <br />
 </li>
 </ul>
-</div>
-<div id="research-question-1a" class="section level3">
-<h3>Research question 1a:</h3>
+<div id="research-question-1a" class="section level4">
+<h4>Research question 1a:</h4>
 <p><strong>a. What is the probability of “good health” given a “high
 income”?</strong><br />
 </p>
@@ -474,8 +535,8 @@ margins (sums of each category) is helpful.<br />
 <br />
 </p>
 </div>
-<div id="research-question-1b" class="section level3">
-<h3>Research question 1b:</h3>
+<div id="research-question-1b" class="section level4">
+<h4>Research question 1b:</h4>
 <p><strong>b. What is the probability of “high income” given a “good
 health?</strong><br />
 </p>
@@ -486,8 +547,8 @@ calculated by Bayes Theorem: P(B|A) = (P(A|B) * P(B)) / P(A).<br />
 <br />
 </p>
 </div>
-<div id="research-question-1c" class="section level3">
-<h3>Research question 1c:</h3>
+<div id="research-question-1c" class="section level4">
+<h4>Research question 1c:</h4>
 <p><strong>c. Are the variables “income level” and “general health”
 independent or dependent?</strong><br />
 <br />
@@ -503,6 +564,7 @@ dependent.<br />
 <p><br />
 </p>
 </div>
+</div>
 <div id="conclusion-1" class="section level3">
 <h3>Conclusion 1</h3>
 <p>In this question we utilized two categorical variables: income and
@@ -516,8 +578,8 @@ probabilities and proofed dependency.<br />
 </p>
 </div>
 </div>
-<div id="research-question-2" class="section level2">
-<h2>Research question 2</h2>
+<div id="numerical-categorical" class="section level2">
+<h2>2: Numerical &amp; Categorical</h2>
 <p>Is general health (<strong>genhlth</strong>) correlated with physical
 activity (<strong>pa1min_</strong>) and how does it change by gender
 (<strong>sex</strong>)?<br />
@@ -533,8 +595,8 @@ gender?<br />
 <br />
 </li>
 </ol>
-<div id="the-variables-1" class="section level3">
-<h3>The variables</h3>
+<div id="the-variables-1" class="section level4">
+<h4>The variables</h4>
 <p><strong>General health</strong></p>
 <p><img src="images/stat_03.png" width="100%" style="display: block; margin: auto;" /><br />
 </p>
@@ -563,9 +625,8 @@ resulting in a cleaned data set.<br />
 <p><strong>Histogram (cleaned data)</strong></p>
 <p><img src="images/stat_02_02.png" width="100%" style="display: block; margin: auto;" /><br />
 </p>
-</div>
-<div id="research-question-2a" class="section level3">
-<h3>Research question 2a:</h3>
+<div id="research-question-2a" class="section level4">
+<h4>Research question 2a:</h4>
 <p><strong>a. Describe physical activity statistically</strong><br />
 </p>
 <p>For descriptive statistics of <strong>Physical Activity</strong> a
@@ -583,8 +644,8 @@ by median (233) and IQR or Inter Quartile Range (345)<br />
 <br />
 </p>
 </div>
-<div id="research-question-2b" class="section level3">
-<h3>Research question 2b</h3>
+<div id="research-question-2b" class="section level4">
+<h4>Research question 2b</h4>
 <p><strong>b. Find the relationship between general health and physical
 activity</strong><br />
 </p>
@@ -604,8 +665,8 @@ best by side-by-side box-plots.<br />
 </li>
 </ul>
 </div>
-<div id="research-question-2c" class="section level3">
-<h3>Research question 2c</h3>
+<div id="research-question-2c" class="section level4">
+<h4>Research question 2c</h4>
 <p><strong>c. Is there a difference in this relationship (b) in respect
 to gender?</strong><br />
 </p>
@@ -630,6 +691,7 @@ group<br />
 </li>
 </ul>
 </div>
+</div>
 <div id="conclusion-2" class="section level3">
 <h3>Conclusion 2:</h3>
 <p>In this questions we utilized three variables: one numerical variable
@@ -647,8 +709,8 @@ Health</strong> are correlated in both groups female and male<br />
 </ul>
 </div>
 </div>
-<div id="research-question-3" class="section level2">
-<h2>Research question 3</h2>
+<div id="numerical-variables" class="section level2">
+<h2>3: Numerical variables</h2>
 <p>Is physical activity (<strong>pa1min_</strong>) correlated with BMI
 (Body Mass Index) (<strong>X_bmi5</strong>) and how does it change with
 general health (<strong>genhlth</strong>) and gender
@@ -690,9 +752,8 @@ variable <strong>BMI</strong> can be done best by histogram.<br />
 right<br />
 <br />
 </p>
-</div>
-<div id="research-question-3a" class="section level3">
-<h3>Research question 3a</h3>
+<div id="research-question-3a" class="section level4">
+<h4>Research question 3a</h4>
 <p><strong>a. Describe BMI statistically</strong><br />
 </p>
 <p>For descriptive statistics of <strong>BMI</strong> a summary
@@ -713,8 +774,8 @@ BMI=95<br />
 </li>
 </ul>
 </div>
-<div id="research-question-3b" class="section level3">
-<h3>Research question 3b</h3>
+<div id="research-question-3b" class="section level4">
+<h4>Research question 3b</h4>
 <p><strong>b. What is the relationship between physical activity and
 BMI?</strong><br />
 </p>
@@ -739,8 +800,8 @@ Conclusion:<br />
 </li>
 </ul>
 </div>
-<div id="research-question-3c" class="section level3">
-<h3>Research question 3c</h3>
+<div id="research-question-3c" class="section level4">
+<h4>Research question 3c</h4>
 <p><strong>c. Is there a difference in this relationship (b) in respect
 to general health and gender?</strong><br />
 </p>
@@ -763,6 +824,7 @@ average than male<br />
 <br />
 </li>
 </ul>
+</div>
 </div>
 <div id="conclusion-3" class="section level3">
 <h3>Conclusion 3:</h3>
@@ -789,8 +851,8 @@ value.<br />
 </div>
 <div id="lessons-learned" class="section level2">
 <h2>Lessons learned</h2>
-<div id="data-exploration-3" class="section level3">
-<h3>Data Exploration:</h3>
+<div id="data-exploration-3" class="section level4">
+<h4>Data Exploration:</h4>
 <p>Data exploration took about 1/3 of the project time. At first I
 jumped into the analysis too soon, without a deeper exploration
 resulting in meaningless results. In a second approach I analysed the
@@ -800,8 +862,8 @@ navigate through the 330 variables without getting lost.</p>
 <p>Since I have no deep background in the health domain, I selected more
 well-known variables such as physical activity and BMI index.</p>
 </div>
-<div id="data-cleaning" class="section level3">
-<h3>Data Cleaning:</h3>
+<div id="data-cleaning" class="section level4">
+<h4>Data Cleaning</h4>
 <p>At first I wanted to calculate sports activity from two variables
 <code>exeroft1</code> (times of sport per month) and
 <code>exerhmm1</code> (duration in hhmm per activity). However, the data
@@ -816,8 +878,8 @@ large the effect of removing outliers had no large impact on the
 results. For small data sets the decision for outlier would however
 require a deeper investigation.</p>
 </div>
-<div id="statistical-analysis" class="section level3">
-<h3>Statistical Analysis:</h3>
+<div id="statistical-analysis" class="section level4">
+<h4>Statistical Analysis</h4>
 <p>The course laid the foundation for how to describe categorical and
 numerical variables statistically and how to find relation between those
 variables. Throughout the project I could gain further practice and
@@ -827,9 +889,7 @@ experience.</p>
 <h3>Using R:</h3>
 <p>I had already some background in statistics and R and it didn’t take
 much effort to finish the project. My biggest challenge was to create
-this webpage in RStudio and post it on GitHub. To use R in this project
-requires some more skills than the course provides. Therefore, the
-course should make it clear that it is not for beginners with R.</p>
+this webpage in RStudio and post it on GitHub.</p>
 </div>
 </div>
 </div>

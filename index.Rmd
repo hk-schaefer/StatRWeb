@@ -1,7 +1,7 @@
 ---
 title: "Statistical mastery for data analysis with R"
 author: "Hartmut Schaefer"
-date: "2024-04-02"
+date: "2024-04-30"
 output: 
   html_document:
     toc: FALSE
@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 \
 
 \
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="30%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="20%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/00_inference.png")
 )
 ```
@@ -26,7 +26,7 @@ knitr::include_graphics(c("~/R/StatRWeb/images/00_inference.png")
 
 ### Skills gained:
 
-`Probability`, `Distributions`, `Descriptive Statistics`, `Exploratory Data Analysis`, `Statistical Inference`, `Statistical Hyopthesis Testing`, `Sampling`, `Linear Regression`, `Logistic Regression`, `R Programming`, `Rstudio`, `Data Visualization`\
+`Probability`, `Distributions`, `Descriptive Statistics`, `Exploratory Data Analysis`, `Statistical Inference`, `Statistical Hyopthesis Testing`, `Sampling`, `Linear Regression`, `Regression`, `R Programming`, `Rstudio`, `Data Visualization`\
 \
 
 
@@ -38,6 +38,7 @@ This specialization course consists of 3 courses:
 1. Introduction to Probability and Data with R\
 2. Inferential Statistics\
 3. Linear Regression and Modeling\
+\
 
 Each course is ending with a project in R to demonstrate the skills gained.
 \
@@ -53,23 +54,25 @@ This website contains three projects to statistical analysis with R:\
 
 - [A "Step-by-step" guide can be found in the ABOUT section](about1.html)\
 - [The R codes can be found in the Project 1 section](project1.html)\
-
+\
 
 **Project 2:** Inferential Statistics\
 
 - [A "Step-by-step" guide can be found in the ABOUT section](about2.html)\
 - [The R codes can be found in the Project 2 section](project2.html)\
+\
 
 **Project 3:** Linear Regression and Modeling 
 
-- planned\
+- [A "Step-by-step" guide can be found in the ABOUT section](about3.html)\
+- [The R codes can be found in the Project 3 section](project3.html)\
 \
 
-All steps are documented in R Markdown with the relevant R codes. All codes are executable from the R Markdown documents available on GitHub [Link](https://github.com/hk-schaefer/StatRWeb).\
+All steps are documented in R Markdown with the relevant R codes. executable R Markdown files are available on GitHub [Link](https://github.com/hk-schaefer/StatRWeb).\
 \
 \
 
-### Contact:
+#### Contact:
 
 [LinkedIn page](https://www.linkedin.com/in/hartmut-schaefer)
 

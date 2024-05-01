@@ -1,0 +1,3563 @@
+---
+title: "Project 3"
+author: "Hartmut Schaefer"
+date: "2024-04-30"
+output: 
+  html_document: 
+    fig_height: 4
+    code_folding: show
+---
+
+# Linear Regression
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+**Load packages**
+
+```{r load-packages, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(statsr)
+library(GGally)          # ------------------- extension of ggplot2
+library(data.table)      # ------------------- table calculation
+library(patchwork)       # ------------------- additional visualization tool
+library(moments)         # ------------------- package to calculate Skewness
+library(broom)           # ------------------- Convert stat obj. into tibbles
+library(modeldata)       # ------------------- Sampling data for modeling
+library(knitr)           # ------------------- support print of tables
+```
+
+
+**Load data**
+
+```{r}
+load("~/R/StatRWeb/Data/movies.Rdata")
+```
+\
+
+## Introduction
+
+#### Project Instruction
+
+Your boss has just acquired data about how much audiences and critics like movies as well as many other variables about the movies. The dataset includes information from [Rotten Tomatos](https://www.rottentomatoes.com/) and [IMDB](https://www.imdb.com/).
+
+She is interested in learning what attributes make a movie popular. She is also interested in learning something new about movies. She wants your team to figure it all out.
+
+As part of this project you will complete exploratory data analysis (EDA), modeling, and prediction.
+\
+\
+
+
+## Part 1: Data
+
+The dataset was provided by the course [**Data Analysis with R, Duke University**](https://www.coursera.org/specializations/statistics) hosted on Coursera.\
+
+The dataset is a sample set of 651 observations with 33 variables. Below the list of all variables and their meanings. The column "important" indicates whether the variable is worthwhile to be considered in the model building or not.
+
+```{r include=FALSE}
+variables <- read.csv("~/R/StatRWeb/Data/movies_variables.csv", header = TRUE)
+```
+
+
+```{r echo=FALSE, layout="1-body-outset"}
+kable(variables %>% 
+#  filter(important == "yes") %>% 
+  select(-levels))
+```
+\
+\
+
+
+#### Important variables
+\
+
+**IMBd rating**
+
+```{r message=FALSE, warning=FALSE, layout="1-body-outset"}
+summary(movies$imdb_rating)
+```
+
+*The Internet Movie Database* (IMDb) ratings are based on the votes of registered users. Each user can vote only once, and the votes are then aggregated and summarized into a single rating. [Link](https://www.imdb.com/list/ls076459507/)\
+
+IMDb Rating      | Meaning
+---------------- | -----------
+`1/10`           | god-awful
+`2/10`           | awful
+`3/10`           | bad
+`4/10`           | nice try, but no cigar
+`5/10`           | meh
+`6/10`           | not bad
+`7/10`           | good
+`8/10`           | very good
+`9/10`           | excellent
+`10/10`          | masterpiece
+
+
+\
+\
+
+**IMDb number of votes**
+
+```{r message=FALSE, warning=FALSE}
+summary(movies$imdb_num_votes)
+```
+The IMDb number of votes tells us about the movie's popularity, audience interest, quality of perception, and longevity. A high rating with a significant number of votes is more credible than a high rating with only a few votes. [Link MS Bing Copilot](https://www.bing.com/search?q=imdb+number+of+votes%2C+what+does+this+tell+us&qs=n&form=QBRE&sp=-1&ghc=1&lq=0&pq=imdb+number+of+votes%2C+what+does+this+tell+us&sc=13-44&sk=&cvid=72B5BB35C4C34F08AE4318A75C6CC22B&ghsh=0&ghacc=0&ghpl=)
+\
+\
+
+**title_type**
+
+```{r layout="1-body-outset"}
+movies %>% 
+  group_by(title_type) %>% 
+  summarise(n = n())
+```
+\
+\
+
+**genre**
+
+```{r}
+movies %>% 
+  group_by(genre) %>% 
+  summarise(n = n())
+```
+\
+\
+
+
+**mpaa_rating**
+
+```{r}
+movies %>% 
+  group_by(mpaa_rating) %>% 
+  summarise(n = n())
+```
+
+Motion Picture Association (MPA) rating and meaning:
+[Link](https://en.wikipedia.org/wiki/Motion_Picture_Association_film_rating_system)
+
+Rating           | Meaning
+---------------- | -----------
+`G`              | general audience
+`NC-17`          | adults only
+`PG`             | parental guidance suggested
+`PG-13`          | parents strongly cautioned
+`R`              | restricted
+`Unrated`        | not rated
+
+\
+\
+
+**studio**
+
+```{r}
+fct_studio <- movies %>% 
+  group_by(studio) %>% 
+  summarise(n = n()) %>% 
+  arrange(desc(n))
+head(fct_studio)
+```
+
+212 distinct entries. Requires a lot of data cleaning, since several of the same studio corporations are listed under different names. We believe that the studio corporation will not influence the movie popularity much and, therefore, drop this class.\
+\
+\
+
+**critics rating**
+
+```{r}
+ movies %>% 
+  group_by(critics_rating) %>% 
+  summarise(n = n())
+```
+
+Tomatometer rating by critics and meaning:
+[Link](https://www.rottentomatoes.com/about#whatisthetomatometer)
+
+
+Rating              | Meaning
+------------------- | -----------------------------
+`Certified Fresh`   | Tomatometer score > 75% and > 5 reviews from top critics, >40 reviews from critics
+`Fresh`             | Tomatometer score > 75% (not perfect but majority gave a thumb up)
+`Rotten`            | Tomatometer score < 60% (movie failed)
+
+\
+\
+
+**critics score**
+
+```{r}
+summary(movies$critics_score)
+```
+\
+Score range: [0 - 100]
+
+\
+\
+
+**audience_rating**
+
+```{r}
+ movies %>% 
+  group_by(audience_rating) %>% 
+  summarise(n = n())
+```
+
+Rotten Tomatoes rating by audience and meaning:
+[Link](https://www.rottentomatoes.com/about#whatisthetomatometer)
+
+
+Rating              | Meaning
+------------------- | -----------------------------
+`Spilled`           | < 60% of audience gave the movie a star rating of 3.5 or higher
+`Upright`           | > 60% of audience gave the movie a star rating of 3.5 or higher
+
+\
+\
+
+**audience_score**
+
+```{r}
+summary(movies$audience_score)
+```
+\
+
+Score range: [0 - 100]
+\
+\
+
+
+#### Check scope of inference
+
+The data were collected from 1970 to 2014. The ratings are a sample from the audience on voluntary basis or from selected groups of movie critics. So we can't claim that they were collected by random sampling. Usually, audience rating is biased towards the extremes. We therefore cannot infer the statistics to the general population, i.e. movie popularity for all people in the US. We can only infer the statistic on new data collected under the same method as our sample dataset.\
+
+\
+\
+\
+
+## Part 2: Research question
+
+**Research question**\
+
+Can the Internet Movie Database (IMDb) rating be explained by factors such as:
+
+a. type, genre, run-time, release timing
+b. other rating measures (e.g, Tomato-measure)
+c. nomination and awards 
+\
+
+**Task:** 
+
+Create a multiple linear model of best fit using only significant strong predictors to answer the questions, of type:
+
+\[
+  \begin{aligned}
+\widehat{imdb\_rating} &= \hat{\beta}_0 + \hat{\beta}_1 \times {x_1} + \hat{\beta}_2 \times {x_2} + . . .\end{aligned}
+\]
+
+- Response (target) variable: `imdb_rating`
+- Explanatory (predictor) variables: `all others`
+\
+
+For the model building and testing split the movie dataset by random sampling into training and test datasets.
+\
+\
+
+**Steps:**
+
+1. Exploratory data analysis
+2. Modeling
+3. Prediction
+
+```{r include=FALSE}
+rm(fct_studio,
+   variables)
+```
+\
+\
+\
+
+## Part 3: EDA
+#### (Exploratory Data Analysis)
+
+**Prepare the dataset**
+
+Remove variables that carry no information about the IMDb rating.
+
+```{r}
+movies_select <- movies %>% 
+  select(-studio,
+         -director,
+         -actor1,
+         -actor2,
+         -actor3,
+         -actor4,
+         -actor5,
+         -imdb_url,
+         -rt_url)
+```
+\
+\
+
+**Check for NAs and replace**
+
+```{r}
+# List NAs in all columns
+colSums(is.na(movies_select))
+```
+
+NAs in "dvd_rel_dates" are not relevant for the model as we will see later. There is one NA in runtime of the movie, listed below.\
+
+```{r}
+# Substitue NA in variable runtime
+movies_select %>% 
+  filter(is.na(runtime)) %>% 
+  select(title, genre, runtime)
+```
+
+According to [Wikipedia](https://en.wikipedia.org/wiki/The_End_of_America_(film)) the movie's runtime is 73 min. We will replace NA with 73 min.
+
+```{r}
+row_id <- which(movies_select$title == "The End of America")
+col_id <- which(colnames(movies_select) == "runtime")
+
+movies_select[row_id, col_id] <- 73
+
+movies_select %>% 
+  filter(title == "The End of America") %>% 
+  select(title, genre, runtime)
+```
+
+```{r include=FALSE}
+rm(row_id, col_id)
+```
+\
+\
+
+**Add computed new variables**
+
+For time series dependency analysis, we will create a date vector for theater release:
+
+```{r}
+# Make date : theater and dvd release date
+movies_select <- movies_select %>% 
+  mutate(thtr_rel_date = make_date(thtr_rel_year, thtr_rel_month, thtr_rel_day))
+```
+\
+Re-arrange the column sequence and summarize the variables.
+
+```{r}
+movies_select <- movies_select %>% 
+  select(imdb_rating,
+         title_type,
+         genre,
+         runtime,
+         mpaa_rating,
+         imdb_num_votes,
+         critics_rating,
+         critics_score,
+         audience_rating,
+         audience_score,
+         best_pic_nom,
+         best_pic_win,
+         best_actor_win,
+         best_actress_win,
+         best_dir_win,
+         top200_box,
+         thtr_rel_year,
+         thtr_rel_month,
+         dvd_rel_year,
+         dvd_rel_month,
+         thtr_rel_date)
+```
+\
+\
+
+**Split data into training and test data**
+
+To test our model(s) we will split the dataset into three portions. One for training (70%), one for verification (20%) used during model building and one for final testing (10%).
+
+```{r}
+set.seed(9876)
+index <- sample(3, nrow(movies_select), replace = TRUE, prob = c(0.7, 0.2, 0.1))
+train <- movies_select[index == 1,]
+verify <- movies_select[index == 2,]
+test <- movies_select[index == 3,]
+```
+\
+
+```{r include=FALSE}
+rm(index)
+```
+
+
+Add row-id to the train dataset, required for outlier identification and removal.
+
+```{r}
+# Add row-id
+train <- train %>% 
+  rowid_to_column(var="ID")
+```
+
+\
+\
+
+### EDA numerical variables
+
+First, let's explore how much each independent variable contributes to the outcome of the response variable by single linear regression. We also want to check for linearity, distributions and outliers.\
+
+Below an overview of all numerical variables showing their relationships and correlation values.
+
+```{r fig.width=8, message=FALSE, warning=FALSE}
+# Compare variables
+ggpairs(train, c(2,5,7,9,11))
+```
+\
+We can see from the table that the correlation between the response variable `imdb_rating` and the variables `runtime`, `imdb_num_votes` is weak, but strong for variables `critics_score` and `audience_score`. We also see, that there is a strong correlation (colinearity) between `critics_score` and `audience_score`.\
+\
+\
+
+**0. imdb_rating (response variable)**
+
+```{r  message=FALSE, warning=FALSE}
+
+p1 <- train %>% 
+  ggplot(aes(x = imdb_rating)) +
+  geom_histogram(binwidth = 0.2, fill = "darkgrey", col = "black")+
+  xlim(0,10)+
+  labs(title = "IMDb_rating - distribution")
+
+p2 <- train %>% 
+  ggplot(aes(y = imdb_rating)) +
+  geom_boxplot()+
+  labs(title = "")+
+  coord_flip()
+
+p1 / p2
+
+summary(train$imdb_rating)
+```
+\
+
+The distribution is slightly left-skewed. The overall shape is close to a bell curve. We have three extreme data points smaller than 3.0.\ 
+
+Extreme data points in `imdb_rating`;
+
+```{r}
+# Extreme data points: < 3
+train %>% 
+  filter(imdb_rating < 3) %>% 
+  select(ID, imdb_rating, title_type, genre, runtime)
+```
+
+These data points have the ID 36, 133 and 246. We will follow up on them later in the analysis.\
+
+
+Next, we will check each single relationship between response and predictor variable for linearity and distribution. We will then identify and remove extreme or potential influential points and decide whether to include the variable as potential predictor in the model.\
+\
+
+**1. imdb_rating \~ runtime**
+
+```{r fig.width = 8, fig.asp=0.7, message=FALSE, warning=FALSE}
+# ---------------------------------------------------- check runtime (raw data)
+p1 <- train %>% 
+  ggplot(aes(x = (runtime))) + 
+  geom_histogram(binwidth = 10, fill = "darkgray", col = "black")+
+  labs(title = "Runtime (raw data)")
+
+p2 <- train %>% 
+  ggplot(aes(x = (runtime), y = imdb_rating))+
+  geom_point(size = 1, alpha = 0.3 )+
+  geom_smooth(method = "loess", se = F, col = "red")+
+  geom_smooth(method = "lm", se = F, col = "blue")
+
+
+# ---------------------------------------------- check runtime (log-transform)
+p3 <- train %>% 
+  ggplot(aes(x = log(runtime))) + 
+  geom_histogram(binwidth = 0.1, fill = "darkgray", col = "black")+
+  labs(title = "Runtime (log(raw data))")
+
+
+p4 <- train %>% 
+  ggplot(aes(x = log(runtime), y = imdb_rating))+
+  geom_point(size = 1, alpha = 0.3 )+
+  geom_smooth(method = "loess", se = F, col = "red")+
+  geom_smooth(method = "lm", se = F, col = "blue")
+
+(p1 + p2) / (p3 + p4) 
+```
+
+\
+The raw data show extremes on the left and right side and strong deviation from linearity. The raw data are not suitable to be used directly in the linear model. We, therefore, will modify the predictor variable by applying different transformations. \
+
+Log transform of raw data normalizes the distribution, but we still see non-linearity issues on the extreme ends on left and right. We will therefore truncated the most extreme data points. The thresholds were selected by trail and error to maximize the effect while keeping the number of truncated data points to a minimum.\
+
+
+```{r include=FALSE}
+rm(p1, p2, p3, p4)
+```
+
+
+```{r}
+# truncate runtime
+train %>% 
+  filter(runtime < 75 | runtime > 180) %>% 
+  select(ID, imdb_rating, title_type, genre, runtime)
+  
+```
+
+Only six data points are outside of range 75-180 min runtime. We will truncate runtime accordingly.\
+
+```{r}
+# Truncate runtime (<75 -> 75, >180 -> 180)
+train$runtime <- ifelse(train$runtime < 75, 75, train$runtime)
+train$runtime <- ifelse(train$runtime > 180, 180, train$runtime)
+```
+
+
+```{r fig.width = 8, fig.asp= 0.7, message=FALSE, warning=FALSE}
+
+# ---------------------------------------------- check runtime (cutoff extremes)
+p5 <- train %>% 
+  ggplot(aes(x = (runtime))) + 
+  geom_histogram(binwidth = 10, fill = "darkgray", col = "black")+
+  labs(title = "Runtime (removed extremes)",
+       subtitle = "runtime between 75 to 180 min")
+
+p6 <- train %>% 
+  ggplot(aes(x = (runtime), y = imdb_rating))+
+  geom_point(size = 1, alpha = 0.3 )+
+  geom_smooth(method = "loess", se = F,  col = "red")+
+  geom_smooth(method = "lm", se = F,  col = "blue")
+        
+
+# ------------------------------ check runtime (cutoff extremes + log-transform)
+p7 <- train %>% 
+  ggplot(aes(x = log(runtime))) + 
+  geom_histogram(binwidth = 0.1, fill = "darkgray", col = "black")+
+  labs(title = "Runtime (removed extremes + log)",
+       subtitle = "runtime between 75 to 180 min")
+
+
+p8 <- train %>% 
+  ggplot(aes(x = log(runtime), y = imdb_rating))+
+  geom_point(size = 1, alpha = 0.3 )+
+  geom_smooth(method = "loess", se = F, col = "red")+
+  geom_smooth(method = "lm", se = F, col = "blue")
+
+(p5 + p6) / (p7 + p8)
+
+```
+\
+The regression line is now linear, with some small deviation on both ends. The distribution is still right-skewed and the data points are concentrated on the left side. 
+Applying a log-transform on top of the removed extreme version improves the data point distribution. The linearity of the regression line is acceptable.\
+\
+```{r include=FALSE}
+rm(p5, p6, p7, p8)
+```
+
+
+
+Simple model evaluation:
+
+```{r}
+# Simple model
+model <- lm(imdb_rating ~ log(runtime), data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+plot(model, which = c(1:5))
+
+```
+\
+
+Residuals are distributed evenly over the range. Variable explains `r r2` % of response. It is a weak estimator but it will be used in the model. There are about 3 outliers and 1 influential point that may have to be removed.\
+
+```{r}
+# Register influential points and outliers
+v1_runtime <- c(36, 133, 246, 249)
+```
+\
+\
+
+
+**2. imdb_rating ~ imdb_num_votes**
+
+```{r fig.width = 8, fig.asp= 0.7, message=FALSE, warning=FALSE}
+# -------------------------------------------------- check imdb_num_votes (raw)
+p1 <- train %>% 
+  ggplot(aes(x = imdb_num_votes)) +
+  geom_histogram(binwidth = 2500, fill = "black")+
+  labs(title = "IMDb votes (raw data)")
+
+p2 <- train %>% 
+  ggplot(aes(y = imdb_num_votes)) +
+  geom_boxplot()+
+  labs(title = "")+
+  coord_flip()
+
+p3 <- train %>% 
+  ggplot(aes(x = (imdb_num_votes), y = imdb_rating))+
+  geom_point(size = 1, alpha = 0.3 )+
+  geom_smooth(method = "loess", se = F, col = "red")+
+  geom_smooth(method = "lm", se = F, col = "blue")+
+  labs(title = "")
+
+(p1 + p2) / p3
+```
+
+```{r include=FALSE}
+rm(p1, p2, p3)
+```
+\
+The distribution is extremely right skewed. The regression line is dominated by several extreme points (right) with large leverage and high influence. We cannot use this data in its raw form for linear regression. We will try to remove to mitigate the influence of the extreme data points points by truncation, cut-off and log-transformation.\
+
+
+Calculate threshold for cut_off: threshold = 3rd quartile + 1.5 * IQR 
+
+```{r message=FALSE, warning=FALSE}
+
+# Calculate cut_off margin for extreme values (1.5 * IQR)
+imdb_extreme <- train %>% 
+  summarise(iqr = IQR(imdb_num_votes),
+            q3 = quantile(imdb_num_votes, 0.75),
+            cut_off = q3 + 1.5 * iqr
+            )
+cut_off <- as.numeric(imdb_extreme$cut_off)
+cut_off
+```
+
+```{r include=FALSE}
+rm(imdb_extreme)
+```
+The cutoff value for extreme values is at about 130,000. 
+
+```{r}
+# Number of values to be affected by cut_off
+train %>% 
+  filter(imdb_num_votes >= cut_off) %>% 
+  summarise(n = n())
+```
+\
+
+Using the upper cut-off threshold would remove 50 data points. We would only do this if the variable shows a high correlation to the response variable.\
+
+
+**Transformation 1: Truncation`**
+
+```{r}
+# truncating
+train_trun <- train %>% 
+  mutate(
+    imdb_num_votes_trun = case_when(
+      imdb_num_votes < cut_off ~ imdb_num_votes,
+      imdb_num_votes >= cut_off ~ cut_off)
+  )
+```
+
+
+```{r fig.width = 8, fig.asp= 0.7, message=FALSE, warning=FALSE}
+# ----------------------------------------- check imdb_num_votes (truncated)
+p1 <- train_trun %>% 
+  ggplot(aes(x = imdb_num_votes_trun)) +
+  geom_histogram(binwidth = 2500, fill = "black")+
+  labs(title = "IMDb votes (truncated at 130K)")
+
+p2 <- train_trun %>% 
+  ggplot(aes(y = imdb_num_votes_trun)) +
+  geom_boxplot()+
+  labs(title = "")+
+  coord_flip()
+
+p3 <- train_trun %>% 
+  ggplot(aes(x = (imdb_num_votes_trun), y = imdb_rating))+
+  geom_point(size = 1, alpha = 0.3 )+
+  geom_smooth(method = "loess", se = F, col = "red")+
+  geom_smooth(method = "lm", se = F, col = "blue")+
+  labs(title = "")
+
+(p1 + p2) / p3
+```
+
+```{r include=FALSE}
+rm(p1, p2, p3)
+```
+\
+
+Model with truncated data
+```{r}
+# simple model
+model <- lm(imdb_rating ~ (imdb_num_votes_trun), data = train_trun)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+```
+
+```{r include=FALSE}
+ rm(model, train_trun)
+```
+\
+`imdb_num_votes_trun` slope coefficient is almost "zero". R2 = `r r2`. The variable has not much information about the response variable.\
+\
+
+**Transformation 2: Cut-off extreme data from `imdb_num_votes`**
+
+```{r fig.width = 8, fig.asp= 0.7, message=FALSE, warning=FALSE}
+# ----------------------------------------- check imdb_num_votes (remove extreme)
+
+p1 <- train %>% 
+  filter(imdb_num_votes <= cut_off) %>% 
+  ggplot(aes(x = imdb_num_votes)) +
+  geom_histogram(binwidth = 2500, fill = "black")+
+  labs(title = "IMDb votes (removed extreme)")
+
+p2 <- train %>% 
+  filter(imdb_num_votes <= cut_off) %>% 
+  ggplot(aes(y = imdb_num_votes)) +
+  geom_boxplot()+
+  labs(title = "")+
+  coord_flip()
+
+p3 <- train %>% 
+  filter(imdb_num_votes <= cut_off) %>% 
+  ggplot(aes(x = imdb_num_votes, y = imdb_rating))+
+  geom_point(size = 1, alpha = 0.3 )+
+  geom_smooth(method = "loess", se = F, col = "red")+
+  geom_smooth(method = "lm", se = F, col = "blue")+
+  labs(title = "")
+
+(p1 + p2) / p3
+```
+
+```{r include=FALSE}
+rm(p1, p2, p3)
+```
+\
+
+Model with filtered data
+
+```{r}
+# simple model
+model <- lm(imdb_rating ~ (imdb_num_votes), 
+                       data =  filter(train, imdb_num_votes <= cut_off))
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+
+```
+\
+`imdb_num_votes_trun` slope coefficient is almost "zero". R2 = `r r2`. F-statistic = 5.5.
+The variable has almost no information about the response variable.\
+\
+
+**Transformation 3: Log10 of `imdb_num_votes`**
+
+```{r fig.width = 8, fig.asp= 0.7, message=FALSE, warning=FALSE}
+# ----------------------------------------- check imdb_num_votes (log-trans)
+
+p1 <- train %>% 
+  ggplot(aes(x = log10(imdb_num_votes))) +
+  geom_histogram(binwidth = 0.2, fill = "darkgrey", col="black")+
+  labs(title = "IMDb votes (log10-transformed)")
+
+p2 <- train %>% 
+  ggplot(aes(y = log10(imdb_num_votes))) +
+  geom_boxplot()+
+  labs(title = "")+
+  coord_flip()
+
+p3 <- train %>% 
+  ggplot(aes(x = log10(imdb_num_votes), y = imdb_rating))+
+  geom_point(size = 1, alpha = 0.3 )+
+  geom_smooth(method = "loess", se = F,col = "red")+
+  geom_smooth(method = "lm", se = F, col = "blue")+
+  labs(title = "")
+
+(p1 + p2) / p3
+```
+
+```{r include=FALSE}
+rm(p1, p2, p3)
+```
+
+
+```{r}
+# simple model
+model <- lm(imdb_rating ~ log10(imdb_num_votes), data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+plot(model, which = c(1))
+```
+
+```{r include=FALSE}
+rm(model, cut_off)
+```
+
+For log10 transform residuals show a remaining parabolic pattern. Truncated, cut-off and log10-transform don't show any convincing linear relationship. We will, therefore, drop this variable from the model.
+\
+\
+
+**3. imdb_rating ~ critics_score**
+
+```{r fig.width = 8, fig.asp= 0.7, message=FALSE, warning=FALSE}
+# check critics_score
+p1 <- train %>% 
+  ggplot(aes(x = critics_score)) +
+  geom_histogram(binwidth = 5, fill = "darkgrey", col="black")+
+  labs(title = "Critics_score")
+
+p2 <- train %>% 
+  ggplot(aes(y = critics_score))+
+  geom_boxplot()+
+  labs(title = "")+
+  coord_flip()
+
+p3 <- train %>% 
+  ggplot(aes(x = critics_score, y = imdb_rating))+
+  geom_point(size = 1, alpha = 0.3 )+
+  geom_smooth(method = "loess", se = F, col = "red")+
+  geom_smooth(method = "lm", se = F, col = "blue")+
+  labs(title = "")
+
+(p1 + p2) / (p3)
+```
+
+```{r include=FALSE}
+rm(p1, p2, p3)
+```
+\
+Approximately good linear relationship with response variable/
+
+```{r}
+model <- lm(imdb_rating ~ (critics_score), data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+plot(model, which = c(1:5))
+```
+
+\
+
+Good linear approximation, random residuals, nearly normal. Variable explains `r r2` % of response. Good candidate for the model. There are 2 influential points and 1 outlier that may have to be removed.\
+
+```{r}
+# Register influential points and outliers
+v2_critics_score <- c(36, 133, 246)
+```
+
+\
+\
+
+**4. imdb_rating ~ audience_score**
+
+```{r fig.width = 8, fig.asp= 0.7, message=FALSE, warning=FALSE}
+# check audience_score
+
+p1 <- train %>% 
+  ggplot(aes(x = audience_score)) +
+  geom_histogram(binwidth = 5, fill = "darkgrey", col="black")+
+  labs(title = "audience_score")
+
+p2 <- train %>% 
+  ggplot(aes(y = audience_score))+
+  geom_boxplot()+
+  labs(title = "")+
+  coord_flip()
+
+p3 <- train %>% 
+  ggplot(aes(x = audience_score, y = imdb_rating))+
+  geom_point(size = 1, alpha = 0.3 )+
+  geom_smooth(method = "loess", se = F,  col = "red")+
+  geom_smooth(method = "lm", se = F, col = "blue")+
+  labs(title = "")
+
+(p1 + p2) / (p3)
+```
+
+```{r include=FALSE}
+rm(p1, p2, p3)
+```
+
+\
+Good linear approximation.\
+
+```{r}
+
+model <- lm(imdb_rating ~ (audience_score), data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+plot(model, which = c(1:5))
+
+```
+
+\
+Random residual distribution but with small funnel effect, nearly normal, no extreme values. Variable explains `r r2` % of response. Good candidate for model. There are 3 outliers and 2 influential points that may have to be removed.\
+
+```{r}
+# Register influential points and outliers
+v3_audience_score <- c(36, 133, 246, 94, 155)
+```
+
+\
+\
+
+### EDA categorical variables
+
+Overview of relationships between response variable `imdb_rating` and categorical variables.
+
+```{r fig.width=8, message=FALSE, warning=FALSE}
+# Compare variables
+ggpairs(train, columns = c(2,3,4,6,8,10))
+```
+
+
+```{r fig.width=8, message=FALSE, warning=FALSE}
+# Compare variables
+ggpairs(train, columns = c(2, 12:17))
+```
+\
+\
+
+**5. imdb_rating ~ title_type**
+
+```{r message=FALSE, warning=FALSE}
+# check title_type
+train %>% 
+  ggplot(aes(y = imdb_rating, x = title_type, group = title_type))+
+  geom_boxplot()+
+  stat_summary(fun.y = median,
+               geom = "line",
+               aes(group = 1),
+               col = "blue",
+               size = 0.5
+  )
+```
+\
+There is a linear relationship between IMDb rating and title type (blue line).
+
+```{r}
+# Simple model
+model <- lm(imdb_rating ~ title_type, data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+plot(model, which = c(1))
+
+```
+
+\
+Interpretation: Residuals do not show constant variability. Variable explains `r r2` % of response.\
+\
+\
+
+**6. imdb_rating ~ genre**
+
+```{r message=FALSE, warning=FALSE}
+# check title_type
+train %>% 
+  ggplot(aes(y = imdb_rating, x = fct_reorder(genre, imdb_rating)))+
+  geom_boxplot()+
+  xlab("genre")+
+  stat_summary(fun.y = median,
+               geom = "line",
+               aes(group = 1),
+               col = "blue",
+               size = 0.5)+
+  coord_flip()
+```
+\
+Each genre has distinctive different median in IMDb rating. There is a nearly linear relationship.
+
+
+```{r}
+# Simple model
+model <- lm(imdb_rating ~ genre, data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+plot(model, which = c(1:5))
+```
+
+\
+Interpretation: Residuals show some constant variability. The relationship is linear. Variable explains `r r2` % of response.\
+\
+\
+
+**7. imdb_rating ~ mpaa_rating**
+
+```{r message=FALSE, warning=FALSE}
+# check title_type
+train %>% 
+  ggplot(aes(y = imdb_rating, x = fct_reorder(mpaa_rating, imdb_rating)))+
+  geom_boxplot()+
+  xlab("mpaa_rating")+
+  stat_summary(fun.y = median,
+               geom = "line",
+               aes(group = 1),
+               col = "blue",
+               size = 0.5)
+
+```
+\
+IQR of MPAA ratings overlap in most cases. Medians show slightly linear relationship to IMDb rating.\
+\
+
+```{r}
+# Simple model
+model <- lm(imdb_rating ~ mpaa_rating, data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+```
+
+\
+Interpretation: Variable explains `r r2` % of response. It is correlated with the response variable. But we think that MPAA rating (age appropriate) has nothing to do with movie rating. If we introduce this variable we may mask effects from other variables, like `genre`. Therefore, we will not include this MPAA rating into the the model.\
+\
+\
+
+**8. imdb_rating ~ critics_rating**
+
+```{r message=FALSE, warning=FALSE}
+# check title_type
+train %>% 
+  ggplot(aes(y = imdb_rating, x = fct_reorder(critics_rating, imdb_rating)))+
+  geom_boxplot()+
+  xlab("critics_rating")+
+  stat_summary(fun.y = median,
+               geom = "line",
+               aes(group = 1),
+               col = "blue",
+               size = 0.5)
+```
+\
+Critics_rating medians are in a linear relationship with IMDB rating.\
+
+
+```{r}
+# Simple model
+model <- lm(imdb_rating ~ critics_rating, data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+plot(model, which = c(1))
+```
+
+\
+Interpretation: Residuals show no constant variability. Variable explains `r r2` % of response. We expect that `critics_rating` is correlated with `critics_score`.\
+\
+\
+
+
+**9. imdb_rating ~ audience_rating**
+
+```{r message=FALSE, warning=FALSE}
+# check title_type
+train %>% 
+  ggplot(aes(y = imdb_rating, x = fct_reorder(audience_rating, imdb_rating)))+
+  geom_boxplot()+
+  xlab("audience_rating")+
+  stat_summary(fun.y = median,
+               geom = "line",
+               aes(group = 1),
+               col = "blue",
+               size = 0.5)
+```
+\
+Distinctive IQR for audience rating in relation to IMDB rating.\
+
+
+```{r}
+# Simple model
+model <- lm(imdb_rating ~ audience_rating, data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+plot(model, which = c(1))
+```
+
+\
+Interpretation: Residuals show constant variability. Variable explains `r r2` % of response. We expect that `audience_rating` is correlated with `audience_score`.\
+\
+\
+
+**10. imdb_rating ~ best_pic_nom**
+
+```{r message=FALSE, warning=FALSE}
+# check title_type
+train %>% 
+  ggplot(aes(y = imdb_rating, x = best_pic_nom))+
+  geom_boxplot()+
+  stat_summary(fun.y = median,
+               geom = "line",
+               aes(group = 1),
+               col = "blue",
+               size = 0.5)
+```
+\
+Best_pic_nom shows distinct IMDB ratings.\
+
+```{r}
+# Simple model
+model <- lm(imdb_rating ~ best_pic_nom, data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+plot(model, which = c(1))
+```
+
+\
+Interpretation: Residuals show no constant variability. Variable explains `r r2` % of response.\
+\
+\
+
+**12. imdb_rating ~ best_pic_win**
+
+```{r message=FALSE, warning=FALSE}
+# check title_type
+train %>% 
+  ggplot(aes(y = imdb_rating, x = best_pic_win))+
+  geom_boxplot()+
+  stat_summary(fun.y = median,
+               geom = "line",
+               aes(group = 1),
+               col = "blue",
+               size = 0.5)
+```
+\
+Best_pic_win shows distinct IMDB ratings.\
+
+```{r}
+# Simple model
+model <- lm(imdb_rating ~ best_pic_win, data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+plot(model, which = c(1))
+```
+
+\
+Interpretation: Residuals show no constant variability. Variable explains `r r2` % of response.\
+\
+\
+
+**13. imdb_rating ~ best_actor_win**
+
+```{r message=FALSE, warning=FALSE}
+# check title_type
+train %>% 
+  ggplot(aes(y = imdb_rating, x = best_actor_win))+
+  geom_boxplot()+
+    stat_summary(fun.y = median,
+               geom = "line",
+               aes(group = 1),
+               col = "blue",
+               size = 0.5)
+```
+\
+Best_actor_win shows no distinct IMDB rating. Slope of line between medians is almost zero.\
+
+
+```{r}
+# Simple model
+model <- lm(imdb_rating ~ best_actor_win, data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+```
+\
+Interpretation: Model is not significant (F-test: p-value = 0.128), i.e. fail to reject H0 (beta1 = 0).  Variable explains only `r r2` % of response.\
+\
+\
+
+**14. imdb_rating ~ best_actress_win**
+
+```{r message=FALSE, warning=FALSE}
+# check title_type
+train %>% 
+  ggplot(aes(y = imdb_rating, x = best_actress_win))+
+  geom_boxplot()+
+  stat_summary(fun.y = median,
+               geom = "line",
+               aes(group = 1),
+               col = "blue",
+               size = 0.5)
+```
+\
+Best_actress_win shows no distinct IMDB rating. Slope of line between medians is zero.\
+
+
+```{r}
+# Simple model
+model <- lm(imdb_rating ~ best_actress_win, data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+```
+
+\
+Interpretation: Model is not significant (F-test: p_value = 0.266), i.e. fail to reject H0 (beta1 = 0). Variable explains `r r2` % of response.\
+\
+\
+
+**15. imdb_rating ~ best_dir_win**
+
+```{r message=FALSE, warning=FALSE}
+# check title_type
+train %>% 
+  ggplot(aes(y = imdb_rating, x = best_dir_win))+
+  geom_boxplot()+
+  stat_summary(fun.y = median,
+               geom = "line",
+               aes(group = 1),
+               col = "blue",
+               size = 0.5)
+```
+\
+Best_dir_win shows a small difference in IMDB rating.\
+
+
+```{r}
+# Simple model
+model <- lm(imdb_rating ~ best_dir_win, data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+plot(model, which = c(1))
+
+```
+
+\
+Interpretation: Residuals show no constant variability. Variable explains `r r2` % of response.\
+\
+\
+
+**16. imdb_rating ~ top200_box**
+
+```{r message=FALSE, warning=FALSE}
+# check title_type
+train %>% 
+  ggplot(aes(y = imdb_rating, x = top200_box))+
+  geom_boxplot()+
+  stat_summary(fun.y = median,
+               geom = "line",
+               aes(group = 1),
+               col = "blue",
+               size = 0.5)
+```
+\
+IQR of Top200_box shows no difference in IMDB rating.\
+
+
+```{r}
+# Simple model
+model <- lm(imdb_rating ~ top200_box, data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+```
+
+\
+Interpretation: Model is not significant (F-test: p-value = 0.116), i.e. fail to reject H0 (beta1 = 0). Variable explains `r r2` % of response.\
+\
+\
+
+**17. imdb_rating ~ thtr_rel_month**
+
+It may be possible that the movie rating is related to the month of theater release, due to seasonal tradition of the audience.
+
+
+```{r message=FALSE, warning=FALSE}
+# check title_type
+train %>% 
+#  ggplot(aes(y = imdb_rating, x = as.factor(thtr_rel_month)))+
+  ggplot(aes(y = imdb_rating, x = fct_reorder(factor(thtr_rel_month), imdb_rating)))+
+  geom_boxplot()+
+  xlab("month of theater release - in order of imdb rating")+
+  stat_summary(fun.y = median,
+               geom = "line",
+               aes(group = 1),
+               col = "blue",
+               size = 0.5)
+```
+\
+The meadians of `thtr_rel_month` show almost no differences in IMDB rating.\
+
+
+```{r}
+# Simple model
+model <- lm(imdb_rating ~ as.factor(thtr_rel_month), data = train)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+```
+
+\
+Interpretation: Model is not significant (F-test: p-value = 0.660), i.e. fail to reject H0 (beta1 = 0). Variable explains `r r2` % of response.\
+\
+\
+
+**18. imdb_rating ~ dvd_rel_month**
+
+It may be possible that the movie rating is related to the month of DVD release, due to seasonal tradition of the audience.
+
+
+```{r message=FALSE, warning=FALSE}
+# check title_type
+train %>% 
+  filter(!is.na(dvd_rel_month)) %>%   
+  ggplot(aes(y = imdb_rating, x = fct_reorder(factor(dvd_rel_month), imdb_rating)))+
+  geom_boxplot()+
+  xlab("month of dvd release - in order of imdb rating")+
+  stat_summary(fun.y = median,
+               geom = "line",
+               aes(group = 1),
+               col = "blue",
+               size = 0.5)
+```
+\
+The `dvd_rel_month` shows no differences in IMDB rating.\
+
+
+```{r}
+# Simple model
+model <- train %>% 
+  filter(!is.na(dvd_rel_month)) %>% 
+  lm(imdb_rating ~ as.factor(thtr_rel_month), data = .)
+summary(model)
+r2 <- round((summary(model)$r.squared * 100),2)
+```
+
+\
+Interpretation: Model is not significant (F-test: p-value = 0.608), i.e. fail to reject H0 (beta1 = 0). Variable explains `r r2` % of response.\
+\
+\
+
+### Check colinearity
+
+**1. Colinearity between `critics_score` and `audience_score`**
+
+Variables `critics_score` and `audience_score` expected to be highly correlated (R = `r round(cor(train$critics_score, train$audience_score),2)`).
+
+Let's plot the relationship.
+
+```{r message=FALSE, warning=FALSE}
+# Correlation between critics_score and audience_score
+
+r <- cor(train$audience_score, train$critics_score)
+r2 <- r^2
+
+train %>% 
+  ggplot(aes(x = audience_score, y = critics_score))+
+  geom_point(size = 1, alpha = 0.3 )+
+  geom_smooth(method = "lm", col = "blue")+
+  labs(title = "Colinearity check: critics_score vs. audience_score")+
+  annotate("text", x=15, y=95, label=paste("R  = ", round(r, 2)), size = 4)+
+  annotate("text", x=15, y=88, label=paste("R2 = ", round(r2, 2)), size = 4)
+```
+
+```{r include=FALSE}
+rm(r, r2)
+```
+
+The data scores from critics and audience were collected independently. Even though they are strongly correlated we think they should be both used in the model. 
+
+
+In addition, **Colinearity** between the two variables can be tested with the **Variance Inflation Factor (VIF)**. \
+Where VIF = 1 / (1 - R-squared): VIF \< 5 is acceptable.\
+
+```{r}
+# Model with "critics_score" and "audience_score"
+model <- lm(imdb_rating ~ (critics_score) + (audience_score), data = train)
+# summary(model)
+
+vif_values <- car::vif(model)
+print("VIF scores: ")
+vif_values
+```
+
+```{r include=FALSE}
+rm(vif_values, model)
+```
+
+\
+VIF value is  between 1 and 5 and indicates a moderate correlation. This is not severe enough to remove one of these variable. [link](https://www.statology.org/variance-inflation-factor-r/)\
+\
+\
+
+**2. Colinearity between `critics_score` and `critics_rating`**
+
+```{r fig.width = 8, fig.asp= 0.7, message=FALSE, warning=FALSE}
+# Collinearty check
+p1 <- train %>% 
+  ggplot(aes(x=critics_rating, y=critics_score))+
+  geom_boxplot() +
+  labs(title = "IMDb_Rating ~ critics_score by critics_rating")+
+  coord_flip()
+
+p2 <- train %>% 
+  ggplot(aes(y = imdb_rating, x = critics_score))+
+  geom_point(aes(col = critics_rating))+
+  geom_smooth(aes(col = critics_rating), method = "lm", se=F)
+
+p1 / p2
+```
+
+```{r include=FALSE}
+rm(p1, p2)
+```
+\
+Categorical variable `critics_rating` is directly derived from `critics_score`. I.e. we can either use `critics_rating` or `critics_score`. `critics_score` is preferred because it contains more information.\
+\
+
+**3. Colinearity between `audience_score` and `audience_rating`**
+
+```{r fig.width = 8, fig.asp= 0.7, message=FALSE, warning=FALSE}
+# Collinearty check
+p1 <- train %>% 
+  ggplot(aes(x=audience_rating, y=audience_score))+
+  geom_boxplot() +
+  labs(title = "IMDb_Rating ~ audience_score by audience_rating")+
+  coord_flip()
+
+p2 <- train %>% 
+  ggplot(aes(y = imdb_rating, x = audience_score))+
+  geom_point(aes(col = audience_rating))+
+  geom_smooth(aes(col = audience_rating), method = "lm", se=F)
+
+p1 / p2
+```
+
+```{r include=FALSE}
+rm(p1, p2)
+```
+\
+Categorical variable `audience_rating` is directly derived from `audience_score`. I.e. we can either use`audience_rating` or `audience_score`. `audience_score` is preferred because it contains more information.\
+\
+\
+
+### Remove outliers
+
+We will remove the identified outlier and influential points and compare a model with and without removal.\
+
+**Remove  outliers and influential points**
+
+```{r}
+# Create a data frame for outliers and influential points
+
+max_length <- max(length(v1_runtime), 
+                  length(v2_critics_score), 
+                  length(v3_audience_score))
+
+length(v1_runtime) <- max_length
+length(v2_critics_score) <- max_length
+length(v3_audience_score) <- max_length
+
+
+df_extreme <- data.frame(v1_runtime, 
+                         v2_critics_score, 
+                         v3_audience_score)
+
+df_extreme <- df_extreme %>% 
+  pivot_longer(cols = 1:3, names_to = "variable", values_to = "ID")
+
+df_extreme <- df_extreme %>% 
+  filter(!is.na(ID)) %>% 
+  arrange(variable)  
+
+df_extreme <- distinct(df_extreme, ID, .keep_all = TRUE)
+```
+
+```{r include=FALSE}
+rm(max_length)
+```
+
+We have identified 6 outliers or influential points for removal.
+
+```{r}
+# List of outliers
+
+train %>% 
+  semi_join(df_extreme, by = "ID") %>% 
+  select(ID, imdb_rating, audience_score, critics_score, runtime)
+```
+
+
+```{r}
+# Remove outliers from training dataset using the anti_join function, 
+# drops all obs in one df1 that have a match in df2
+
+train_clean <- train %>% 
+  anti_join(df_extreme, by = "ID")
+```
+\
+
+**Model without removal:**
+
+```{r}
+m_full_raw <- lm(imdb_rating ~ log(runtime) + critics_score + audience_score, data = train)
+summary(m_full_raw)
+```
+\
+
+**Model with removal:**
+
+```{r}
+m_full_clean <- lm(imdb_rating ~ log(runtime) + critics_score + audience_score, data = train_clean)
+summary(m_full_clean)
+```
+
+\
+The model with extreme values has an adjusted R2 of 0.8159, whereas the model without extreme (i.e. removed extreme) values has an adjusted R2  of 0.8402 (Note: higher adj R2 is better). The model without extreme values has significantly improvement over the model with extreme values.
+\
+\
+
+### Summary of EDA
+
+The table below shows a summary of all predictors in respect of condition fulfillment and effect on response variable. Candidates for model predictors are marked in column "candidate" by "yes".\
+
+As candidates for the model we will select 3 numerical predictors and 5 categorical predictors. In total 8 predictors.\
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/predictor_summary.png"))
+```
+\
+Explanation of columns:
+
+- *linear*: linearity checked against response variable
+- *constant variability*: residuals from simple lm checked against response variable
+- *nearly normal*: distribution of variable is nearly normal
+- *independent*: independence checked between variables
+- *R_squared %*: Measure how much the variable contributes to the response in percent
+- *Model p-value*: p-value from F-test if the simple model is significant (alpha = 5%)
+- *candidate*: "Yes" if variable meets all criteria to be included in the modeling process\
+\
+\
+
+**Reduce the variables in all datasets to 8 predictors**
+
+```{r}
+# Select predictors for model building in all datasets (train, verify, test)
+
+train_select <- train_clean %>%  # ----------------------------- training dataset
+  select(imdb_rating,
+         runtime,
+         critics_score,
+         audience_score,
+         title_type,
+         genre,
+         best_pic_nom,
+         best_pic_win,
+         best_dir_win,
+         thtr_rel_date)
+
+verify_select <- verify %>%   # ------------------------- verification dataset
+  select(imdb_rating,
+         runtime,
+         critics_score,
+         audience_score,
+         title_type,
+         genre,
+         best_pic_nom,
+         best_pic_win,
+         best_dir_win,
+         thtr_rel_date)
+
+test_select <- test %>%   # ------------------------- final testing dataset
+  select(imdb_rating,
+         runtime,
+         critics_score,
+         audience_score,
+         title_type,
+         genre,
+         best_pic_nom,
+         best_pic_win,
+         best_dir_win,
+         thtr_rel_date)
+
+```
+\
+
+```{r include=FALSE}
+rm(movies,
+   movies_select,
+   df_extreme,
+   m_full_clean,
+   m_full_raw,
+   test,
+   train,
+   train_clean,
+   verify,
+   v1_runtime,
+   v2_critics_score,
+   v3_audience_score)
+```
+\
+\
+\
+
+
+## Part 4: Modeling
+
+After we have identified potential predictors we will now move to the modeling process.
+
+**Modeling goals**
+
+1. Find the best model that fits the training dataset
+2. Optimize the model for high prediction accuracy
+3. Avoid over- or under-fitting, prefer the simplest and best model (parsimonious model)
+
+We will conduct a step-by-step variable selection approach. There, are several measures that can be used as criteria for selection: `p-value`, `adjusted R-squared`, and others like the Akaike Information Criterion (AIC).
+
+`adjusted R-squared` and `AIC` are the preferred criteria to optimize the prediction accuracy. Since the AIC was not part of the course we will use `adjusted R-squared`
+
+For better understanding of model development we will use the **forward selection** approach, and gradually add new predictors to the model and monitor the improvements. For each model we will run a prediction test with the verification data to monitor the prediction accuracy.\
+\
+\
+
+
+### Forward selection approach
+
+**STEP 0: Null model (no predictor)**
+
+```{r}
+# Initialize an empty data frame to register each model result
+model_eval <- data.frame(
+                   model = character(),
+                   variables = character(),
+                   adjusted_R2 = numeric(),
+                   RMSE = numeric(),
+                   mean_APE = numeric(),
+                   stringsAsFactors = FALSE)
+```
+
+
+```{r}
+m0 <- lm(imdb_rating ~ 1, data = train_select)
+```
+\
+\
+
+**STEP 1: Add 1st predictor**
+
+**1-01: imdb_rating ~ log(runtime)**
+
+```{r}
+# STEP 1: Add 1st predictor
+m1_01 <- update(m0, . ~ . +log(runtime), data = train_select)
+# summary(m1_01)
+adjR2 <- summary(m1_01)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m1_01, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measures
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Register model measures
+model_eval[1,1] <- "m1_01"
+model_eval[1,2] <-"log(runtime)"
+model_eval[1,3] <- adjR2
+model_eval[1,4] <- rmse
+model_eval[1,5] <- mean_ape
+
+model_eval[1,]
+
+```
+\
+
+**1-02: imdb_rating ~ critics_score**
+
+```{r echo=FALSE}
+# STEP 1: Add 1st predictor
+m1_02 <- update(m0, . ~ . +critics_score, data = train_select)
+# summary(m1_02)
+adjR2 <- summary(m1_02)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m1_02, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[2,1] <- "m1_02"
+model_eval[2,2] <-"critics_score"
+model_eval[2,3] <- adjR2
+model_eval[2,4] <- rmse
+model_eval[2,5] <- mean_ape
+
+model_eval[2,]
+```
+\
+
+
+**1-03: imdb_rating ~ audience_score**
+
+```{r echo=FALSE}
+# STEP 1: Add 1st predictor
+m1_03 <- update(m0, . ~ . +audience_score, data = train_select)
+# summary(m1_03)
+adjR2 <- summary(m1_03)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m1_03, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[3,1] <- "m1_03"
+model_eval[3,2] <-"audience_score"
+model_eval[3,3] <- adjR2
+model_eval[3,4] <- rmse
+model_eval[3,5] <- mean_ape
+
+model_eval[3,]
+```
+\
+
+**1-04: imdb_rating ~ title_type**
+
+```{r echo=FALSE}
+# STEP 1: Add 1st predictor
+m1_04 <- update(m0, . ~ . +title_type, data = train_select)
+# summary(m1_04)
+adjR2 <- summary(m1_04)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m1_04, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[4,1] <- "m1_04"
+model_eval[4,2] <-"title_type"
+model_eval[4,3] <- adjR2
+model_eval[4,4] <- rmse
+model_eval[4,5] <- mean_ape
+
+model_eval[4,]
+```
+\
+
+**1-05: imdb_rating ~ genre**
+
+```{r echo=FALSE}
+# STEP 1: Add 1st predictor
+m1_05 <- update(m0, . ~ . +genre, data = train_select)
+# summary(m1_05)
+adjR2 <- summary(m1_05)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m1_05, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[5,1] <- "m1_05"
+model_eval[5,2] <-"genre"
+model_eval[5,3] <- adjR2
+model_eval[5,4] <- rmse
+model_eval[5,5] <- mean_ape
+
+model_eval[5,]
+```
+\
+
+**1-06: imdb_rating ~ best_pic_nom**
+
+```{r echo=FALSE}
+# STEP 1: Add 1st predictor
+m1_06 <- update(m0, . ~ . +best_pic_nom, data = train_select)
+# summary(m1_06)
+adjR2 <- summary(m1_06)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m1_06, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[6,1] <- "m1_06"
+model_eval[6,2] <- "best_pic_nom"
+model_eval[6,3] <- adjR2
+model_eval[6,4] <- rmse
+model_eval[6,5] <- mean_ape
+
+model_eval[6,]
+```
+\
+
+**1-07: imdb_rating ~ best_pic_win**
+
+```{r echo=FALSE}
+# STEP 1: Add 1st predictor
+m1_07 <- update(m0, . ~ . +best_pic_win, data = train_select)
+# summary(m1_07)
+adjR2 <- summary(m1_07)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m1_07, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[7,1] <- "m1_07"
+model_eval[7,2] <- "best_pic_win"
+model_eval[7,3] <- adjR2
+model_eval[7,4] <- rmse
+model_eval[7,5] <- mean_ape
+
+model_eval[7,]
+```
+\
+
+**1-08: imdb_rating ~ best_dir_win**
+
+```{r echo=FALSE}
+# STEP 1: Add 1st predictor
+m1_08 <- update(m0, . ~ . +best_dir_win, data = train_select)
+# summary(m1_08)
+adjR2 <- summary(m1_08)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m1_08, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[8,1] <- "m1_08"
+model_eval[8,2] <- "best_dir_win"
+model_eval[8,3] <- adjR2
+model_eval[8,4] <- rmse
+model_eval[8,5] <- mean_ape
+
+model_eval[8,]
+```
+\
+\
+
+**Evaluation STEP 1 (1st predictor)**
+
+Select the model with the largest adjusted R2 and compare with smallest RMSE from verification dataset.
+
+Summary STEP 1:
+
+
+```{r layout="1-body-outset"}
+kable(model_eval %>% 
+  filter(grepl("m1", model)))
+```
+
+Best model(s):
+
+```{r layout="1-body-outset"}
+kable(model_eval %>% 
+  filter(adjusted_R2 == max(adjusted_R2) |
+         RMSE == min(RMSE)))
+```
+Best model is "m1_03" with variable "audience_score".
+
+```{r}
+# STEP 1: Best model
+m1 <- m1_03
+```
+\
+
+**STEP 2: Add 2nd predictor**
+
+**2-01: imdb_rating ~ audience_score + log(runtime)**
+
+```{r }
+# STEP 2: Add 2nd predictor
+m2_01 <- update(m1, . ~ . +log(runtime), data = train_select)
+# summary(m2_01)
+adjR2 <- summary(m2_01)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m2_01, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measures
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Register model measures
+model_eval[9,1] <- "m2_01"
+model_eval[9,2] <- "audience_score+log(runtime)"
+model_eval[9,3] <- adjR2
+model_eval[9,4] <- rmse
+model_eval[9,5] <- mean_ape
+
+model_eval[9,]
+```
+\
+
+**2-02: imdb_rating ~ audience_score + critics_score**
+
+```{r echo=FALSE}
+# STEP 2: Add 2nd predictor
+m2_02 <- update(m1, . ~ . +critics_score, data = train_select)
+# summary(m2_02)
+adjR2 <- summary(m2_02)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m2_02, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measures
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Register model measures
+model_eval[10,1] <- "m2_02"
+model_eval[10,2] <- "audience_score+critics_score"
+model_eval[10,3] <- adjR2
+model_eval[10,4] <- rmse
+model_eval[10,5] <- mean_ape
+
+model_eval[10,]
+```
+\
+
+**2-03: imdb_rating ~ audience_score + title_type**
+
+```{r echo=FALSE}
+# STEP 2: Add 2nd predictor
+m2_03 <- update(m1, . ~ . +title_type, data = train_select)
+# summary(m2_03)
+adjR2 <- summary(m2_03)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m2_03, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[11,1] <- "m2_03"
+model_eval[11,2] <- "audience_score+title_type"
+model_eval[11,3] <- adjR2
+model_eval[11,4] <- rmse
+model_eval[11,5] <- mean_ape
+
+model_eval[11,]
+```
+\
+
+**2-04: imdb_rating ~ audience_score + genre**
+
+```{r echo=FALSE}
+# STEP 2: Add 2nd predictor
+m2_04 <- update(m1, . ~ . +genre, data = train_select)
+# summary(m2_04)
+adjR2 <- summary(m2_04)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m2_04, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[12,1] <- "m2_04"
+model_eval[12,2] <- "audience_score+genre"
+model_eval[12,3] <- adjR2
+model_eval[12,4] <- rmse
+model_eval[12,5] <- mean_ape
+
+model_eval[12,]
+```
+\
+
+**2-05: imdb_rating ~ audience_score + best_pic_nom**
+
+```{r echo=FALSE}
+# STEP 2: Add 2nd predictor
+m2_05 <- update(m1, . ~ . +best_pic_nom, data = train_select)
+# summary(m2_05)
+adjR2 <- summary(m2_05)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m2_05, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[13,1] <- "m2_05"
+model_eval[13,2] <- "audience_score+best_pic_nom"
+model_eval[13,3] <- adjR2
+model_eval[13,4] <- rmse
+model_eval[13,5] <- mean_ape
+
+model_eval[13,]
+```
+\
+
+**2-06: imdb_rating ~ audience_score + best_pic_win**
+
+```{r echo=FALSE}
+# STEP 2: Add 2nd predictor
+m2_06 <- update(m1, . ~ . +best_pic_win, data = train_select)
+# summary(m2_06)
+adjR2 <- summary(m2_06)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m2_06, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[14,1] <- "m2_06"
+model_eval[14,2] <- "audience_score+best_pic_win"
+model_eval[14,3] <- adjR2
+model_eval[14,4] <- rmse
+model_eval[14,5] <- mean_ape
+
+model_eval[14,]
+```
+\
+
+**2-07: imdb_rating ~ audience_score + best_dir_win**
+
+```{r echo=FALSE}
+# STEP 2: Add 2nd predictor
+m2_07 <- update(m1, . ~ . +best_dir_win, data = train_select)
+# summary(m2_07)
+adjR2 <- summary(m2_07)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m2_07, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[15,1] <- "m2_07"
+model_eval[15,2] <- "audience_score+best_pic_win"
+model_eval[15,3] <- adjR2
+model_eval[15,4] <- rmse
+model_eval[15,5] <- mean_ape
+
+model_eval[15,]
+```
+\
+
+**Evaluation STEP 2 (2nd predictor)**
+
+Select the model with the largest adjusted R2 and compare with smallest RMSE from verification dataset.
+
+Summary STEP 2:
+
+```{r layout="1-body-outset"}
+kable(model_eval %>% 
+  filter(grepl("m2", model)))
+```
+
+Best model(s):
+
+```{r layout="1-body-outset"}
+# model_eval
+kable(model_eval %>% 
+  filter(adjusted_R2 == max(adjusted_R2) |
+         RMSE == min(RMSE)))
+```
+Best model is "m2_02" with variables "audience_score + critics_score".\
+
+
+```{r}
+# STEP 2: Best model
+m2 <- m2_02
+```
+\
+\
+
+**STEP 3: Add 3rd predictor**
+
+**3-01: imdb_rating ~ audience_score + critics_score + log(runtime)**
+
+```{r}
+# STEP 3: Add 3rd predictor
+m3_01 <- update(m2, . ~ . +log(runtime), data = train_select)
+# summary(m3_01)
+adjR2 <- summary(m3_01)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m3_01, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measures
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Register model measures
+model_eval[16,1] <- "m3_01"
+model_eval[16,2] <- "audience_score+critics_score+log(runtime)"
+model_eval[16,3] <- adjR2
+model_eval[16,4] <- rmse
+model_eval[16,5] <- mean_ape
+
+model_eval[16,]
+```
+\
+
+**3-02: imdb_rating ~ audience_score + critics_score + title_type**
+
+```{r echo=FALSE}
+# STEP 3: Add 3rd predictor
+m3_02 <- update(m2, . ~ . +title_type, data = train_select)
+# summary(m3_02)
+adjR2 <- summary(m3_02)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m3_02, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[17,1] <- "m3_02"
+model_eval[17,2] <- "audience_score+critics_score+title_type"
+model_eval[17,3] <- adjR2
+model_eval[17,4] <- rmse
+model_eval[17,5] <- mean_ape
+
+model_eval[17,]
+```
+\
+
+**3-03: imdb_rating ~ audience_score + critics_score + genre**
+
+```{r echo=FALSE}
+# STEP 3: Add 3rd predictor
+m3_03 <- update(m2, . ~ . +genre, data = train_select)
+# summary(m3_03)
+adjR2 <- summary(m3_03)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m3_03, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[18,1] <- "m3_03"
+model_eval[18,2] <- "audience_score+critics_score+genre"
+model_eval[18,3] <- adjR2
+model_eval[18,4] <- rmse
+model_eval[18,5] <- mean_ape
+
+model_eval[18,]
+```
+\
+
+
+**3-04: imdb_rating ~ audience_score + critics_score + best_pic_nom**
+
+```{r echo=FALSE}
+# STEP 3: Add 3rd predictor
+m3_04 <- update(m2, . ~ . +best_pic_nom, data = train_select)
+# summary(m3_04)
+adjR2 <- summary(m3_04)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m3_04, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[19,1] <- "m3_04"
+model_eval[19,2] <- "audience_score+critics_score+best_pic_nom"
+model_eval[19,3] <- adjR2
+model_eval[19,4] <- rmse
+model_eval[19,5] <- mean_ape
+
+model_eval[19,]
+```
+\
+
+**3-05: imdb_rating ~ audience_score + critics_score + best_pic_win**
+
+```{r echo=FALSE}
+# STEP 3: Add 3rd predictor
+m3_05 <- update(m2, . ~ . +best_pic_win, data = train_select)
+# summary(m3_05)
+adjR2 <- summary(m3_05)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m3_05, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[20,1] <- "m3_05"
+model_eval[20,2] <- "audience_score+critics_score+best_pic_win"
+model_eval[20,3] <- adjR2
+model_eval[20,4] <- rmse
+model_eval[20,5] <- mean_ape
+
+model_eval[20,]
+```
+\
+
+**3-06: imdb_rating ~ audience_score + critics_score + best_dir_win**
+
+```{r echo=FALSE}
+# STEP 3: Add 3rd predictor
+m3_06 <- update(m2, . ~ . +best_dir_win, data = train_select)
+# summary(m3_06)
+adjR2 <- summary(m3_06)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m3_06, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[21,1] <- "m3_06"
+model_eval[21,2] <- "audience_score+critics_score+best_dir_win"
+model_eval[21,3] <- adjR2
+model_eval[21,4] <- rmse
+model_eval[21,5] <- mean_ape
+
+model_eval[21,]
+```
+\
+
+**Evaluation STEP 3 (3rd predictor)**
+
+Select the model with the largest adjusted R2 and compare with smallest RMSE from verification dataset.
+
+Summary STEP 3:
+
+```{r layout="1-body-outset"}
+kable(model_eval %>% 
+  filter(grepl("m3", model)))
+```
+
+Best model(s):
+
+```{r layout="1-body-outset"}
+# model_eval
+kable(model_eval %>% 
+  filter(adjusted_R2 == max(adjusted_R2) |
+         RMSE == min(RMSE)))
+```
+
+Model m3_03 has the better fit with the training data (largest adjusted R2).
+Model m3_01 has the better prediction accuracy tested with the verification data (smallest RMSE).
+
+Best model is "m3_03" with variables "audience_score + critics_score + genre".\
+
+```{r echo=FALSE}
+# STEP 2: Best model
+m3 <- m3_03
+# summary(m3)
+```
+\
+
+
+**STEP 4: Add 4th predictor**
+
+**4-01: imdb_rating ~ audience_score + critics_score + genre + log(runtime)**
+
+```{r}
+# STEP 4: Add 4th predictor
+m4_01 <- update(m3, . ~ . +log(runtime), data = train_select)
+# summary(m4_01)
+adjR2 <- summary(m4_01)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m4_01, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measures
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Register model measures
+model_eval[22,1] <- "m4_01"
+model_eval[22,2] <- "audience_score+critics_score+genre+log(runtime)"
+model_eval[22,3] <- adjR2
+model_eval[22,4] <- rmse
+model_eval[22,5] <- mean_ape
+
+model_eval[22,]
+```
+\
+
+**4-02: imdb_rating ~ audience_score + critics_score + genre + title_type**
+
+```{r echo=FALSE}
+# STEP 4: Add 4th predictor
+m4_02 <- update(m3, . ~ . +title_type, data = train_select)
+# summary(m4_02)
+adjR2 <- summary(m4_02)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m4_02, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[23,1] <- "m4_02"
+model_eval[23,2] <- "audience_score+critics_score+genre+title_type"
+model_eval[23,3] <- adjR2
+model_eval[23,4] <- rmse
+model_eval[23,5] <- mean_ape
+
+model_eval[23,]
+```
+\
+
+**4-03: imdb_rating ~ audience_score + critics_score + genre + best_pic_nom**
+
+```{r echo=FALSE}
+# STEP 4: Add 4th predictor
+m4_03 <- update(m3, . ~ . +best_pic_nom, data = train_select)
+# summary(m4_03)
+adjR2 <- summary(m4_03)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m4_03, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[24,1] <- "m4_03"
+model_eval[24,2] <- "audience_score+critics_score+genre+best_pic_nom"
+model_eval[24,3] <- adjR2
+model_eval[24,4] <- rmse
+model_eval[24,5] <- mean_ape
+
+model_eval[24,]
+```
+\
+
+**4-04: imdb_rating ~ audience_score + critics_score + genre + best_pic_win**
+
+```{r echo=FALSE}
+# STEP 4: Add 4th predictor
+m4_04 <- update(m3, . ~ . +best_pic_win, data = train_select)
+# summary(m4_04)
+adjR2 <- summary(m4_04)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m4_04, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[25,1] <- "m4_04"
+model_eval[25,2] <- "audience_score+critics_score+genre+best_pic_win"
+model_eval[25,3] <- adjR2
+model_eval[25,4] <- rmse
+model_eval[25,5] <- mean_ape
+
+model_eval[25,]
+```
+\
+
+**4-05: imdb_rating ~ audience_score + critics_score + genre + best_dir_win**
+
+```{r echo=FALSE}
+# STEP 4: Add 4th predictor
+m4_05 <- update(m3, . ~ . +best_dir_win, data = train_select)
+# summary(m4_05)
+adjR2 <- summary(m4_05)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m4_05, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[26,1] <- "m4_05"
+model_eval[26,2] <- "audience_score+critics_score+genre+best_dir_win"
+model_eval[26,3] <- adjR2
+model_eval[26,4] <- rmse
+model_eval[26,5] <- mean_ape
+
+model_eval[26,]
+
+```
+\
+
+
+**Evaluation STEP 4 (4th predictor)**
+
+Select the model with the largest adjusted R2 and compare with smallest RMSE from verification dataset.
+
+Summary STEP 4:
+
+```{r layout="1-body-outset"}
+kable(model_eval %>% 
+  filter(grepl("m4", model)))
+```
+
+Best model(s):
+
+```{r layout = "1-body-outset"}
+# model_eval
+kable(model_eval %>% 
+  filter(adjusted_R2 == max(adjusted_R2) |
+         RMSE == min(RMSE)))
+```
+Best model is "m4_01" with variables "audience_score + critics_score + genre + log(runtime)".\
+
+```{r}
+# STEP 2: Best model
+m4 <- m4_01
+# summary(m4)
+```
+\
+\
+
+**STEP 5: Add 5th predictor**
+
+**5-01: imdb_rating ~ audience_score + critics_score + genre + log(runtime) + title_type**
+
+```{r}
+# STEP 5: Add 5th predictor
+m5_01 <- update(m4, . ~ . +title_type, data = train_select)
+# summary(m5_01)
+adjR2 <- summary(m5_01)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m5_01, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measures
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Register model measures
+model_eval[27,1] <- "m5_01"
+model_eval[27,2] <- "audience_score+critics_score+genre+log(runtime)+title_type"
+model_eval[27,3] <- adjR2
+model_eval[27,4] <- rmse
+model_eval[27,5] <- mean_ape
+
+model_eval[27,]
+```
+\
+
+**5-02: imdb_rating ~ audience_score + critics_score + genre + log(runtime) + best_pic_nom**
+
+```{r echo=FALSE}
+# STEP 5: Add 5th predictor
+m5_02 <- update(m4, . ~ . +best_pic_nom, data = train_select)
+# summary(m5_02)
+adjR2 <- summary(m5_02)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m5_02, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[28,1] <- "m5_02"
+model_eval[28,2] <- "audience_score+critics_score+genre+log(runtime)+best_pic_nom"
+model_eval[28,3] <- adjR2
+model_eval[28,4] <- rmse
+model_eval[28,5] <- mean_ape
+
+model_eval[28,]
+```
+\
+
+**5-03: imdb_rating ~ audience_score + critics_score + genre + log(runtime) + best_pic_win**
+
+```{r echo=FALSE}
+# STEP 5: Add 5th predictor
+m5_03 <- update(m4, . ~ . +best_pic_win, data = train_select)
+# summary(m5_03)
+adjR2 <- summary(m5_03)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m5_03, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[29,1] <- "m5_03"
+model_eval[29,2] <- "audience_score+critics_score+genre+log(runtime)+best_pic_win"
+model_eval[29,3] <- adjR2
+model_eval[29,4] <- rmse
+model_eval[29,5] <- mean_ape
+
+model_eval[29,]
+```
+\
+
+**5-04: imdb_rating ~ audience_score + critics_score + genre + log(runtime) + best_dir_win**
+
+```{r echo=FALSE}
+# STEP 5: Add 5th predictor
+m5_04 <- update(m4, . ~ . +best_dir_win, data = train_select)
+# summary(m5_04)
+adjR2 <- summary(m5_04)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m5_04, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[30,1] <- "m5_04"
+model_eval[30,2] <- "audience_score+critics_score+genre+log(runtime)+best_dir_win"
+model_eval[30,3] <- adjR2
+model_eval[30,4] <- rmse
+model_eval[30,5] <- mean_ape
+
+model_eval[30,]
+```
+\
+
+
+**Evaluation STEP 5 (5th predictor)**
+
+Select the model with the largest adjusted R2 and compare with smallest RMSE from verification dataset.
+
+Summary STEP 5:
+
+
+
+```{r layout="1-body-outset"}
+kable(model_eval %>% 
+  filter(grepl("m5", model)))
+```
+
+
+Best model(s):
+
+```{r layout="1-body-outset"}
+# model_eval
+kable(model_eval %>% 
+  filter(adjusted_R2 == max(adjusted_R2) |
+         RMSE == min(RMSE)))
+```
+
+Model m5_01 has the better fit with the training data (largest adjusted R2).
+Model m5_03 has the better prediction accuracy tested with the verification data (smallest RMSE).
+
+Best model is "m5_01": audience_score + critics_score + genre + log(runtime) + title_type
+
+```{r}
+# STEP 2: Best model
+m5 <- m5_01
+# summary(m5)
+```
+\
+\
+
+**STEP 6: Add 6th predictor**
+
+**6-01: imdb_rating ~ audience_score + critics_score + genre + log(runtime) + title_type + best_pic_nom**
+
+```{r}
+# STEP 6: Add 6th predictor
+m6_01 <- update(m5, . ~ . +best_pic_nom, data = train_select)
+# summary(m6_01)
+adjR2 <- summary(m6_01)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m6_01, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measures
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Register model measures
+model_eval[31,1] <- "m6_01"
+model_eval[31,2] <- "audience_score+critics_score+genre+log(runtime)+title_type+best_pic_nom"
+model_eval[31,3] <- adjR2
+model_eval[31,4] <- rmse
+model_eval[31,5] <- mean_ape
+
+model_eval[31,]
+```
+\
+
+**6-02: imdb_rating ~ audience_score + critics_score + genre + log(runtime) + title_type + best_pic_win**
+
+```{r echo=FALSE}
+# STEP 6: Add 6th predictor
+m6_02 <- update(m5, . ~ . +best_pic_win, data = train_select)
+# summary(m6_02)
+adjR2 <- summary(m6_02)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m6_02, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[32,1] <- "m6_02"
+model_eval[32,2] <- "audience_score+critics_score+genre+log(runtime)+title_type+best_pic_win"
+model_eval[32,3] <- adjR2
+model_eval[32,4] <- rmse
+model_eval[32,5] <- mean_ape
+
+model_eval[32,]
+```
+
+\
+
+**6-03: imdb_rating ~ audience_score + critics_score + genre + log(runtime) + title_type + best_dir_win**
+
+```{r echo=FALSE}
+# STEP 6: Add 6th predictor
+m6_03 <- update(m5, . ~ . +best_dir_win, data = train_select)
+# summary(m6_03)
+adjR2 <- summary(m6_03)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m6_03, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[33,1] <- "m6_03"
+model_eval[33,2] <- "audience_score+critics_score+genre+log(runtime)+title_type+best_dir_win"
+model_eval[33,3] <- adjR2
+model_eval[33,4] <- rmse
+model_eval[33,5] <- mean_ape
+
+model_eval[33,]
+
+# t_df <- data.table::transpose(model_eval[33,])
+# rownames(t_df) <- colnames(model_eval)
+# t_df
+```
+\
+
+**Evaluation STEP 6 (6th predictor)**
+
+Select the model with the largest adjusted R2 and compare with smallest RMSE from verification dataset.
+
+Summary STEP 6:
+
+```{r layout="1-body-outset"}
+kable(model_eval %>% 
+  filter(grepl("m6", model)))
+```
+
+
+Best model(s):
+
+```{r layout="1-body-outset"}
+# model_eval
+kable(model_eval %>% 
+  filter(adjusted_R2 == max(adjusted_R2) |
+         RMSE == min(RMSE)))
+```
+Model m6_03 has the better fit with the training data (largest adjusted R2).
+Model m5_03 has the better prediction accuracy tested with the verification data (smallest RMSE).
+
+Best model is "m6_03": audience_score + critics_score + genre + log(runtime) + title_type + best_dir_win
+
+```{r}
+# STEP 2: Best model
+m6 <- m6_03
+# summary(m5)
+```
+\
+\
+
+**STEP 7: Add 7th predictor**
+
+**7-01: imdb_rating ~ audience_score + critics_score + genre + log(runtime) + title_type + best_dir_win + best_pic_nom**
+
+```{r}
+# STEP 7: Add 7th predictor
+m7_01 <- update(m6, . ~ . +best_pic_nom, data = train_select)
+# summary(m7_01)
+adjR2 <- summary(m7_01)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m7_01, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measures
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Register model measures
+model_eval[34,1] <- "m7_01"
+model_eval[34,2] <- "audience_score+critics_score+genre+log(runtime)+title_type+best_dir_win+best_pic_nom"
+model_eval[34,3] <- adjR2
+model_eval[34,4] <- rmse
+model_eval[34,5] <- mean_ape
+
+model_eval[34,]
+```
+\
+
+**7-02: imdb_rating ~ audience_score + critics_score + genre + log(runtime) + title_type + best_dir_win + best_pic_win**
+
+```{r echo=FALSE}
+# STEP 7: Add 7th predictor
+m7_02 <- update(m6, . ~ . +best_pic_win, data = train_select)
+# summary(m7_02)
+adjR2 <- summary(m7_02)$adj.r.squared
+
+# Predict
+verify_select2 <- verify_select %>% 
+  mutate(fitted = predict(m7_02, verify_select),
+         residual = imdb_rating - fitted,
+         ape = abs(residual)/imdb_rating)
+# Accuracy measure of model ismean of absolute percent error
+rmse <- sqrt(sum(verify_select2$residual^2)/nrow(verify_select2))
+mean_ape <- mean(verify_select2$ape) * 100 
+
+# Output to evaluation df
+model_eval[35,1] <- "m7_02"
+model_eval[35,2] <- "audience_score+critics_score+genre+log(runtime)+title_type+best_dir_win+best_pic_win"
+model_eval[35,3] <- adjR2
+model_eval[35,4] <- rmse
+model_eval[35,5] <- mean_ape
+
+model_eval[35,]
+```
+\
+\
+
+**Evaluation STEP 7 (7th predictor)**
+
+Select the model with the largest adjusted R2 and compare with smallest RMSE from verification dataset.
+
+Summary STEP 7:
+
+```{r layout="1-body-outset"}
+kable(model_eval %>% 
+  filter(grepl("m7", model)))
+```
+
+
+Best model(s):
+
+```{r layout="1-body-outset"}
+# model_eval
+kable(model_eval %>% 
+  filter(adjusted_R2 == max(adjusted_R2) |
+         RMSE == min(RMSE)))
+```
+
+Adding a 7th predictor has not improved the model any more. According to our manual selection approach, using adjusted R-square, as decision criteria, the best model is:
+
+**m6_03: imdb_rating ~ audience_score + critics_score + genre + log(runtime) + title_type + best_dir_win**
+\
+\
+
+
+### ALTERNATIVE: MASS package
+
+R has convenient packages that allow the whole forward and backward step-by-step selection approach with one function call. (This was not part of the project assignment, but we highly recommend it). A good guide to the function can be found [here](https://quantifyinghealth.com/stepwise-regression-in-r/#:~:text=How%20to%20run%20forward%20stepwise%20linear%20regression%20library%28MASS%29,variables%20direction%20%3D%20%27forward%27%2C%20%23%20run%20forward%20selection)
+
+First, we have to modify our input dataset slightly:
+
+```{r}
+# Prepare training data dataset
+train_select2 <- train_select %>% 
+  mutate(runtime_log = log(runtime)) %>% 
+  select(-runtime,
+         -thtr_rel_date)
+```
+\
+
+Second, we have to build a full model and a null model:
+```{r}
+# Build models full and null
+m_full <- lm(imdb_rating ~ ., data = train_select2)
+m_null <- lm(imdb_rating ~ 1, data = train_select2)
+```
+\
+
+Forward selection approach:
+```{r message=FALSE, warning=FALSE}
+# Forward selection approach
+library(MASS)
+step(m_null, direction = "forward", scope = list(upper = m_full,
+                                                 lower = m_null),
+     trace = 0) %>% 
+  summary()
+detach("package:MASS", unload = TRUE)  # - remove package because masking SELECT function
+```
+\
+
+Backward elimination approach:
+```{r message=FALSE, warning=FALSE}
+# Backward elimination approach
+library(MASS)
+step(m_full, direction = "backward", scope = list(upper = m_full,
+                                                  lower = m_null), 
+     trace = 0) %>% 
+  summary()
+detach("package:MASS", unload = TRUE) # - remove package because masking SELECT function
+```
+\
+
+Forward and backward approach arriving at the same model:\
+**imdb_rating ~ critics_score + audience_score + genre + runtime_log**
+\
+\
+
+
+
+### Model selection
+
+Plotting the model performance over each step, measured by adjusted R-squared from training data and RMSE from verfication data:
+
+```{r fig.width = 8, fig.asp=0.7, message=FALSE, warning=FALSE}
+# Plot stepwise improvement of adjusted R2 and RMSE
+
+# Create a data frame for best model by each step
+model_eval_best <- data.frame(model = character(),
+                   variables = character(),
+                   adjusted_R2 = numeric(),
+                   RMSE = numeric(),
+                   mean_APE = numeric(),
+                   stringsAsFactors = FALSE)
+
+model_eval_best[1,] <- model_eval %>% 
+  filter(grepl("m1", model)) %>% 
+  filter(adjusted_R2 == max(adjusted_R2))
+
+model_eval_best[2,] <- model_eval %>% 
+  filter(grepl("m2", model)) %>% 
+  filter(adjusted_R2 == max(adjusted_R2))
+
+model_eval_best[3,] <- model_eval %>% 
+  filter(grepl("m3", model)) %>% 
+  filter(adjusted_R2 == max(adjusted_R2))
+   
+model_eval_best[4,] <- model_eval %>% 
+  filter(grepl("m4", model)) %>% 
+  filter(adjusted_R2 == max(adjusted_R2))
+
+model_eval_best[5,] <- model_eval %>% 
+  filter(grepl("m5", model)) %>% 
+  filter(adjusted_R2 == max(adjusted_R2))
+
+model_eval_best[6,] <- model_eval %>% 
+  filter(grepl("m6", model)) %>% 
+  filter(adjusted_R2 == max(adjusted_R2))
+
+model_eval_best[7,] <- model_eval %>% 
+  filter(grepl("m7", model)) %>% 
+  filter(adjusted_R2 == max(adjusted_R2))
+
+p1 <- model_eval_best %>%
+  ggplot(aes(x = model, y = adjusted_R2, group = 1))+
+  geom_line()+
+  geom_point()+
+  ylim(0.76, 0.86)+
+  labs(title = "Model selection by adj. R-squared",
+       subtitle = "Higher is better")+
+  xlab("")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+
+p2 <- model_eval_best %>%
+  ggplot(aes(x = model, y = RMSE, group = 1))+
+  geom_line()+
+  geom_point()+
+  ylim(0.45, 0.6)+
+  labs(title = "RMSE from verification data",
+       subtitle = "Lower is better")+
+  xlab("")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+
+p1 + p2
+```
+
+```{r include=FALSE}
+rm(p1, p2)
+```
+
+
+```{r echo=FALSE, layout="1-body-outset"}
+kable(model_eval_best[,1:4])
+```
+\
+
+Comparing the three best models by adjusted R2 and RMSE:\
+
+In respect of adjusted R2, model m6_03 would be the best fitted model using 6 predictors. Looking at the left graph adjusted R2 reaches a plateau at model m4_01 and is flattening out through m5_01 and m6_03. In respect of RMSE, model m4_01 would result in the best prediction using the verification dataset.\
+
+
+Comparing the three best models by coefficient estimates and their p-values
+
+```{r}
+# Compare models by coefficient estimates and their p-values
+df_m4 <- tidy(summary(m4_01)) 
+df_m5 <- tidy(summary(m5_01)) 
+df_m6 <- tidy(summary(m6)) 
+
+variables <- as.character(df_m6$term)
+estimates_m4 <- round(as.numeric(df_m4$estimate),4)
+estimates_m5 <- round(as.numeric(df_m5$estimate),4)
+estimates_m6 <- round(as.numeric(df_m6$estimate),4)
+p_value_m4 <- round(as.numeric(df_m4$p.value), 4)
+p_value_m5 <- round(as.numeric(df_m5$p.value), 4)
+p_value_m6 <- round(as.numeric(df_m6$p.value), 4)
+
+max_length <- length(variables)
+length(estimates_m4) <- max_length
+length(estimates_m5) <- max_length
+length(p_value_m4) <- max_length
+length(p_value_m5) <- max_length
+
+df_compare <- data.frame(variables,
+                         estimates_m4,
+                         estimates_m5,
+                         estimates_m6,
+                         p_value_m4,
+                         p_value_m5,
+                         p_value_m6)
+```
+
+
+```{r echo=FALSE, layout="1-body-outset"}
+kable(df_compare)
+```
+
+
+
+The p-values for added variables `title_type:FeatureFilm`, `title_type:TVMovie` (m5_01) and `best_dir_win:yes` (m6_03) are all greater than 0.05, i.e. not significant and don't add much information to the model anymore. The coefficient estimates do not vary much between the different models.\
+
+We are in favor of model m4_01 because:
+
+- the adjust R2 is close to the maximum
+- it is the simpler model (parsimonious model)
+- it has the best prediction accuracy (smallest RMSE)
+- the p-values for `title_type` and `best_dir_win` are not significant
+- it matches the results from forward and backward approach of the MASS::step function
+\
+
+
+Our best model candidate is therefore: **m4_01: `audience_score + critics_score + genre + log(runtime)`**\
+
+Finally, we have to check that the model meets all required conditions.\
+
+```{r include=FALSE}
+# Clean up environment
+rm(m0, m1_01, m1_02, m1_03, m1_04, m1_05, m1_06, m1_07, m1_08)
+rm(m1, m2_01, m2_02, m2_03, m2_04, m2_05, m2_06, m2_07)
+rm(m2, m3_01, m3_02, m3_03, m3_04, m3_05, m3_06)
+rm(m3, m4_02, m4_03, m4_04, m4_05)
+rm(m4, m5_02, m5_03, m5_04)
+rm(m5, m6_01, m6_02)
+rm(m6, m7_01, m7_02)
+rm(m_null, m_full, adjR2, mean_ape, rmse)
+rm(train_select2, verify_select2)
+rm(estimates_m4, estimates_m5, estimates_m6, p_value_m4, p_value_m5, p_value_m6)
+rm(variables, max_length)
+
+```
+\
+
+### Model condition check
+
+**Quick model check**
+
+```{r}
+m_final <- m4_01
+# summary(m_final)
+plot(m_final, which = c(1:5))
+```
+
+\
+Plot 1 (Residual distribution): equally distributed, no remaining non-linear pattern\
+Plot 2 (qq-plot): nearly normal distributed, but with some remaining left skew\
+Plot 3 (normalized residuals): linear but negative slope, i.e. higher residuals on left side\
+Plot 4 (Cook's distance): still 3 remaining influential points (355, 46. 322)\
+Plot 5 (Leverage): still 3 larger leverage points (355, 46, 322)\
+
+Removing these three influential point would improve the model of best fit further. But this will not guarantee that our model will also perform better in predicting data points from a test dataset that are outside of our training data.\
+\
+\
+
+
+**1. Check for normality of residual**
+
+```{r}
+# Normality check
+
+# add fitted values and residuals to data frame
+train_select2 <- train_select
+train_select2$fitted <- m_final$fitted.values
+train_select2$residuals <- m_final$residuals
+
+train_select2 %>% 
+  ggplot(aes(x = residuals))+
+  geom_histogram(binwidth = 0.1, fill = "darkgrey", col = "black")+
+  labs(title = "Model check: Normal distribution")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+```
+\
+The model residuals are **nearly normal distributed** with a small left skew.\
+\
+\
+
+**2. Constant variability (homoscedasticity)**
+
+```{r message=FALSE, warning=FALSE}
+# Homoscedasticity check
+train_select2 %>% 
+  ggplot(aes(x = fitted, y = abs(residuals)))+
+  geom_point(size = 3, color = "black", alpha = 0.3)+
+  geom_smooth(method = "loess", linetype = 1, se = F, color = "red")+
+  geom_smooth(method = "lm", linetype = 1, se = F, color = "blue")+
+  labs(title = "Model check: Variability")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+
+```
+\
+Due to some outliers (top) the residual variability shows some uneven distribution. Removing these outliers would optimize the model fit but not the prediction accuracy of real world data. To improve the model we may have to add some non-linear relationship (e.g. interaction terms). As for now, we will accept this condition.\
+\
+\
+
+**3. Autocorrelation check (time series check)**
+
+```{r message=FALSE, warning=FALSE}
+# Autocorrelation check: Idependence of residuals along time axis
+train_select2 %>% 
+  ggplot(aes(x = thtr_rel_date, y = residuals))+
+  geom_point(size = 3, color = "black", alpha = 0.3)+
+  geom_smooth(method = "loess", linetype = 1, se = F, color = "red")+
+  geom_smooth(method = "lm", linetype = 1, se = F, color = "blue")+
+  labs(title = "Model check: Autocorrelation")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+```
+\
+The residuals are randomly distributed along the time axis. We don't see any autocorrelation pattern.\
+\
+\
+
+**4a. Linearity check - `residuals` vs `audience_score`**
+
+```{r message=FALSE, warning=FALSE}
+# Linearity check: audience_score
+train_select2 %>% 
+  ggplot(aes(x = audience_score, y = residuals))+
+  geom_point(size = 3, color = "black", alpha = 0.3)+
+  geom_smooth(method = "loess", linetype = "dashed", se = F, color = "red")+
+  geom_smooth(method = "lm", linetype = "dashed", se = F, color = "blue")+
+  labs(title = "Model check: Linearity - audience_score")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+  
+```
+\
+Some deviation form linearity visible for `audience_score` below 30. The low ratings cannot be expressed well with the linear model. However, most of the data points (>30) are modeled correctly.\
+\
+
+**4b. Linearity check - `residuals` vs `critics_score`**
+
+```{r message=FALSE, warning=FALSE}
+# Linearity check: critics_score
+train_select2 %>% 
+  ggplot(aes(x = critics_score, y = residuals))+
+  geom_point(size = 3, color = "black", alpha = 0.3)+
+  geom_smooth(method = "loess", linetype = "dashed", se = F, color = "red")+
+  geom_smooth(method = "lm", linetype = "dashed", se = F, color = "blue")+
+  labs(title = "Model check: Linearity - critics_score")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+  
+```
+\
+Some deviation form linearity visible for `critics_score` below 30. The low ratings cannot be expressed well with the linear model. However, most of the data points (>30) are modeled correctly.\
+\
+
+**4c. Variability check - `residuals` vs `genre`**
+
+```{r message=FALSE, warning=FALSE}
+# Variability check: genres
+train_select2 %>% 
+  ggplot(aes(x = fct_reorder(genre, residuals) , y = residuals))+
+  geom_point(position = position_dodge(width = 2), color = "lightblue", size = 4, alpha = 0.9)+
+  geom_boxplot()+
+  labs(title = "Model check: Variability - genre")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))+
+  coord_flip()
+```
+\
+There are large differences in the variability between the levels, caused by outliers with residual > |1|, in total 9 data points. However, due to large sample size we  will proceed with the model.\
+\
+
+**4d. Linearity check - `residuals` vs `log(runtime)`**
+
+```{r message=FALSE, warning=FALSE}
+# Linearity check: log(runtime)
+train_select2 %>% 
+  ggplot(aes(x = log(runtime), y = residuals))+
+  geom_point(size = 3, color = "black", alpha = 0.3)+
+  geom_smooth(method = "loess", linetype = "dashed", se = F, color = "red")+
+  geom_smooth(method = "lm", linetype = "dashed", se = F, color = "blue")+
+  labs(title = "Model check: Linearity - log(runtime)")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+```
+\
+The residuals are very well linear distributed. However, we see some differences in variability. There are several outliers in the lower part (residual < -1). Due to the large data size we will accept the model.\
+\
+\
+
+**Summary condition check**
+
+1. *Linearity*: Is met. We don't see a dominant non-linear trend line in the residuals, except for the lower value range which not perfectly described by a linear model.\
+2. *Nearly normal distribution*: Is met. However, distribution is slightly left-skewed due to some extreme values in the negative range. The sample size is large and we can accept the condition.\
+3. *Constant variability (homoscedasticity)*: Is acceptable. The residual variability is wider for lower fitted values and narrower for higher fitted values.\ 
+4. *Residuals in order of data collection (autocorrelation)*: Is met. The residuals are randomly distributed. No pattern due to order of collection noticeable.\
+4. *Residuals against each predictor*: all numerical predictors are linear but but some non-constant variability in the residuals is visible. The categorical predictor `genre` is linear but also shows some larger variability in the residuals between the categories.\
+\
+\
+\
+
+
+### Summary Modeling
+
+The best model was selected by a step-by-step forward selection approach using the adjusted R-squared measure. The model selection was further optimized by minimizing the number of predictors by criteria significance and best model prediction.\ 
+
+The best fitted model has 3 numerical predictors and 1 categorical predictor with 10 levels, in total 13 predictors:
+
+\[
+  \begin{aligned}
+  \widehat{imdb\_rating} = b0\\
+  &+ b1 \times (critics\_score) + b2 \times (audience\_score) +
+  b3 \times (genreAnima) + b4 \times (genreArt)\\
+  &+ b5 \times (genreComedy) + b6 \times (genreDrama) + b7 \times (genreDocu) 
+  + b8 \times  (genreHorror)\\
+  &+ b9 \times (genreMusical) + b10 \times (genreMystery) + b11 \times (genreOther) +
+  b12 \times (genreSF)\\
+  &+ b13 \times (runtime\_log)
+  \end{aligned}
+\]
+
+Overall the linear model is a reasonable estimate for the given dataset. However, movies with lower IMDb ratings show a higher variability in critics and audience scores. For movies with mid or high ratings the variability is much smaller.\
+\
+\
+
+### Answer the research questions
+
+**a) Can the Internet Movie Database (IMDb) rating be explained by title_type, genre, or runtime?**
+
+The IMDb rating increases by 0.47 points per unit of log(runtime), i.e. the longer the movie the better the rating on average, when all other variables are hold constant.
+
+Furthermore, the the IMDb rating increases by 0.32 points for genre "documentary", increases by 0.17 points for genre "mystery", decreases by 0.21 points for genre "comedy", and decreases by 0.28 points for genre "animation" on average, when all other variables are hold constant.
+\
+\
+
+**b) Can the Internet Movie Database (IMDb) rating be explained by other rating measures, such as "Tomatomeasure" critics score or audience score?**
+
+The IMDb rating increases by 0.03 points per unit audience score (scale 1 -100) and increases by 0.01 points per unit critics score (scale 1-100) on average, when all other variables are hold constant. I.e. audience scores have a 3-time stronger relationship with IMDb rating than critics scores. 
+\
+\
+
+**c) Can the Internet Movie Database (IMDb) rating be explained by Academy awards or nominations?**
+
+Academy awards or nominations for best picture have a minor effect (increase by 0.08) on the IMDb rating but are not significant. Academy awards of best actor, actress or director have almost no impact and are not significant.
+\
+\
+
+**Note**
+
+The model describes only existing relationships between independent variables and IMDb rating. We cannot draw causation from these findings. Furthermore, we cannot use the model to make predictions for movie ratings that are outside of the time frame (1970 -2014). We also cannot infer the model to the popularity of movies in the general public, but only to data that are collected with the same variables and measures.
+\
+
+
+
+```{r include=FALSE}
+saveRDS(train_select, "~/R/StatRWeb/data/train_select.Rdata")
+saveRDS(verify_select, "~/R/StatRWeb/data/verify_select.Rdata")
+saveRDS(test_select, "~/R/StatRWeb/data/test_select.Rdata")
+saveRDS(m_final, "~/R/StatRWeb/data/m_final.Rdata")
+saveRDS(model_eval_best, "~/R/StatRWeb/data/model_eval_best.Rdata")
+```
+
+\
+
+```{r include=FALSE}
+rm(df_compare,
+   df_m4,
+   df_m5,
+   df_m6,
+   m4_01,
+   m5_01,
+   m6_03,
+   model_eval,
+   model_eval_best,
+   train_select2)
+```
+\
+\
+\
+
+## Part 5: Prediction
+
+As final step, we will test the model with a test dataset, that was separated from the training data. We will use our final model and predict the response variable (imdb_rating_hat) and compare it with the true value.
+
+As measure of accuracy we will use the Root Mean Square Error (RMSE). Finally,  we will look into residual plots to get some insight into their distribution and remaining patterns.
+\
+
+### The final model
+
+In the previous chapter we identified the best fitted model with 3 numerical predictors and 1 categorical predictor with 10 levels, in total 13 predictors:
+
+\[
+  \begin{aligned}
+  \widehat{imdb\_rating} = b0\\
+  &+ b1 \times (audience\_score) + b2 \times (critics\_score) +
+  b3 \times (genreAnima) + b4 \times (genreArt)\\
+  &+ b5 \times (genreComedy) + b6 \times (genreDocu) + b7 \times (genreDrama) 
+  + b8 \times  (genreHorror)\\
+  &+ b9 \times (genreMusical) + b10 \times (genreMystery) + b11 \times (genreOther) +
+  b12 \times (genreSF)\\
+  &+ b13 \times (runtime\_log)
+  \end{aligned}
+\]
+\
+
+```{r echo=FALSE, layout="1-body-outset"}
+kable(tidy(summary(m_final))[1:14,])
+```
+\
+
+### Prediction accuracy
+
+**Predict `imdb_rating_hat` for TRAINING data, compute RMSE**
+```{r}
+# Predict from training data
+train_predict <- train_select %>% 
+  mutate(data.frame(predict(m_final, newdata = train_select, interval = "prediction")))
+
+train_predict <- train_predict %>% 
+  mutate(res = imdb_rating - fit,
+         interval = (imdb_rating >= lwr & imdb_rating <= upr))
+
+# Accuracy measure of model is mean of absolute percent error
+rmse_train <- sqrt(sum(train_predict$res^2)/nrow(train_predict))
+
+print(paste0("RMSE training = ", round(rmse_train, 5)))
+
+```
+\
+**Predict `imdb_rating_hat` for TEST data, compute RMSE**
+```{r}
+# Predict from training data
+test_predict <- test_select %>% 
+  mutate(data.frame(predict(m_final, newdata = test_select, interval = "prediction")))
+
+test_predict <- test_predict %>% 
+  mutate(res = imdb_rating - fit,
+         interval = (imdb_rating >= lwr & imdb_rating <= upr))
+
+# Accuracy measure of model is mean of absolute percent error
+rmse_test <- sqrt(sum(test_predict$res^2)/nrow(test_predict))
+
+print(paste0("RMSE test = ", round(rmse_test, 5)))
+
+```
+\
+
+The RMSE for the test dataset is `r round(rmse_test,3)` and the RMSE of the training dataset is `r round(rmse_train,3)`. I.e. about 0.1 points larger than the RMSE of the training data set. This is expected because the model was fitted to the training dataset and not to the test dataset, hence the training RMSE is smaller.\
+\
+
+### Interpret prediction interval
+\
+
+**Example 1: highest `imdb_rating`**
+
+```{r echo=FALSE, layout="1-body-outset"}
+# Two examples: highest and lowest rating
+kable(test_predict %>% 
+  filter(imdb_rating == max(imdb_rating)) %>% 
+  select(audience_score,
+         critics_score,
+         genre,
+         runtime,
+         imdb_rating,
+         fit,
+         res,
+         lwr,
+         upr,
+         interval))
+```
+\
+\
+\[
+  \begin{aligned}
+  \widehat{imdb\_rating\_9.0} = b0\\
+  &+ b1 \times (97) + b2 \times (97) + b3 \times (0) + b4 \times (0) + b5 \times (0) + b6 \times (0) + b7 \times (0)\\ 
+  &+ b8 \times  (0) + b9 \times (0) + b10 \times (1) + b11 \times (0) + b12 \times (0) + b13 \times (202\_log)
+  \end{aligned}
+\]
+\
+
+We are 95% sure that the average `imdb_rating` is between 7.7 and 9.3 points, for an `audience_score` of 97, `critics_score` of 97, `genre` "Mystery & Suspense" and `runtime` of 202 minutes. The true value is 9.0 points which is inside the interval and is a good prediction.\
+\
+\
+
+**Example 2: lowest `imdb_rating`**
+
+```{r echo=FALSE, layout="1-body-outset"}
+# Two examples: highest and lowest rating
+kable(test_predict %>% 
+  filter(imdb_rating == min(imdb_rating)) %>% 
+  select(audience_score,
+         critics_score,
+         genre,
+         runtime,
+         imdb_rating,
+         fit,
+         res,
+         lwr,
+         upr,
+         interval))
+```
+\
+\
+\[
+  \begin{aligned}
+  \widehat{imdb\_rating\_3.4} = b0\\
+  &+ b1 \times (10) + b2 \times (23) + b3 \times (0) + b4 \times (0) + b5 \times (1) + b6 \times (0) + b7 \times (0)\\ 
+  &+ b8 \times  (0) + b9 \times (0) + b10 \times (0) + b11 \times (0) + b12 \times (0) + b13 \times (85\_log)
+  \end{aligned}
+\]
+\
+
+We are 95% sure that the average `imdb_rating` is between 3.6 and 5.2 points, for an `audience_score` of 23, `critics_score` of 10, `genre` "Comedy" and `runtime` of 85 minutes. The true value, however, is 3.4 points which is outside the interval and is a bad prediction.\
+\
+\
+
+### Prediction diagnostics
+
+**Number of data points that are outside of the prediction interval**
+
+We noticed that for some data points the predicted interval do not contain the true response value. We can expect that for 5% of the data points the intervals will not contain the true value. The prediction interval is calculated by the standard error (SE) of the point estimate imdb_rating_hat multiplied by the t-statistics for a 95% confidence interval.\
+
+```{r}
+total <- length(test_predict$fit)
+
+test_predict %>% 
+  group_by(interval) %>% 
+  summarise(n = n(),
+            per = round(n/total *100, 1))
+```
+
+There are 6 points out of 72 (8.3%) that are outside the prediction interval, which is higher than 5%. There are some effects that are not modeled correctly. On the other hand, about 92% were modeled correctly, which is a pretty good result.\
+
+
+```{r echo=FALSE, layout="1-body-outset"}
+# Data points that are outside of prediction interval
+kable(test_predict %>% 
+  filter(interval == FALSE) %>% 
+  select(audience_score,
+         critics_score,
+         genre,
+         runtime,
+         imdb_rating,
+         fit,
+         res,
+         lwr,
+         upr,
+         interval))
+```
+\
+\
+
+**Relationship between predicted values and true values (imdb_rating vs imdb_rating_hat)**
+
+```{r fig.width = 8, fig.asp= 0.7, message=FALSE, warning=FALSE}
+
+# Fitted vs actual values
+test_predict %>% 
+  ggplot(aes(x = imdb_rating))+
+  geom_abline(slope = 1, intercept = 0, color = "black", size = 0.75, linetype = 6) +
+  geom_pointrange(aes(y = fit, ymin = lwr, ymax = upr, color = interval), size = 0.5)+
+  labs(title = "Predicted values vs true values - test data",
+       subtitle = "Predicted values with prediction interval (95% confidence), n = 72")+
+  ylim(3.,9.5)+
+  xlim(3.,9.5)+
+  xlab("imdb_rating (truth)")+
+  ylab("imdb_rating (predicted)")+
+  guides(color=guide_legend(title="In interval"))+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))+
+  annotate("text", y=3.7, x=8.5, label="under estimated", size = 4)+
+  annotate("text", y=9, x=4.7, label="over estimated", size = 4)
+```
+\
+
+In the ideal case all dots should be on the straight black line. However, the points, calculated from the model are offset from the ideal line. There are six points whose prediction interval do not contain the true response value (red), predominantly in the lower range.\
+\
+
+
+**Distribution of residuals**
+
+```{r}
+test_predict %>% 
+  ggplot(aes(x = res))+
+  geom_histogram(binwidth = 0.1, fill="darkgrey", col="black") +
+  labs(title = "Residual distribution - predicted test data",
+       subtitle = "n = 72")+
+  xlab("residuals")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+```
+\
+
+The distribution is left-skewed due to some extreme residuals. Besides the few extreme values the distribution is nearly normal distributed.\
+\
+
+**Residual variability**
+
+```{r message=FALSE, warning=FALSE}
+test_predict %>% 
+  ggplot(aes(x = fit, y = abs(res)))+
+  geom_point(size = 3, col = "black", alpha = 0.3)+
+  geom_smooth(method = "lm", se = F)+
+  geom_smooth(method = "loess", se = F, col = "red")+
+  ylim(0, 2.5)+
+  labs(title = "Residual variability of predictions",
+       subtitle = "Absolute values")+
+  xlab("imdb_rating (predicted)")+
+  ylab("abs(residuals)")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+```
+\
+The residuals variability is slightly wider on the left (lower imdb ratings) due to some larger residuals. The trend line of the residual distribution is pointing slightly downwards. Some wavy pattern is still present. In the ideal case the line should be straight and flat.\
+\
+\
+
+
+### Summary Prediction
+
+- We are 95% confident that 92% of the predicted data points contain the true response within their prediction interval, i.e. 92% of the predictions are correct.
+- The model accuracy for the test dataset is about RMSE = 0.5 points, and about 0.1 points less accurate than for the training dataset, which is a reasonable good accuracy.
+- Data points with lower IMDb ratings show larger deviations from the true value.
+- The wavy downward trend in the residual distribution suggests that there is still some underlying non-linear component present which could not be modeled. Refinement with a more general non-linear approach may lead to further improvements.
+\
+
+```{r include=FALSE}
+rm(list = ls())
+```
+
+

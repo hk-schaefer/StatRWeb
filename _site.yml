@@ -5,14 +5,18 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "ABOUT Project 1"
+    - text: "ABOUT Descriptive Stats"
       href: about1.html
-    - text: "Project 1"
+    - text: "Code: Descriptive Stats"
       href: project1.html
-    - text: "ABOUT Project 2"
+    - text: "ABOUT Inferential Stats"
       href: about2.html
-    - text: "Project 2"
+    - text: "Code: Inferential Stats"
       href: project2.html
+    - text: "ABOUT Regression"
+      href: about3.html
+    - text: "Code: Regression"
+      href: project3.html
 output:
  html_document:
     theme: flatly
