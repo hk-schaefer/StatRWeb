@@ -32,7 +32,7 @@ m_final <- readRDS("~/R/StatRWeb/data/m_final.Rdata")
 # LINEAR REGRESSION
 \
 \
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="20%"}
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="40%"}
 knitr::include_graphics(c("~/R/StatRWeb/images/00_icon.jpg")
 )
 ```
