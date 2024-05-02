@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Project 3: Step-by-Step Guide</title>
+
+<script src="site_libs/header-attrs-2.22/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Portfolio: Statistics with R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about1.html">ABOUT Descriptive Stats</a>
+</li>
+<li>
+  <a href="project1.html">Code: Descriptive Stats</a>
+</li>
+<li>
+  <a href="about2.html">ABOUT Inferential Stats</a>
+</li>
+<li>
+  <a href="project2.html">Code: Inferential Stats</a>
+</li>
+<li>
+  <a href="about3.html">ABOUT Regression</a>
+</li>
+<li>
+  <a href="project3.html">Code: Regression</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Project 3: Step-by-Step Guide</h1>
+
+</div>
+
+
+<div id="linear-regression" class="section level1">
+<h1>LINEAR REGRESSION</h1>
+<p><br />
+<br />
+<img src="images/00_icon.jpg" width="40%" style="display: block; margin: auto;" /><br />
+</p>
+<div id="introduction" class="section level2">
+<h2>1. Introduction</h2>
+<p><strong>Objectives</strong></p>
+<p>The objective of the 3rd project in this course was to apply the
+learned contents of “Multiple linear regression and modeling”. Skills
+learned are:<br />
+</p>
+<p><code>Exploratory Data Analysis</code>,
+<code>Variable Selection</code>, <code>Linear Regression</code>,
+<code>Regression</code>, <code>Model Selection</code>,
+<code>Inference</code>, <code>Prediction</code>,
+<code>Statistical Thinking</code>, <code>R programming</code><br />
+<br />
+<br />
+</p>
+<p><strong>Contents</strong></p>
+<p>The multiple linear regression modeling project was split into the
+sections:</p>
+<ul>
+<li>Part 1: Data inspections</li>
+<li>Part 2: Research question</li>
+<li>Part 3: Explanatory data analysis (variable selection)</li>
+<li>Part 4: Modeling</li>
+<li>Part 5: Prediction</li>
+</ul>
+<p>Code chunks and detailed descriptions can be found in the <a
+href="project3.html"><strong>R-Markdown</strong></a> file.<br />
+<br />
+</p>
+<p><strong>Project Instruction</strong></p>
+<p>Your boss has just acquired data about how much audiences and critics
+like movies as well as many other variables about the movies. The
+dataset includes information from <a
+href="https://www.rottentomatoes.com/">Rotten Tomatos</a> and <a
+href="https://www.imdb.com/">IMDB</a>.</p>
+<p>She is interested in learning what attributes make a movie popular.
+She is also interested in learning something new about movies. She wants
+your team to figure it all out.</p>
+<p>As part of this project you will complete exploratory data analysis
+(EDA), modeling, and prediction.<br />
+<br />
+<br />
+</p>
+<p><strong>The Dataset</strong></p>
+<p>The dataset was provided by the course <a
+href="https://www.coursera.org/specializations/statistics"><strong>Data
+Analysis with R, Duke University</strong></a> hosted on the Coursera
+platform.<br />
+</p>
+<p>The dataset is a sample set of 651 observations with 33 variables.
+The data were collected in the years from 1970 to 2014. The ratings were
+collected by [Rotten Tomatos] from the audience on voluntary basis and
+from selected groups of movie critics. So we can’t claim that they were
+collected by random sampling. We, therefore, cannot infer the statistics
+to the general population, i.e. movie popularity for all people in the
+US. We can only infer the model on new data collected in the same time
+frame and under the same method as our sample dataset.<br />
+</p>
+<p>A meaningful research question had to be formulated and answered by
+multiple linear regression and modeling.<br />
+<br />
+<br />
+</p>
+</div>
+<div id="research-question" class="section level2">
+<h2>2. Research question</h2>
+<p>Can the Internet Movie Database (IMDb) rating be explained by factors
+such as:</p>
+<ol style="list-style-type: lower-alpha">
+<li>type, genre, run-time, release timing,</li>
+<li>other rating measures (e.g, Tomato-measure from audience and
+critics), and</li>
+<li>nomination and awards (e.g. Academy Award-winning films)?<br />
+<br />
+<br />
+</li>
+</ol>
+</div>
+<div id="exploratory-data-analysis-eda" class="section level2">
+<h2>3. Exploratory Data Analysis (EDA)</h2>
+<p><br />
+</p>
+<p><strong>Variable dependencies and relevance</strong></p>
+<p>We identified the following variables of interest, which needed to be
+checked for linear relationship with the response variable, distribution
+and independence.<br />
+<br />
+</p>
+<table>
+<colgroup>
+<col width="43%" />
+<col width="40%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable type</th>
+<th>Variable name</th>
+<th>Data type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Dependent variable (response)</td>
+<td>imdb_response</td>
+<td>numerical</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Independent variables (predictors)</td>
+<td>critics_score, audience_score</td>
+<td>numerical</td>
+</tr>
+<tr class="even">
+<td>Independent variables (predictors)</td>
+<td>runtime, imdb_num_votes</td>
+<td>numerical</td>
+</tr>
+<tr class="odd">
+<td>Independent variables (predictors)</td>
+<td>title_type, mpaa_rating</td>
+<td>categorical</td>
+</tr>
+<tr class="even">
+<td>Independent variables (predictors)</td>
+<td>critics_rating, audience_rating</td>
+<td>categorical</td>
+</tr>
+<tr class="odd">
+<td>Independent variables (predictors)</td>
+<td>awards and nomination</td>
+<td>categorical</td>
+</tr>
+<tr class="even">
+<td>Independent variables (predictors)</td>
+<td>thtr_rel, dvd_rel (dates)</td>
+<td>date</td>
+</tr>
+</tbody>
+</table>
+<p>Ten non-relevant variables such as movie_title, studio, director,
+actors, and urls were dropped from the dataset.<br />
+<br />
+<br />
+</p>
+<p><strong>Split data into training and test data</strong></p>
+<p>For modeling (training) and testing (prediction) we split the dataset
+into three sub-sets: training data (70%) for model training,
+verification data (20%) to verify prediction accuracy during the
+training, and testing data (10%) to check the prediction accuracy of the
+final model.<br />
+<br />
+<br />
+</p>
+<p><strong>Check linear relationship of each predictor variable against
+response variable</strong></p>
+<p>Each predictor variable was checked for distribution, outliers,
+linearity and correlation using histogram and boxplots and single linear
+regression diagnostic plots.</p>
+<p>Summary plot for numerical variables:</p>
+<p><img src="images/01_image.png" width="92%" style="display: block; margin: auto;" /></p>
+<p>Summary plots for categorical variables:</p>
+<p><img src="images/02_image.png" width="90%" style="display: block; margin: auto;" /><img src="images/03_image.png" width="90%" style="display: block; margin: auto;" /><br />
+<br />
+</p>
+<p>In total 6 extreme outliers and influencial points had to be removed
+from the dataset. Predictor <code>runtime</code> was truncated and
+log-transformed to meet a normal distribution. Several predictors had to
+be dropped due to non-linearity or low correlation with the response
+variable.<br />
+<br />
+<br />
+</p>
+<p><strong>Colinearity check (independence of variables)</strong></p>
+<p>Finally, we had to check for independence between the predictor
+variables (colinearity). Independence is sometimes difficult to avoid,
+decisions have to be made out of contaxt and from knowledge of the
+data</p>
+<p>For example, <code>audience_score</code> and
+<code>critics_score</code> are highly correlated. Nevertheless, they
+were independently collected from two different groups, audience and
+critics. Therefore, both were included in the model.</p>
+<p>In contrast, <code>audience_rating</code> and
+<code>critics_rating</code> were dropped from the model, because they
+are just an categorical aggregation of <code>audience_score</code> and
+<code>critics_score</code> data, respectively.<br />
+<br />
+<br />
+</p>
+<p><strong>Selected variables (pre-selection)</strong></p>
+<p>Below the list of remaining important variables meeting the above
+conditions with information from <strong>simple linear model</strong>
+and diagnostic plots. As candidates for the model we selected 3
+numerical predictors and 5 categorical predictors. In total 8
+predictors.<br />
+</p>
+<p><img src="images/04_image.png" width="100%" style="display: block; margin: auto;" /><br />
+<br />
+<br />
+</p>
+</div>
+<div id="modeling" class="section level2">
+<h2>4. Modeling</h2>
+<p>Our modeling goals were:</p>
+<ol style="list-style-type: decimal">
+<li>Finding the best model that fits the training dataset</li>
+<li>Optimizing the model for high prediction accuracy</li>
+<li>Avoiding over- or under-fitting, prefer the simplest and best model
+(parsimonious model)</li>
+</ol>
+<p>The modeling was conducted by a step-by-step <strong>forward
+selection</strong> approach. As criteria measure for variable selection
+we used <code>adjusted R-squared</code> that optimizes the prediction
+accuracy.</p>
+<p>We run a prediction test with the verification dataset after each
+step and monitored its accuracy.<br />
+<br />
+<br />
+</p>
+<p><strong>Forward selection approach</strong></p>
+<p>We started with an empty model (model_null) and added variables
+one-at-a-time until we couldn’t find any variables that improved the
+model as measured by adjusted R-squared. In this course we carried out
+each selection step manually step-by-step, resulting in 35 models.<br />
+</p>
+<p>After we demonstrated the manual step-by-step process we utilized as
+alternative the integrated <code>step()-function</code> from R package
+<code>MASS</code> instead. The <code>step()-function</code> selects the
+best model by forward, backward or bi-directional approach with one
+function call.<br />
+</p>
+<p>A list for the best models after each step is shown below, as well as
+a plot regarding improvements in fit, measured in adjusted R-squared
+(adjR2), and prediction accuracy, measured in Root Mean Square Error
+(RMSE).<br />
+</p>
+<table style="width:100%;">
+<colgroup>
+<col width="5%" />
+<col width="75%" />
+<col width="10%" />
+<col width="8%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="left">variables</th>
+<th align="right">adjusted_R2</th>
+<th align="right">RMSE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">m1_03</td>
+<td align="left">audience_score</td>
+<td align="right">0.7939711</td>
+<td align="right">0.5796008</td>
+</tr>
+<tr class="even">
+<td align="left">m2_02</td>
+<td align="left">audience_score+critics_score</td>
+<td align="right">0.8350502</td>
+<td align="right">0.5278249</td>
+</tr>
+<tr class="odd">
+<td align="left">m3_03</td>
+<td align="left">audience_score+critics_score+genre</td>
+<td align="right">0.8491622</td>
+<td align="right">0.5115876</td>
+</tr>
+<tr class="even">
+<td align="left">m4_01</td>
+<td align="left">audience_score+critics_score+genre+log(runtime)</td>
+<td align="right">0.8530012</td>
+<td align="right">0.4915971</td>
+</tr>
+<tr class="odd">
+<td align="left">m5_01</td>
+<td
+align="left">audience_score+critics_score+genre+log(runtime)+title_type</td>
+<td align="right">0.8534625</td>
+<td align="right">0.4916075</td>
+</tr>
+<tr class="even">
+<td align="left">m6_03</td>
+<td
+align="left">audience_score+critics_score+genre+log(runtime)+title_type+best_dir_win</td>
+<td align="right">0.8534709</td>
+<td align="right">0.4921523</td>
+</tr>
+<tr class="odd">
+<td align="left">m7_01</td>
+<td
+align="left">audience_score+critics_score+genre+log(runtime)+title_type+best_dir_win+best_pic_nom</td>
+<td align="right">0.8532064</td>
+<td align="right">0.4923146</td>
+</tr>
+</tbody>
+</table>
+<p><br />
+</p>
+<p><img src="about3_files/figure-html/unnamed-chunk-7-1.png" width="672" /><br />
+As result, model <strong>m4_01</strong> turned out to be the best model
+in respect of our goals (best fit, optimized prediction, simplest and
+best model)<br />
+<br />
+<br />
+</p>
+<p><strong>Check conditions</strong></p>
+<p>To apply inference to new datasets, the multiple regression method
+depends on the following assumptions:</p>
+<ol style="list-style-type: decimal">
+<li>the residuals are independent</li>
+<li>the residuals are nearly normal distributed (less important for
+larger datasets)</li>
+<li>the variability of the residuals is nearly constant</li>
+<li>residuals are independent</li>
+<li>each variable is linearly related to the response variable</li>
+</ol>
+<p><img src="about3_files/figure-html/unnamed-chunk-8-1.png" width="672" /><br />
+<br />
+</p>
+<p><br />
+</p>
+<p>The conditions are largely met with some limitations;</p>
+<ul>
+<li><em>Linearity</em>: A wavy non-linear component remains due to
+larger residuals on the left side of the x-axis.<br />
+</li>
+<li><em>Constant variability (homoscedasticity)</em>: The residuals are
+related to the x-axis and show some funnel effect from right to
+left.<br />
+<br />
+<br />
+</li>
+</ul>
+<div id="summary-modeling" class="section level4">
+<h4>Summary Modeling</h4>
+<p>The best model was selected by a step-by-step forward selection
+approach using adjusted R-squared measure. The model selection was
+further optimized by removing less significant predictors and for the
+best prediction accuracy. </p>
+<p><strong>The model</strong></p>
+<p><span class="math display">\[
+  \begin{aligned}
+  \widehat{imdb\_rating} = b0\\
+  &amp;+ b1 \times (critics\_score) + b2 \times (audience\_score) +
+  b3 \times (genreAnima) + b4 \times (genreArt)\\
+  &amp;+ b5 \times (genreComedy) + b6 \times (genreDrama) + b7 \times
+(genreDocu)
+  + b8 \times  (genreHorror)\\
+  &amp;+ b9 \times (genreMusical) + b10 \times (genreMystery) + b11
+\times (genreOther) +
+  b12 \times (genreSF)\\
+  &amp;+ b13 \times (runtime\_log)
+  \end{aligned}
+\]</span></p>
+<table style="width:100%;">
+<colgroup>
+<col width="42%" />
+<col width="15%" />
+<col width="13%" />
+<col width="15%" />
+<col width="13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">1.7116690</td>
+<td align="right">0.6007292</td>
+<td align="right">2.8493188</td>
+<td align="right">0.0045846</td>
+</tr>
+<tr class="even">
+<td align="left">audience_score</td>
+<td align="right">0.0336498</td>
+<td align="right">0.0013899</td>
+<td align="right">24.2101883</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="odd">
+<td align="left">critics_score</td>
+<td align="right">0.0090751</td>
+<td align="right">0.0009844</td>
+<td align="right">9.2192044</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td align="left">genreAnimation</td>
+<td align="right">-0.2790586</td>
+<td align="right">0.1646319</td>
+<td align="right">-1.6950460</td>
+<td align="right">0.0907662</td>
+</tr>
+<tr class="odd">
+<td align="left">genreArt House &amp; International</td>
+<td align="right">0.0498693</td>
+<td align="right">0.1407809</td>
+<td align="right">0.3542333</td>
+<td align="right">0.7233319</td>
+</tr>
+<tr class="even">
+<td align="left">genreComedy</td>
+<td align="right">-0.2068684</td>
+<td align="right">0.0806024</td>
+<td align="right">-2.5665297</td>
+<td align="right">0.0105983</td>
+</tr>
+<tr class="odd">
+<td align="left">genreDocumentary</td>
+<td align="right">0.3152836</td>
+<td align="right">0.0982333</td>
+<td align="right">3.2095396</td>
+<td align="right">0.0014257</td>
+</tr>
+<tr class="even">
+<td align="left">genreDrama</td>
+<td align="right">0.0237413</td>
+<td align="right">0.0704210</td>
+<td align="right">0.3371334</td>
+<td align="right">0.7361753</td>
+</tr>
+<tr class="odd">
+<td align="left">genreHorror</td>
+<td align="right">-0.0556447</td>
+<td align="right">0.1184759</td>
+<td align="right">-0.4696712</td>
+<td align="right">0.6388200</td>
+</tr>
+<tr class="even">
+<td align="left">genreMusical &amp; Performing Arts</td>
+<td align="right">-0.0232443</td>
+<td align="right">0.1564131</td>
+<td align="right">-0.1486086</td>
+<td align="right">0.8819298</td>
+</tr>
+<tr class="odd">
+<td align="left">genreMystery &amp; Suspense</td>
+<td align="right">0.1731705</td>
+<td align="right">0.0876575</td>
+<td align="right">1.9755352</td>
+<td align="right">0.0488249</td>
+</tr>
+<tr class="even">
+<td align="left">genreOther</td>
+<td align="right">-0.1143020</td>
+<td align="right">0.1211071</td>
+<td align="right">-0.9438095</td>
+<td align="right">0.3457791</td>
+</tr>
+<tr class="odd">
+<td align="left">genreScience Fiction &amp; Fantasy</td>
+<td align="right">-0.2207139</td>
+<td align="right">0.1744752</td>
+<td align="right">-1.2650161</td>
+<td align="right">0.2065276</td>
+</tr>
+<tr class="even">
+<td align="left">log(runtime)</td>
+<td align="right">0.4650320</td>
+<td align="right">0.1307605</td>
+<td align="right">3.5563642</td>
+<td align="right">0.0004163</td>
+</tr>
+</tbody>
+</table>
+<p><br />
+</p>
+<p>Overall the linear model is a reasonable estimate for the given
+dataset. However, movies with lower IMDb ratings show a higher
+variability in critics and audience scores. For movies with mid or high
+ratings the variability is much smaller.<br />
+<br />
+<br />
+</p>
+<p><strong>Answer the research questions</strong></p>
+<p><strong>a) Can the Internet Movie Database (IMDb) rating be explained
+by title_type, genre, or runtime?</strong></p>
+<p>The IMDb rating increases by 0.47 points per unit of log(runtime),
+i.e. the longer the movie the better the rating on average, when all
+other variables are hold constant.</p>
+<p>Furthermore, the the IMDb rating increases by 0.32 points for genre
+“documentary”, increases by 0.17 points for genre “mystery”, decreases
+by 0.21 points for genre “comedy”, and decreases by 0.28 points for
+genre “animation” on average, when all other variables are hold
+constant.<br />
+<br />
+</p>
+<p><strong>b) Can the Internet Movie Database (IMDb) rating be explained
+by other rating measures, such as “Tomatomeasure” critics score or
+audience score?</strong></p>
+<p>The IMDb rating increases by 0.03 points per unit audience score
+(scale 1 -100) and increases by 0.01 points per unit critics score
+(scale 1-100) on average, when all other variables are hold constant.
+I.e. audience score have a 3-time stronger relationship with IMDb rating
+than critics scores.<br />
+<br />
+</p>
+<p><strong>c) Can the Internet Movie Database (IMDb) rating be explained
+by Academy awards or nominations?</strong></p>
+<p>Academy awards or nominations for best movie have a minor effect
+(increase by 0.08) on the IMDb rating but are not significant. Academy
+awards of best actor, actress or director have almost no impact and are
+not significant.<br />
+<br />
+</p>
+<p><strong>Note</strong></p>
+<p>The model describes only existing relationships between independent
+variables and IMDb rating. We cannot draw causation from these findings.
+Furthermore, we cannot use the model to make predictions for movie
+ratings that are outside of the time frame (1970 -2014). We also cannot
+infer the model to the popularity of movies in the general public, but
+only to data that are collected with the same variables and
+measures.<br />
+<br />
+<br />
+</p>
+</div>
+</div>
+<div id="prediction" class="section level2">
+<h2>5. Prediction</h2>
+<p>As final step, we tested the model with a test dataset. The test
+dataset was separated from the original movies dataset, earlier in this
+project. Utilizing the final model we predicted predict the response
+variable (imdb_rating_hat) and compared it with its true value.</p>
+<p>As measure of accuracy we used the Root Mean Square Error (RMSE).
+Finally, we looked into residual plots to get some insight into their
+distribution and possible remaining patterns.<br />
+</p>
+<p><strong>Test dataset</strong></p>
+<p><img src="about3_files/figure-html/unnamed-chunk-11-1.png" width="672" /><br />
+The test dataset has a sample size of 72 data points and are randomly
+distributed.<br />
+<br />
+<br />
+</p>
+<div id="prediction-and-evaluation" class="section level4">
+<h4>Prediction and evaluation</h4>
+<p><strong>Root Mean Square Error (RMSE) comparison</strong></p>
+<p>The RMSE for the test dataset is 0.498 and the RMSE of the training
+dataset is 0.39. I.e. about 0.1 points larger than the RMSE of the
+training data set. This is expected because the model was fitted to the
+training dataset and not to the test dataset, hence the training RMSE is
+smaller.<br />
+<br />
+<br />
+</p>
+<p><strong>Two examples: Interpretation of prediction and prediction
+interval</strong></p>
+<p>Example 1: highest <code>imdb_rating</code></p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="12%" />
+<col width="16%" />
+<col width="7%" />
+<col width="10%" />
+<col width="7%" />
+<col width="8%" />
+<col width="7%" />
+<col width="7%" />
+<col width="7%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">audience_score</th>
+<th align="right">critics_score</th>
+<th align="left">genre</th>
+<th align="right">runtime</th>
+<th align="right">imdb_rating</th>
+<th align="right">fit</th>
+<th align="right">res</th>
+<th align="right">lwr</th>
+<th align="right">upr</th>
+<th align="left">interval</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">97</td>
+<td align="right">97</td>
+<td align="left">Mystery &amp; Suspense</td>
+<td align="right">202</td>
+<td align="right">9</td>
+<td align="right">8.497676</td>
+<td align="right">0.5023236</td>
+<td align="right">7.692482</td>
+<td align="right">9.302871</td>
+<td align="left">TRUE</td>
+</tr>
+</tbody>
+</table>
+<p><br />
+<span class="math display">\[
+  \begin{aligned}
+  \widehat{imdb\_rating\_9.0} = b0\\
+  &amp;+ b1 \times (97) + b2 \times (97) + b3 \times (0) + b4 \times (0)
++ b5 \times (0) + b6 \times (0) + b7 \times (0)\\
+  &amp;+ b8 \times  (0) + b9 \times (0) + b10 \times (1) + b11 \times
+(0) + b12 \times (0) + b13 \times (202\_log)
+  \end{aligned}
+\]</span></p>
+<p>We are 95% sure that the average <code>imdb_rating</code> is between
+7.7 and 9.3 points, for an <code>audience_score</code> of 97,
+<code>critics_score</code> of 97, <code>genre</code> “Mystery &amp;
+Suspense” and <code>runtime</code> of 202 minutes. The true value is 9.0
+points which is inside the interval and is a good prediction.<br />
+<br />
+</p>
+<p>Example 2: lowest <code>imdb_rating</code></p>
+<table>
+<colgroup>
+<col width="14%" />
+<col width="13%" />
+<col width="6%" />
+<col width="7%" />
+<col width="11%" />
+<col width="8%" />
+<col width="9%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">audience_score</th>
+<th align="right">critics_score</th>
+<th align="left">genre</th>
+<th align="right">runtime</th>
+<th align="right">imdb_rating</th>
+<th align="right">fit</th>
+<th align="right">res</th>
+<th align="right">lwr</th>
+<th align="right">upr</th>
+<th align="left">interval</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">23</td>
+<td align="right">10</td>
+<td align="left">Comedy</td>
+<td align="right">85</td>
+<td align="right">3.4</td>
+<td align="right">4.435473</td>
+<td align="right">-1.035473</td>
+<td align="right">3.648125</td>
+<td align="right">5.222821</td>
+<td align="left">FALSE</td>
+</tr>
+</tbody>
+</table>
+<p><br />
+<span class="math display">\[
+  \begin{aligned}
+  \widehat{imdb\_rating\_3.4} = b0\\
+  &amp;+ b1 \times (10) + b2 \times (23) + b3 \times (0) + b4 \times (0)
++ b5 \times (1) + b6 \times (0) + b7 \times (0)\\
+  &amp;+ b8 \times  (0) + b9 \times (0) + b10 \times (0) + b11 \times
+(0) + b12 \times (0) + b13 \times (85\_log)
+  \end{aligned}
+\]</span></p>
+<p>We are 95% sure that the average <code>imdb_rating</code> is between
+3.6 and 5.2 points, for an <code>audience_score</code> of 23,
+<code>critics_score</code> of 10, <code>genre</code> “Comedy” and
+<code>runtime</code> of 85 minutes. The true value, however, is 3.4
+points which is outside the interval and is a bad prediction.<br />
+<br />
+<br />
+</p>
+<p><strong>Number of data points that are outside of the prediction
+interval</strong></p>
+<p>There are 6 points out of 72 (8.3%) that are outside the prediction
+interval, which is more than the expected rate of 5%. There are some
+effects that are not modeled correctly. On the other hand, about 92%
+were modeled correctly, which is a pretty good result.<br />
+<br />
+<br />
+</p>
+<p><strong>Relationship between predicted and true values</strong></p>
+<p><img src="about3_files/figure-html/unnamed-chunk-17-1.png" width="672" /><br />
+</p>
+<p>In the ideal case all dots should be on the straight black line.
+However, the points, calculated from the model are offset from the ideal
+line. There are six points whose prediction intervals do not contain the
+true response value (red), predominantly in the lower range.<br />
+<br />
+<br />
+</p>
+<p><strong>Diagnostics or prediction accuracy</strong></p>
+<p><img src="about3_files/figure-html/unnamed-chunk-18-1.png" width="672" /><br />
+</p>
+<p>Besides the few extreme values the distribution is nearly normal
+distributed. The residuals variability is slightly larger on the left
+(lower imdb ratings) due to some larger residuals. Some wavy pattern is
+still present.<br />
+<br />
+<br />
+</p>
+</div>
+<div id="summary-prediction" class="section level4">
+<h4>Summary Prediction</h4>
+<ul>
+<li>We are 95% confident that 92% of the predicted data points contain
+the true response within their prediction interval, i.e. 92% of the
+predictions are correct.</li>
+<li>The wavy downward trend in the residual distribution suggests that
+there is still some underlying non-linear component present which could
+not be modeled. Refinement with a more general non-linear approach may
+lead to further improvements.<br />
+<br />
+<br />
+</li>
+</ul>
+</div>
+<div id="section" class="section level4">
+<h4>——————————————————————————————————————————————————</h4>
+</div>
+<div id="references" class="section level4">
+<h4>References:</h4>
+<ul>
+<li><a href="https://www.coursera.org/specializations/statistics">Data
+Analysis with R, Duke University</a> hosted on the Coursera
+platform<br />
+</li>
+<li><a href="https://r4ds.hadley.nz/">R for Data Science (2e)</a><br />
+<br />
+</li>
+</ul>
+</div>
+<div id="contact" class="section level4">
+<h4>Contact:</h4>
+<ul>
+<li><a
+href="https://www.linkedin.com/in/hartmut-schaefer/">LinkedIn</a><br />
+<br />
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
