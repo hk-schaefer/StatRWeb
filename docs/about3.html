@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Project 3: Step-by-Step Guide</title>
+
+<script src="site_libs/header-attrs-2.22/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Portfolio: Statistics with R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about1.html">ABOUT Inference</a>
+</li>
+<li>
+  <a href="project1.html">Code: Inferential Stat</a>
+</li>
+<li>
+  <a href="about2.html">ABOUT Linear Regression</a>
+</li>
+<li>
+  <a href="project2.html">Code: Linear Reg.</a>
+</li>
+<li>
+  <a href="about3.html">ABOUT Logistic Regression</a>
+</li>
+<li>
+  <a href="project3.html">Code: Logistic Reg.</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Project 3: Step-by-Step Guide</h1>
+
+</div>
+
+
+<div id="logistic-regression" class="section level1">
+<h1>LOGISTIC REGRESSION</h1>
+<p><br />
+</p>
+<p><br />
+<br />
+<img src="images/02_icon.png" width="30%" style="display: block; margin: auto;" /><br />
+</p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p><strong>Objectives</strong></p>
+<p>The objective of this project is to apply learned contents of
+“Logistic Regression and Modeling”. Skills required for this project
+are:<br />
+</p>
+<p><code>Logistic Regression</code>,
+<code>Exploratory Data Analysis</code>, <code>Variable Selection</code>,
+<code>Modeling</code>, <code>Interpretation</code>,
+<code>Prediction</code>, <code>Classification</code>,
+<code>Statistical Thinking</code>, <code>R programming</code><br />
+<br />
+</p>
+<p><strong>Contents</strong></p>
+<p>The logistic regression modeling project was split into the
+sections:</p>
+<ul>
+<li>Part 1: Data inspections</li>
+<li>Part 2: Research question</li>
+<li>Part 3: Explanatory data analysis</li>
+<li>Part 4: Modeling</li>
+<li>Part 5: Prediction</li>
+</ul>
+<p>Code chunks and detailed descriptions can be found in the <a
+href="project3.html"><strong>R-Markdown</strong></a> file.<br />
+<br />
+</p>
+<p><strong>Project Instruction</strong></p>
+<p>This project is a non-guided project and was not part of the course
+<a
+href="https://www.coursera.org/specializations/statistics"><strong>Data
+Analysis with R, Duke University</strong></a> hosted on the Coursera
+platform. The entire project was carried out by myself, from problem
+definition to answering the question. For this purpose, a multiple
+logistic regression model was implemented and tested in R.</p>
+<p>In project <a href="about2.html">Linear Regression</a> we analyzed a
+movie dataset and answered the question what factors make a movie
+popular. The variable of interest was a continuous variable
+<code>imdb_rating</code> and we used the <strong>multiple linear
+regression</strong> method to answer this problem.</p>
+<p>For this project we modified the research question in a way that we
+must apply a <strong>logistic regression</strong> model. We, therefore,
+selected as the variable of interest the binary variable
+<code>audience_rating</code>.</p>
+<p>As part of this project, we completed exploratory data analysis
+(EDA), modeling, and prediction.<br />
+<br />
+<br />
+<br />
+</p>
+</div>
+<div id="data-inspection" class="section level2">
+<h2>1. Data inspection</h2>
+<p>The dataset was provided by the course <a
+href="https://www.coursera.org/specializations/statistics"><strong>Data
+Analysis with R, Duke University</strong></a> hosted on the Coursera
+platform. The dataset includes information from <a
+href="https://www.rottentomatoes.com/">Rotten Tomatos</a> and <a
+href="https://www.imdb.com/">IMDB</a>.<br />
+</p>
+<p>The dataset used here is a sample of 651 observations with 8
+variables. The data were collected in the years from 1970 to 2014 from
+the audience on voluntary basis and from selected groups of movie
+critics. So we can’t claim that they were collected by random sampling.
+We, therefore, cannot infer the statistics to the general population,
+i.e. movie popularity for all people in the US. We can only infer the
+model on new data collected in the same time frame and under the same
+method as our sample dataset.<br />
+<br />
+<br />
+</p>
+</div>
+<div id="research-question" class="section level2">
+<h2>2. Research question</h2>
+<ol style="list-style-type: decimal">
+<li><p>Can the binary (audience) rating be explained by factors such as
+genre, other rating measures (e.g, IMDb and critics ratings), or
+nomination and awards (e.g. Academy Award-winning films)?<br />
+</p></li>
+<li><p>What are the most influential predictors for audience
+rating?<br />
+<br />
+</p></li>
+</ol>
+<p><strong>Task</strong></p>
+<p>Build a logistic regression model to best fit the relationships
+between these variables optimized for a high prediction accuracy for new
+data.</p>
+<p>The logistic regression model has the following linear form:</p>
+<p><span class="math display">\[
+  \begin{aligned}
+  log(\frac{p}{1-p}) = \beta{_0}\ + \beta{_1} x{_1} + \beta{_2} x{_2} +
+\beta{_3} x{_3} + . . . + \beta{_k} x{_k}
+  \end{aligned}
+\]</span></p>
+<p>Where:<br />
+</p>
+<ul>
+<li>A success is defined if outcome <code>audience_rating</code> =
+“Upright” or “1”.<br />
+</li>
+<li><span class="math inline">\(p\)</span> is the probability of a
+success </li>
+<li><span class="math inline">\(odd = \frac{p}{1-p}\)</span> is the
+probability of success vs the probability of failure<br />
+</li>
+<li><span class="math inline">\(logit(p)\)</span> is the logit function
+of <span class="math inline">\(p\)</span> equal to <span
+class="math inline">\(log(\frac{p}{1-p})\)</span></li>
+<li><span class="math inline">\(\beta_i\)</span> are the unknowns of the
+model<br />
+</li>
+<li><span class="math inline">\(x_i\)</span> are the independent
+variables.<br />
+<br />
+<br />
+<br />
+</li>
+</ul>
+</div>
+<div id="exploratory-data-analysis-eda" class="section level2">
+<h2>3. Exploratory Data Analysis (EDA)</h2>
+<p><strong>The variables</strong></p>
+<p>We identified seven potential independent variables of interest to be
+included in the modeling .<br />
+<br />
+</p>
+<table>
+<colgroup>
+<col width="43%" />
+<col width="40%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable type</th>
+<th>Variable name</th>
+<th>Data type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Dependent variable (response)</td>
+<td>audience_rating</td>
+<td>categorical</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Independent variables (predictor)</td>
+<td>imdb_rating</td>
+<td>numerical</td>
+</tr>
+<tr class="even">
+<td>Independent variables (predictor)</td>
+<td>critics_score</td>
+<td>numerical</td>
+</tr>
+<tr class="odd">
+<td>Independent variables (predictor)</td>
+<td>critics_rating</td>
+<td>categorical</td>
+</tr>
+<tr class="even">
+<td>Independent variables (predictor)</td>
+<td>genre</td>
+<td>categorical</td>
+</tr>
+<tr class="odd">
+<td>Independent variables (predictor)</td>
+<td>mpaa_rating</td>
+<td>categorical</td>
+</tr>
+<tr class="even">
+<td>Independent variables (predictors)</td>
+<td>best_pic_nom, best_pic_win</td>
+<td>categorical</td>
+</tr>
+</tbody>
+</table>
+<p><br />
+<br />
+</p>
+<p><strong>Split data into training and test data</strong></p>
+<p>For modeling (training) and testing (prediction) we split by the
+dataset into two sub-sets by stratified sampling:<br />
+</p>
+<ul>
+<li>Training data (80%) for model training</li>
+<li>Test data (20%) to check the prediction accuracy of the final
+model.<br />
+</li>
+</ul>
+<p><br />
+</p>
+<p><strong>audience_rating distribution (training and test
+data)</strong></p>
+<p><img src="about3_files/figure-html/unnamed-chunk-3-1.png" width="672" /><br />
+</p>
+<p>The proportions of “Spilled (0)” versus “Upright (1)” in both
+datasets are roughly evenly distributed, which is important to avoid any
+bias between model fitting and final testing.<br />
+<br />
+<br />
+</p>
+<div
+id="relationships-between-dependent-and-selected-independent-variables"
+class="section level4">
+<h4>Relationships between dependent and selected independent
+variables</h4>
+<p><strong><code>audience_rating</code> vs
+<code>imdb_rating</code></strong></p>
+<p><img src="about3_files/figure-html/unnamed-chunk-4-1.png" width="672" /><br />
+Movies with lower IMDb ratings are more likely to be rated as “Spilled”
+and higher IMDd ratings are more likely to be rated as “Upright”. This
+variable is of interest.<br />
+<br />
+</p>
+<p><strong><code>audience_rating</code> vs
+<code>genre</code></strong></p>
+<p><img src="about3_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><br />
+The proportions of audience rating are distinct for each type of genre.
+The variable may be influential and is of interest.<br />
+<br />
+</p>
+<p><strong><code>audience_rating</code> vs
+<code>critics_rating</code></strong></p>
+<p><img src="about3_files/figure-html/unnamed-chunk-6-1.png" width="672" /><br />
+The proportions of audience ratings are closely related to the critics
+ratings. The variable is influential.<br />
+<br />
+<br />
+</p>
+</div>
+<div id="check-the-assumption-for-logistic-regression"
+class="section level4">
+<h4>Check the assumption for logistic regression</h4>
+<p><strong>Assumption for logistic regression</strong><br />
+</p>
+<p>In order to apply logistic regression the variables must meet the
+following 5 assumptions:<br />
+</p>
+<ol style="list-style-type: decimal">
+<li>Dependent variable is binary (1 or 0)</li>
+<li>The data are independent. I.e not paired, not depending on order of
+selection.</li>
+<li>The independent variables should not correlate too strongly with
+each other (collinearity assumption)</li>
+<li>The independent numerical variables are linearly correlated to the
+log odds of the dependent variable</li>
+<li>There should be no outliers<br />
+<br />
+</li>
+</ol>
+<p><em>Assumption 1:</em> Dependent variable is binary <strong>is
+met</strong>. (binary response variable)<br />
+<br />
+<em>Assumption 2:</em> Data are independent of each other <strong>is
+met</strong>. (random sample)<br />
+<br />
+<em>Assumption 3:</em> Independent variables are not too strongly
+correlated <strong>is met</strong> after removal of a highly correlated
+variable.<br />
+</p>
+<p>The correlation coefficients between the independent variables:</p>
+<p><img src="about3_files/figure-html/unnamed-chunk-7-1.png" width="672" /><br />
+Variable <code>critics_score</code> is highly correlated to two other
+variables and was removed.<br />
+</p>
+<p><br />
+<br />
+</p>
+<p><em>Assumption 4:</em> Independent numerical variable is linearly
+correlated to the log-odds of the dependent variable <strong>is
+met</strong>.<br />
+</p>
+<p><img src="about3_files/figure-html/unnamed-chunk-9-1.png" width="672" /><br />
+The relationship between <code>imdb_rating</code> and the observed
+<code>logit(p)</code> is approximately linear.<br />
+<br />
+</p>
+<p><em>Assumption 5:</em> Outliers have been removed. The assumption
+<strong>is met</strong>.<br />
+</p>
+<p>We identified and removed three outliers by Cook’s distance from a
+simple logistic model with variable imdb_rating.<br />
+<br />
+</p>
+<p><img src="about3_files/figure-html/unnamed-chunk-10-1.png" width="672" /><br />
+<br />
+<br />
+<br />
+<br />
+</p>
+</div>
+</div>
+<div id="part-4-modeling" class="section level2">
+<h2>Part 4: Modeling</h2>
+<p><strong>Model selection using a function from package
+MASS::stepAIC()</strong></p>
+<p>The model was calculated by a step-by-step forward selection
+approach. As measure for the model selection the function uses the AIC
+(Akaike Information Criterion) criteria. The lower the AIC value the
+better the model fit.</p>
+<pre><code>## 
+## Call:
+## glm(formula = audience_rating ~ imdb_rating + critics_rating, 
+##     family = &quot;binomial&quot;, data = train_model)
+## 
+## Coefficients:
+##                      Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)          -22.9652     2.6380  -8.706   &lt;2e-16 ***
+## imdb_rating            3.8268     0.3934   9.727   &lt;2e-16 ***
+## critics_ratingFresh   -1.7296     0.6747  -2.563   0.0104 *  
+## critics_ratingRotten  -1.5618     0.6672  -2.341   0.0193 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 707.49  on 517  degrees of freedom
+## Residual deviance: 280.96  on 514  degrees of freedom
+## AIC: 288.96
+## 
+## Number of Fisher Scoring iterations: 7</code></pre>
+<p><br />
+</p>
+<p>The model selected by the algorithm has 1 numerical variable and 1
+categorical variable, with to levels. In total 3 variables. All
+variables are statistically significant.<br />
+<br />
+<br />
+</p>
+<p><strong>Model diagnostics</strong></p>
+<p>To assess the quality of the model, we plotted the predicted outcome
+against the true outcome by grouping the predicted probabilities into
+buckets (e.g. 10%). For each bucket the mid-points and confidence
+intervals were calculated.<br />
+</p>
+<p><img src="about3_files/figure-html/unnamed-chunk-12-1.png" width="672" /><br />
+The points plotted should fall close to the line y = x, since the
+predicted probabilities should be similar to the observed probabilities.
+The dashed line is within the confidence bound of 95% confidence
+intervals for most of the buckets. We can therefore conclude that the
+logistic fit of the final model is reasonable.<br />
+<br />
+</p>
+<p><strong>The final model</strong></p>
+<p>In the previous chapter we identified the best fitted model with 1
+numerical predictor and 1 categorical predictors
+(<code>critics_rating</code> with 2 levels), in total 3 predictors:</p>
+<p><span class="math display">\[
+  \begin{aligned}
+  \widehat{logit(p)} = \hat{\beta_0} + \hat{\beta_1} \times
+(imdb\_rating) + \hat{\beta_2} \times (critics\_ratingFresh) +
+\hat{\beta_2} \times (critics\_ratingRotten)
+  \end{aligned}
+\]</span><br />
+</p>
+<p>Where <span class="math inline">\(\beta_i\)</span> are the estimates
+listed below:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">-22.965178</td>
+<td align="right">2.6379652</td>
+<td align="right">-8.705641</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td align="left">imdb_rating</td>
+<td align="right">3.826755</td>
+<td align="right">0.3934266</td>
+<td align="right">9.726732</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="odd">
+<td align="left">critics_ratingFresh</td>
+<td align="right">-1.729583</td>
+<td align="right">0.6747076</td>
+<td align="right">-2.563456</td>
+<td align="right">0.0103636</td>
+</tr>
+<tr class="even">
+<td align="left">critics_ratingRotten</td>
+<td align="right">-1.561766</td>
+<td align="right">0.6672351</td>
+<td align="right">-2.340653</td>
+<td align="right">0.0192501</td>
+</tr>
+</tbody>
+</table>
+<p><br />
+The categorical variable <code>critics_rating</code> has the following
+levels:<br />
+</p>
+<ul>
+<li><code>Certified Fresh</code>: Reference level</li>
+<li><code>Fresh</code>: estimate <span
+class="math inline">\(\hat{\beta_2} = -1.729583\)</span></li>
+<li><code>Rotten</code>: estimate <span
+class="math inline">\(\hat{\beta_3} = -1.561766\)</span></li>
+</ul>
+<p><br />
+<br />
+</p>
+<p><strong>Interpretation of the model coefficients</strong><br />
+</p>
+<p>The model coefficients explain the change in the logit output per
+unit of change in <span class="math inline">\(x_i\)</span>, all others
+hold constant.<br />
+</p>
+<p>Since logit values are not intuitive understandable it is better to
+explain the coefficient as “odds ratio (OR)”, i.e. effect of change in
+odds. The odds ratios can be expressed by the exponent of the
+coefficient, <span class="math inline">\(OR =
+\exp(\hat{\beta_i})\)</span>.<br />
+</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">odds_ratio</th>
+<th align="left">significant</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">imdb_rating</td>
+<td align="right">3.826755</td>
+<td align="right">45.913</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">critics_ratingFresh</td>
+<td align="right">-1.729583</td>
+<td align="right">0.177</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">critics_ratingRotten</td>
+<td align="right">-1.561766</td>
+<td align="right">0.210</td>
+<td align="left">TRUE</td>
+</tr>
+</tbody>
+</table>
+<p><br />
+</p>
+<ul>
+<li>For a one-unit increase of IMDb-rating, the odds of audience rating
+“Upright” increases by a factor of 45.9.<br />
+<br />
+</li>
+<li><code>critics_rating:Fresh</code> odds of being rated “Upright” by
+the audience are smaller by a factor of 0.18 than
+<code>critics_rating:Certified-Fresh</code> odds of being rated
+“Upright”.<br />
+<br />
+</li>
+<li><code>critics_rating:Rotten</code> odds of being rated “Upright” by
+the audience are smaller by a factor of 0.21 than
+<code>critics_rating:Certified-Fresh</code> odds of being rated
+“Upright”.<br />
+<br />
+<br />
+</li>
+</ul>
+<p><strong>Answer the research questions</strong><br />
+</p>
+<p><em>1. Can the binary (audience) rating be explained by attributes
+such as genre, other rating measures (e.g, IMDb and critics ratings),
+and nomination and awards (e.g. Academy Award-winning
+films)?</em> <br />
+</p>
+<p>The binary variable <code>audience_rating</code> can be well
+explained by attributes <code>imdb_rating</code> and
+<code>critics_rating</code>. The variables are statistically
+significant.<br />
+<br />
+</p>
+<p><em>2. What is the most influential predictor for audience
+rating?</em><br />
+</p>
+<p>The overall most influential predictor for
+<code>audience_rating</code> is <code>imdb_rating</code>, i.e. low
+<code>imdb_rating</code> results in
+<code>audience_rating: Spilled</code> and high <code>imdb_rating</code>
+results in <code>audience_rating: Upright</code>.<br />
+<br />
+<br />
+</p>
+<p><strong>Note</strong></p>
+<p>The model describes only existing relationships between independent
+variables and Audience Rating. We cannot draw causation from these
+findings. Furthermore, we cannot use the model to make predictions for
+movie ratings that are outside of the time frame (1970 -2014). We also
+cannot infer the model to the popularity of movies in the general
+public, but only to data that are collected with the same variables and
+measures.<br />
+<br />
+</p>
+<div id="summary-modeling" class="section level4">
+<h4>Summary Modeling</h4>
+<p>The best model was selected by a step-by-step forward selection
+approach using the AIC measure. The most influential variables are
+<code>imdb_rating</code> and <code>critics_rating</code>. The
+assumptions for the logistic regression modeling were met.</p>
+<p>Overall, the logistic model is a reasonable estimate for
+<code>audience_rating</code> based on the given dataset.<br />
+<br />
+<br />
+</p>
+</div>
+</div>
+<div id="prediction" class="section level2">
+<h2>5. Prediction</h2>
+<p><strong>Fitting accuracy of the model using the test
+data</strong></p>
+<p>To assess the quality of the model fit for the testing data we will
+plot the bucketed predicted probabilities against the bucketed observed
+probabilities with confidence intervals, as we did in section 4. Again,
+we split the data into 10 buckets by quantiles of 10%.<br />
+</p>
+<p><img src="about3_files/figure-html/unnamed-chunk-15-1.png" width="672" /><br />
+<br />
+The dashed line is within the confidence bound of 95% confidence
+intervals for most of the buckets. The three data points in the right
+upper corner with confidence interval 0 are not located directly on the
+diagonal line but are very close to it. In other words, looking at the
+graph we are 95% confident that more than 70% of the data points are
+expressed correctly by the model. We can therefore conclude that the
+logistic fit and the predicted values for the test data are
+reasonable.<br />
+<br />
+<br />
+</p>
+<p><strong>Classification accuracy of the model</strong></p>
+<p>Another way to assess the model performance is to look at their
+classification measures. A logistic regression will return predicted
+probabilities of the event occurrence. A threshold value, yet to be
+determined, is used as a criterion to divide the predicted probabilities
+into two classes {0, 1}. If the outcome values are balanced the
+threshold value is usually set to 0.5. In this respect we can treat the
+logistic model as a classification problem. <br />
+</p>
+<p>To evaluate a classification performance a decision matrix from the
+outcome is commonly used. From the decision matrix the metrics
+<code>accuracy</code>, <code>error rate</code>, <code>precision</code>,
+<code>sensitivity</code> and <code>specificity</code> can be
+calculated.<br />
+</p>
+<p>The decision matrix (a.k.a. confusion matrix):</p>
+<p><img src="images/01_decision_matrix.png" width="50%" style="display: block; margin: auto auto auto 0;" /></p>
+<p><br />
+</p>
+<p><em>Accuracy</em>, most intuitive, but problematic for imbalanced
+classes in response (e.g. 1 out of 1000)<br />
+- <em>accuracy = (TP + TN) / (TP + FP + TN + FN)</em><br />
+</p>
+<p><em>Error Rate:</em> Opposite of <em>accuracy</em>. Shows how often
+the outcomes are being misclassified.<br />
+- <em>error rate = (FP + FN) / (TP + FP + TN + FN)</em><br />
+</p>
+<p><em>Precision:</em> Ratio of true positive to the predicted
+positives. Used when the cost for false positive is high (i.e. avoid
+false classification of “Upright”)<br />
+- <em>precision = TP / (TP + FP)</em><br />
+</p>
+<p><em>Sensitivity:</em> Concerned about positive outcomes, and when the
+cost of false positive is low (i.e avoid false classification of
+“Spilled”)<br />
+- <em>sensitivity = TP / (TP + FN)</em><br />
+</p>
+<p><em>Specificity:</em> Concerned about negative outcomes and a high
+cost to a positive outcome. (i.e. in favor of outcome “Spilled”, because
+outcome “Upright” is involved with high cost).<br />
+- <em>specificity = TN / (TN + FP)</em><br />
+</p>
+<p>For our purpose we will focus on the <em>accuracy</em> and
+<em>precision</em> metric, since the classes are evenly distributed.
+Below the decision matrices for the training and test data.<br />
+<br />
+</p>
+<div class="figure" style="text-align: left">
+<img src="images/03_conf_matrix_train.png" alt="Decision matrix of classification results" width="40%" /><img src="images/04_conf_matrix_test.png" alt="Decision matrix of classification results" width="40%" />
+<p class="caption">
+Decision matrix of classification results
+</p>
+</div>
+<p><br />
+</p>
+<p>The classification metrics for test and training data are as
+follows:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">metrics</th>
+<th align="right">train_data</th>
+<th align="right">test_data</th>
+<th align="left">change</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">accuracy</td>
+<td align="right">0.8822</td>
+<td align="right">0.8615</td>
+<td align="left">0.023</td>
+</tr>
+<tr class="even">
+<td align="left">error</td>
+<td align="right">0.1178</td>
+<td align="right">0.1385</td>
+<td align="left">—</td>
+</tr>
+<tr class="odd">
+<td align="left">precision</td>
+<td align="right">0.9066</td>
+<td align="right">0.8831</td>
+<td align="left">0.026</td>
+</tr>
+<tr class="even">
+<td align="left">sensitivity</td>
+<td align="right">0.8851</td>
+<td align="right">0.8831</td>
+<td align="left">0.002</td>
+</tr>
+<tr class="odd">
+<td align="left">specificity</td>
+<td align="right">0.8784</td>
+<td align="right">0.8302</td>
+<td align="left">0.055</td>
+</tr>
+</tbody>
+</table>
+<p><br />
+The classification performance for the test data are in line with the
+the performance for the training dataset. We don’t see any large decline
+in performance in the test data due to overfitting or underfitting.</p>
+<p><em>Accuracy:</em> The prediction for <code>audience_rating</code> is
+86.1% accurate for all cases using the test data. This is a 2.3%
+reduction in accuracy than for the training data as expected.<br />
+</p>
+<p><em>Precision:</em> The prediction of
+<code>audience_rating: Upright</code> is 88.3% correct compared to the
+total “Upright” predicted cases using the test data. This is a 2.6%
+reduction in precision than for the training data as expected.<br />
+<br />
+<br />
+</p>
+<div id="summary-prediction" class="section level4">
+<h4>Summary prediction</h4>
+<p><br />
+</p>
+<ul>
+<li>The classification performance for the test data are in line with
+the the performance for the training data</li>
+<li>The classification accuracy for the correct
+<code>audience_rating</code> is 86.1%.</li>
+<li>The classification precision for the correct
+<code>audience_rating: Upright</code> is 88.3%.</li>
+<li>The overall accuracy score of the model for the classification from
+the test data is “good”.<br />
+</li>
+</ul>
+<p><br />
+<br />
+<br />
+</p>
+</div>
+</div>
+<div id="summary-and-outlook" class="section level2">
+<h2>Summary and Outlook</h2>
+<p>For the project we used a dataset about movie ratings from Rotten
+Tomatos and IMDb.</p>
+<p>The task was to build a logistic regression model to identify the
+most influential of 7 variables that lead to the correct description of
+the binary variable audience rating (“Upright”, “Spilled”).</p>
+<p>For the modeling the original sample dataset was split into training
+data (80%) and test data (20%). The assumptions required for logistic
+regression were checked, and correlated variables and outlieres were
+removed. The best fitting model was build by a step-by-step forward
+selection approach using the AIC criteria. Two influential variables
+were identified: “imdb_rating” and “ciricis_rating”. Especially,
+“imdb_rating” has the biggest impact on the outcome:</p>
+<p>I.e.: For a one-unit increase of IMDb-rating, the odds of audience
+rating “Upright” increases by a factor of 45.9. Whereas, for one unit
+increase of critics rating the odds of audience rating increases only by
+a factor of 0.2.</p>
+<p>Finally, the model was tested for prediction and classification with
+the separated test data. The classification performance for the test
+data were in line with the performance with the training data. The
+overall classification scores achieved were good, with an accuracy of
+86.1% and a precision of 88.3%</p>
+<p>For future projects in logistic regression analysis the modeling
+could be further optimized by <em>cross-validation</em> approach for
+best fitting and prediction. Furthermore, one could use methods from
+<em>machine learning</em> to determine the threshold value for an
+optimized classification.<br />
+</p>
+<p><br />
+<br />
+</p>
+</div>
+<div id="references" class="section level2">
+<h2>References:</h2>
+<p><br />
+</p>
+<ul>
+<li><p><a href="https://www.openintro.org/book/os/">OpenIntro
+Statistics: Fourth Edition</a>, by David Diez, Mine Cetinkaya-Rundel,
+Christoph Barr</p></li>
+<li><p><a
+href="https://www.coursera.org/specializations/statistics">Data Analysis
+with R Specialization</a>, by Duke University on Coursera
+platform</p></li>
+</ul>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
