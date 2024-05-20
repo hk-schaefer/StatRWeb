@@ -5,17 +5,17 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "ABOUT Descriptive Stats"
+    - text: "ABOUT Inference"
       href: about1.html
-    - text: "Code: Descriptive Stats"
+    - text: "Code: Inferential Stat"
       href: project1.html
-    - text: "ABOUT Inferential Stats"
+    - text: "ABOUT Linear Regression"
       href: about2.html
-    - text: "Code: Inferential Stats"
+    - text: "Code: Linear Reg."
       href: project2.html
-    - text: "ABOUT Regression"
+    - text: "ABOUT Logistic Regression"
       href: about3.html
-    - text: "Code: Regression"
+    - text: "Code: Logistic Reg."
       href: project3.html
 output:
  html_document:

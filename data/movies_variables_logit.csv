@@ -1,0 +1,9 @@
+variable_name,meaning,data_type,levels,important
+audience_rating," Categorical variable for audience rating on Rotten Tomatoes (Spilled, Upright)",factor,2,yes
+imdb_rating, Rating on IMDB,num,NA,yes
+genre," Genre of movie (Action & Adventure, Comedy, Documentary, Drama, Horror, Mystery & Suspense, Other)",factor,11,yes
+mpaa_rating," MPAA rating of the movie (G, PG, PG-13, R, Unrated)",factor,6,yes
+critics_score, Critics score on Rotten Tomatoes,num,NA,yes
+critics_rating," Categorical variable for critics rating on Rotten Tomatoes (Certified Fresh, Fresh, Rotten)",factor,3,yes
+best_pic_nom," Whether or not the movie was nominated for a best picture Oscar (no, yes)",factor,2,yes
+best_pic_win," Whether or not the movie won a best picture Oscar (no, yes)",factor,2,yes

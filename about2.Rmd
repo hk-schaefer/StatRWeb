@@ -7,707 +7,698 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r load-packages, message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(statsr)
+library(GGally)          # ------------------- extension of ggplot2
+library(data.table)      # ------------------- table calculation
+library(patchwork)       # ------------------- additional visualization tool
+library(moments)         # ------------------- package to calculate Skewness
+library(broom)           # ------------------- Convert stat obj. into tibbles
+library(modeldata)       # ------------------- Sampling data for modeling
+library(knitr)           # ------------------- support print of tables
+```
 
 
-# INFERENTIAL STATISTICS
+```{r include=FALSE}
+train_select <- readRDS("~/R/StatRWeb/data/train_select.Rdata")
+verify_select <- readRDS("~/R/StatRWeb/data/verify_select.Rdata")
+test_select <- readRDS("~/R/StatRWeb/data/test_select.Rdata")
+model_eval_best <- readRDS("~/R/StatRWeb/data/model_eval_best.Rdata")
+m_final <- readRDS("~/R/StatRWeb/data/m_final.Rdata")
+```
+
+
+# LINEAR REGRESSION
 \
 \
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
-knitr::include_graphics(c("~/R/StatRWeb/images//00_inference.png")
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="40%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/00_icon.jpg")
 )
 ```
 \
 
 
-## Objectives
+## 1. Introduction
 
-Objective of the 2nd project is to apply learned contents of "inferential statistics":
 
-- Conditions for statistical inference, The Central Limit Theorem\
-- Confidence interval and hypothesis testing\
-- Inference for categorical data\
-- Inference for numerical data\
-- z-test, Chi-square test, t-test, F-test, ANOVA
+**Objectives**
+
+The objective of this project was to apply the learned contents of "Multiple linear regression and modeling". Skills demonstrated are:\
+
+`Exploratory Data Analysis`, `Variable Selection`, `Multiple Linear Regression`, `Model Selection`,  `Inference`, `Prediction`, `Statistical Thinking`, `R programming`\
 \
 \
 
-## Part 1: The data set
+**Contents**
 
-For this project the data set "General Social Survey (GSS) Cumulative File 1972-2012" was used provided through the course. This data set is a sample of selected indicators in the GSS with the goal of providing a convenient data resource for students learning statistical reasoning using the R language.The data set contains 114 variables and 57,061 observations.  [Link](https://d3c33hcgiwev3.cloudfront.net/_8abbe344133a7a8c98cfabe01a5075c2_gss.html?Expires=1711843200&Signature=NA9UOEFUJSPiJ2yEK-jMs1r0FM6Mv8fO21UDJWkCAqVDAm5DRUMfD~xUJpTSQHU-AWefK9vtHT5T90ffPXmBPR1tpSYX~e~KVBX2LujrYxSzvIPngO-r8Ah1S8BRa9XL9NH-GIc9o5gigSf8beum93T1gfKMNTDmJncao9ebNAg_&Key-Pair-Id=APKAJLTNE6QMUY6HBC5A)
-\
+The multiple linear regression modeling project was split into the sections:
 
-Five meaningful research questions were formulated and answered covering the most important methods of inferential statistics. The samples were taken randomly and the size of each sample is above 1000 and the inference statistic can be therefore generalized to the US population.\
-\
-\
+- Part 1: Data inspections
+- Part 2: Research question
+- Part 3: Explanatory data analysis (variable selection)
+- Part 4: Modeling
+- Part 5: Prediction
 
-## Part 2: Research questions
-
-Part I: Inference for categorical data\
-\
-Research question 1: Inference for a single proportion (z-test)\
-Research question 2: Inference for a difference of two proportions (z-test)\
-Research question 3: Testing for independence of many proportions (Chi-square test)\
-\
-
-Part II: Inference for numerical data\
-\
-Research question 4: Inference for a difference of two means (t-test)\
-Research question 5: Inference for differences of many means: ANOVA test\
-
-\
-\
+Code chunks and detailed descriptions can be found in the [**R-Markdown**](project2.html) file.
 \
 \
 
-## Part 3: Categorical data
+**Project Instruction**
+
+Your boss has just acquired data about how much audiences and critics like movies as well as many other variables about the movies. The dataset includes information from [Rotten Tomatos](https://www.rottentomatoes.com/) and [IMDB](https://www.imdb.com/).
+
+She is interested in learning what attributes make a movie popular. She is also interested in learning something new about movies. She wants your team to figure it all out.
+
+As part of this project you will complete exploratory data analysis (EDA), modeling, and prediction.\
 \
 \
 
+**The Dataset**
 
-### 1. Single proportion
-#### Research Question 1: Attitude towards suicide
+The dataset was provided by the course [**Data Analysis with R, Duke University**](https://www.coursera.org/specializations/statistics) hosted on the Coursera platform.\
 
-One of the question in the GSS survey was the attitude towards suicide if someone has an incurable disease. Do the majority of Americans approve the view on suicide in this case?\
+The dataset is a sample set of 651 observations with 33 variables. The data were collected in the years from 1970 to 2014. The ratings were collected by [Rotten Tomatos] from the audience on voluntary basis and from selected groups of movie critics. So we can't claim that they were collected by random sampling. We, therefore, cannot infer the statistics to the general population, i.e. movie popularity for all people in the US. We can only infer the model on new data collected in the same time frame and under the same method as our sample dataset.\
 
-a) Calculate the proportion and its **confidence interval** at a 95% confidence level.\
-b) Does the data provide strong evidence that the majority of people approve the view on suicide in this case. Apply a **hypothesis test** with a significance level of 5%.\
-c) Run the tests over all samples and identify a trend over the years.\
+A meaningful research question had to be formulated and answered by multiple linear regression and modeling.\
 \
-We will cary out a one-sided z-Test.\
-
-**Variable**
-
-Variable `suicide1`(2 levels): Suicide if incurable disease, single variable\
-
 \
 
-**Data exploration**\
+## 2. Research question
 
-Distribution of categories "approved" vs. "not approved" for all years.\
+Can the Internet Movie Database (IMDb) rating be explained by factors such as:
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/02_suicide1.png")
+a. type, genre, run-time, release timing, 
+b. other rating measures (e.g, Tomato-measure from audience and critics), and
+c. nomination and awards (e.g. Academy Award-winning films)?
+\
+\
+\
+
+## 3. Exploratory Data Analysis (EDA)
+\
+
+**Variable dependencies and relevance**
+
+We identified the following variables of interest, which needed to be checked for linear relationship with the response variable, distribution and independence.\
+\
+
+Variable type                       | Variable name                   | Data type
+------------------------------------|---------------------------------|------------- 
+Dependent variable (response)       | imdb_response                   | numerical
+                                    |                                 |
+Independent variables (predictors)  | critics_score, audience_score   | numerical
+Independent variables (predictors)  | runtime, imdb_num_votes         | numerical
+Independent variables (predictors)  | title_type, mpaa_rating         | categorical                         
+Independent variables (predictors)  | critics_rating, audience_rating | categorical
+Independent variables (predictors)  | awards and nomination           | categorical
+Independent variables (predictors)  | thtr_rel, dvd_rel (dates)       | date  
+
+Ten non-relevant variables such as movie_title, studio, director, actors, and urls were dropped from the dataset.\
+\
+\
+
+**Split data into training and test data**
+
+For modeling (training) and testing (prediction) we split the dataset into three sub-sets:
+training data (70%) for model training, verification data (20%) to verify prediction accuracy during the training, and testing data (10%) to check the prediction accuracy of the final model.\
+\
+\
+
+**Check linear relationship of each predictor variable against response variable**
+
+Each predictor variable was checked for distribution, outliers, linearity and correlation using histogram and boxplots  and single linear regression diagnostic plots.
+
+Summary plot for numerical variables:
+
+```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="92%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/01_image.png")
 )
 ```
-\
-\
-\
-
-#### 1a) Inference - Confidence interval for proportion
 
 
-**Condition check**:\
-1. Independence of observations: Samples were taken randomly (see Part 1) => OK\
-2. Success-failure condition (SF condition): Calculate the SF conditions (SF_CI) by using the sample proportion "p_hat"\
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/03_suicide1.png")
-)
-```
-\
-Independence and SF conditions for all samples are met. We can, therefore, conclude the sample proportion p_hat is nearly normal distributed and we can apply the z-statistic to calculate the confidence level.\
-\
-
-**Confidence interval**
-
-For the confidence intervals we calculate the sample proportion (p_hat), the Standard error (SE), the critical z-value (z_star) given via the significance level, the margin of error (MOE) and the lower and upper boundary:
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/04_suicide1.png")
-)
-```
-\
-
-**Conclusion: **
-We are 95% confident that the true proportion of the American population who approved suicide in case of incurable disease was in 1977 between 36.7% and 41.6%, and in 2012 between 56.3% and 61.7%.\
-\
-\
-
-#### 1b) Inference - Hypothesis Test
-
-Null hypothesis (H0): There is no strong evidence that the American population approves suicide in case of incurable disease.
-
-Alternative hypothesis (Ha): There is strong evidence that the American population approves suicide in case of incurable disease.\
-
-This can be formulated as:\
-
-- H0: p0 = 0.5 (there is no minority or majority to approve suicide)\
-- Ha: p  > 0.5 (there is a majority to approve suicide)\
-- Significance level: alpha = 0.05 (5%)
-\
-
-
-**Condition check**:\
-1. Independence of observations: Samples were taken randomly (see Part 1) => OK\
-2. Success-failure condition: Calculate the SF condition (SF_HT) by using the true proportion "p0 = 0.5" assuming that the Null-hypothesis is true.
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/05_suicide1.png")
-)
-```
-\
-Independence and SF conditions for all samples are met. We can, therefore, conclude the sample proportion p_hat is nearly normal distributed and we can apply the z-statistic to calculate the confidence level.\
-\
-
-**Hypothesis test**\
-
-For the hypothesis test we calculate the Standard of Error (SE), z-Statistic (Z) and the p-value.
-The p-value tells us how likely the observations could have occurred under the null hypothesis.
-If the p-value is smaller than the given significance level (alpha=0.05) we will reject the null hypothesis in favor of the alternative hypothesis.
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/06_suicide.png")
-)
-```
-\
-
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/07_suicide1.png")
-)
-```
-\
-**Conclusion: **
-In 14 out of 21 samples the data show strong evidence that the majority of the population does approve suicide in case of incurable disease, with a type 1 error of 5%. I.e we may have made an error of 5% by rejecting the hypothesis but in fact the null hypothesis is true.\
-In 7 out of 21 samples the data do not show strong evidence that the majority of the population does approve suicide in case of incurable disease.\
-\
-\
-
-#### 1c) Inference - Trend
-
-Visualizing the trend of population attitude towards suicide between 1977 and 2012:
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/08_suicide1.png")
-)
-```
-\
-\
-**Conclusion: **
-Between 1977 to 1989, the majority of the population did not approved suicide, except in 1986. Whereas, from 1990 onwards the majority did approve it. The approval rate for suicide increased overall from 39% to 69% between 1977 and 1994 then slightly decreased to 59% in 2012.\
-\
-The results of the confidence interval and hypothesis tests agree with each other. I.e a "Fail to reject H0/ no majority" result corresponds to a confidence interval whose lower boundary value is less or equal to 50%.\
-\
-\
-\
-\
-
-### 2. Difference of two proportions
-#### Research Question 2: Success in life through hard work - belief by race
-
-Another question in the GSS survey is about the belief that hard work leads to success in life. We want to find differences in belief between the White and Non-white population and do a statistical test on the difference of two proportions.
-
-a) Calculate the proportion difference and **confidence interval** at a 95% confidence level\
-b) Does the data provide strong evidence that there is a difference in belief. Apply a **hypothesis test** with a significance level of 5%\
-c) Run the tests over all samples and identify a trend over the years.\
-\
-
-**Variables**
-
-Categorical variable `getahead` (4 levels): Opinion of how people get ahead, response variable\
-Categorical variable `race` (3 levels): Race of respondent, explanatory variable\
-\
-
-**Data exploration**\
-
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="80%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/03_getahead.png")
-)
-```
-\
-
-**Group categorical levels to meaningful sub-categories**\
-
-- race: grouping "Black" and "Other" ->  "Non-white"\
-- getahead: grouping "Both Equally", "Luck Or Help", and "Other" -> "Other"
-\
-
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="80%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/04_getahead.png")
-)
-```
-\
-\
-
-#### 2a) Inference - Confidence Interval
-
-**Condition check**:\
-1. Independence of observations: Samples were taken randomly (see Part 1) => OK\
-2. Success-failure condition (SF condition): Calculate the SF conditions (SF_CI) by using the sample proportion "p_hat_white" and "p_hat_non_white".
+Summary plots for categorical variables:
 
 
 ```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="90%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/07_getahead.png")
+knitr::include_graphics(c("~/R/StatRWeb/images/02_image.png")
+)
+knitr::include_graphics(c("~/R/StatRWeb/images/03_image.png")
 )
 ```
 \
-Independence and SF conditions for all samples are met. We can, therefore, conclude the sample proportions p_hat_white and p_hat_non_white are nearly normal distributed and we can apply the z-statistic to calculate the confidence level for the proportion difference.\
 \
 
-**Confidence interval**\
-
-For the confidence intervals we calculate the Standard error (SE), the critical z-value (z_star) given via the significance level, the margin of error (MOE) and the lower and upper boundary:
-
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/12_getahead.png")
-)
-```
-\
-**Conclusion: **
-We are 95% confident that the true proportion difference between White and Non-white Americans who belief that hard work leads to success is between -9.0% and 2.2% in 2012. I.e. the true difference could be either negative or positive. Therefore, there is no clear winner. This will be covered more in the hypothesis test.\
+In total 6 extreme outliers and influencial points had to be removed from the dataset.
+Predictor `runtime` was truncated and log-transformed to meet a normal distribution. 
+Several predictors had to be dropped due to non-linearity or low correlation  with the response variable.\
 \
 \
 
-
-#### 2b) Inference - Hypothesis Test
-
-Null hypothesis (H0): There is no strong evidence of a difference in belief between White and Non-white American population that hard work leads to success in life.\
-
-Alternative hypothesis (Ha): There is strong evidence of a difference in belief between White and Non-white American population that hard work leads to success in life.\
-
-This can be formulated as:\
-
-- H0: p0_diff = p_white - p_non_white  = 0 (there is no difference)\
-- Ha: p_diff  = p_white - p_non_white != 0 (there is a difference)\
-- Significance level: alpha = 0.05 (5%)
-
-We will carry out a two-sided z-Test\
-\
-
-**Condition check**:\
-1. Independence of observations: Samples were taken randomly (see Part 1) => OK\
-2. Success-failure condition: Calculate the SF condition (SF_HT) by using the proportion "p_pool", the weighted average of "p_hat_white" and "p_hat_non_white".
+**Colinearity check (independence of variables)**
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/13_getahead.png")
-)
-```
-\
+Finally, we had to check for independence between the predictor variables (colinearity). Independence is sometimes difficult to avoid, decisions have to be made out of contaxt and from knowledge of the data
 
-Independence and SF conditions for all samples are met. We can, therefore, conclude the sample proportion p_hat_white and p_hat_non_white are nearly normal distributed and we can apply the z-statistic to calculate the confidence level.\
+For example, `audience_score` and `critics_score` are highly correlated. Nevertheless, they were independently collected from two different groups, audience and critics. Therefore, both were included in the model.
+
+In contrast, `audience_rating` and `critics_rating` were dropped from the model, because they are just an categorical aggregation of `audience_score` and `critics_score` data, respectively.\
 \
 \
 
-**Hypothesis test**\
+**Selected variables (pre-selection)**
 
-For the hypothesis test we calculate the Standard of Error (SE), z-Statistic (Z) and the p-value.
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/09_getahead.png")
-)
-```
-/
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/10_getahead.png")
-)
-```
-\
-**Conclusion: **
-In 17 out of 24 the data show no strong evidence that there is a difference in belief between White and Non-white Americans that hard work leads to success. In other words, we have no strong evidence that being a white American increases or reduces the belief that hard work leads to success in life.\
-Only in 7 out of 24 the data show strong evidence that there is a difference in belief between White and Non-white Americans that hard work leads to success. In other words, we do have strong evidence that being a white American increases or reduces the belief that hard work leads to success in life\
-\
-\
-
-#### 2c) Inference - Trend
-
-Visualizing the trend of population attitude towards hard work between 1973 and 2012:
+Below the list of remaining important variables meeting the above conditions with information from **simple linear model** and diagnostic plots. As candidates for the model we selected 3 numerical predictors and 5 categorical predictors. In total 8 predictors.\
 
 
 ```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/11_getahead.png")
-)
-```
-\
-**Conclusion: **
-Overall, the White group believes more than the Non-White group, that hard work leads to success in life. However, in most cases (17 out of 24) the difference is not statistically significant, due to a large margin of error (+/-6.8%). The results of the confidence interval and hypothesis tests agree with each other. I.e a "Fail to reject H0" result corresponds to a confidence interval that does include 0.\
-\
-\
-\
-\
-
-
-### 3: Independence test
-#### Resarch Question 3: Political party vs. education degree
-
-In this example, we want to answer the question of whether there is a relationship between the preferred political party and the level of education. Both variables are categorical variables with multiple levels. 
-
-To test for a relationship, we will conduct a **Chi-square test for independence**. An introduction to this test can be found [in the text book for this course, OpenIntro Statistics, 4th edition, page 240](https://leanpub.com/os)\
-
-We will use the following variables:\
-
-- Categorical variable `partyid`(8 levels): Political party affiliation, response variable\
-- Categorical variable `degree` (5 levels): Respondents highest degree, explanatory variable\
-
-The Hypothesis test can be formulated in the form:\
-
-- H0: The political party preference **is independent** from the education degree\
-- Ha: The political party preference **is not independent** from the education degree\
-- Significance level: alpha = 5%\
-\
-\
-
-**Data exploration**\
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="80%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/03_party.png")
-)
-```
-\
-
-The 8 levels in category `partyid` will be regrouped into the 3 major political parties: Republican, Democrat and Independent. The relationship between education degree and preferred political party is shown the the next plot.\
-
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="80%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/04_party.png")
-)
-```
-\
-
-**Create a two-way table for independence test**
-
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/05_party.png")
+knitr::include_graphics(c("~/R/StatRWeb/images/04_image.png")
 )
 ```
 \
 \
-
-#### 3) Inference - Independence test
-
-**Check conditions**\
-
-1. Independence:\
-
-- random sampling within each group: OK\
-- random sampling between groups: OK\
-- sample size < 10% of population: OK\
-- each case only contributes to one cell (assumed): OK\
-\
-2. Sample size:\
-
-- each cell size > 5: OK\
-
-All conditions are met and nearly normal distribution can be assumed. Chi-square test statistic can be applied.\
 \
 
-**Chi-square test**\
+## 4. Modeling
 
-The Hypotheses:\
+Our modeling goals were:
 
-- H0: The political party preference **is independent** from the education degree\
-- Ha: The political party preference **is not independent** from the education degree\
-- Significance level: alpha = 5%\
+1. Finding the best model that fits the training dataset
+2. Optimizing the model for high prediction accuracy
+3. Avoiding over- or under-fitting, prefer the simplest and best model (parsimonious model)
 
-Chi-square statistics:\
+The modeling was conducted by a step-by-step **forward selection** approach. As criteria measure for variable selection we used `adjusted R-squared` that optimizes the prediction accuracy. 
 
-- X-squared = SUM ((observed  - expected)^2 / expected)\
-- The test statistics is comparing the observed values/proportions with expected values/proportions. The expected values are calculated from marginal proportions.\
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/06_party.png")
-)
-```
-\
-**Conclusion: **
-The X-squared value is large (62.2) and the p-value is nearly zero. We can, therefore, reject H0 hypothesis. I.e. the political party preference depends on the degree of education.\
+We run a prediction test with the verification dataset after each step and monitored its accuracy.\
 \
 \
 
+**Forward selection approach**
 
-## Part 4: Numerical data
+We started with an empty model (model_null) and added variables one-at-a-time until we couldn't find any variables that improved the model as measured by adjusted R-squared. In this course we carried out each selection step manually step-by-step, resulting in 35 models.\
 
-### 4. Difference of two means
-#### Research question 4: Attitude towards space exploration spending by education
+After we demonstrated the manual step-by-step process we utilized as alternative  the integrated `step()-function` from R package `MASS` instead.  The `step()-function` selects the best model by forward, backward or bi-directional approach with one function call.\
 
-One of the questions in the GSS survey deals with the attitude towards government spending on space exploration (too little, too much). We want to know if there is difference in the attitude due to average years of education in 2010 to 2012. We assume that people with more years of education may think that the gov. spending is too little. To proof this claim we will conduct a hypothesis test and calculate the confidence interval by t-statistic.
+A list for the best models after each step is shown below, as well as a plot regarding improvements in fit, measured in adjusted R-squared (adjR2), and prediction accuracy, measured in Root Mean Square Error (RMSE).\
 
-We will use the following variables:\
-
-- Categorical variable `natspac`(3 levels): Space exploration program, response variable\
-- Numerical variable `educ`: Highest year of school completed, explanatory variable\
-
-Tasks:\
-
-a) Calculate a summary statistic and a **confidence interval** for the difference in means at a 95% confidence level\
-b) Does the data provide strong evidence that Americans with more years in education think that the government spending for space exploration is too little.  Apply a **hypothesis test** with a significance level of 5%\
-\
-\
-
-**Data exploration - Variable `naspac`**\
-
-Distribution of attitude towards space spending (too little, too much):\
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/03_space.png")
-)
+```{r echo=FALSE, layout="1-body-outset"}
+kable(model_eval_best[,1:4])
 ```
 \
 
-**Data exploration - Variable `educ`**\
+```{r echo=FALSE, fig.asp=0.6, fig.width=7, message=FALSE, warning=FALSE}
+p1 <- model_eval_best %>%
+  ggplot(aes(x = model, y = adjusted_R2, group = 1))+
+  geom_line()+
+  geom_point()+
+  ylim(0.76, 0.86)+
+  labs(title = "Model selection by adj. R-squared",
+       subtitle = "Higher is better")+
+  xlab("")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
 
-Summary statistics:\
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/09_space.png")
-)
+p2 <- model_eval_best %>%
+  ggplot(aes(x = model, y = RMSE, group = 1))+
+  geom_line()+
+  geom_point()+
+  ylim(0.45, 0.6)+
+  labs(title = "RMSE from verification data",
+       subtitle = "Lower is better")+
+  xlab("")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+p1 + p2
 ```
 \
-
-Distribution of years of education by attitude space spending:\
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="90%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/04_space.png")
-)
-```
-
-Check of normality or skewness of distribution:\
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="90%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/05_space.png")
-)
-```
-The distributions indicate some left skew. We like to calculate the skewness and decide if we can use the samples for the statistical test.\
-
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/10_space.png")
-)
-```
-The skewness values are between -0.5 and +0.5, i.e. approximately symmetric distribution. [Link](https://www.machinelearningplus.com/statistics/skewness-and-kurtosis/).\
-\
+As result, model **m4_01** turned out to be the best model in respect of our goals (best fit, optimized prediction, simplest and best model)\
 \
 \
 
-#### 4a) Inference - Confidence Interval
 
 **Check conditions**
-\
-1. Independence:\
 
-- random samples within each group: OK\
-- samples between groups are not paired: OK\
-- sample size < 10% of population: OK\
+To apply inference to new datasets, the multiple regression method depends on the following assumptions:
 
-\
-2. Sample size/ skewness\
+1. the residuals are independent
+2. the residuals are nearly normal distributed (less important for larger datasets)
+3. the variability of the residuals is nearly constant
+4. residuals are independent
+5. each variable is linearly related to the response variable
 
-- each sample size is > 30: OK\
-- skewness is between -0.5 and +0.5, i.e. approx. symmetric: OK\
+```{r echo=FALSE, fig.asp=0.7, fig.width=7, message=FALSE, warning=FALSE}
+train_select2 <- train_select
+train_select2$fitted <- m_final$fitted.values
+train_select2$residuals <- m_final$residuals
 
-All conditions are met and nearly normal distribution can be assumed. t-statistic can be applied\
-\
-\
-
-**Calculate confidence interval**
-
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/07_space.png")
-)
-```
-\
-
-**Conclusion: **
-We are 95% confident that the true difference in mean for years in education is between 1.24 and 1.98 years. \
-I.e. The American public who thinks that the spending for space exploration is too little attended in average 1.24 to 1.98 more years in education as their counterparts.\
-\
-\
-\
-
-#### 4b) Inference - Hypothesis Test
-
-Null hypothesis (H0): There is no strong evidence that Americans with more years in education think that the government spending for space exploration is too little.\
-
-Alternative hypothesis (Ha): There is strong evidence that Americans with more years in education think that the government spending for space exploration is too little.\
-
-This can be formulated as:\
-
-- H0: mue_diff = mue_too_little - mue_too_much  = 0 (there is no difference)\
-- Ha: mue_diff = mue_too_little - mue_too_much  > 0 (is greater than null)\
-- Significance level: alpha = 0.05 (5%)\
-\
-mue: population mean (true mean)\
-mean: sample mean (estimate of true mean)\
-\
-
-We will carry out a one-sided t-Test\
-\
-
-**Check conditions**\
-
-\
-1. Independence:\
-
-- random samples within each group: OK\
-- samples between groups are not paired: OK\
-- sample size < 10% of population: OK\
-
-\
-2. Sample size/ skewness\
-
-- each sample size is > 30: OK\
-- skewness is between -0.5 and +0.5, i.e. approx. symmetric: OK\
-
-All conditions are met and nearly normal distribution can be assumed. t-statistic can be applied\
-\
-
-**Hypothesis test** \
+# linearity of residuals
+p1 <- train_select2 %>% 
+  ggplot(aes(x = fitted, y = residuals))+
+  geom_point(size = 1, color = "black", alpha = 0.3)+
+  geom_smooth(method = "loess", linetype = 1, se = F, color = "red")+
+  geom_smooth(method = "lm", linetype = 1, se = F, color = "blue")+
+  labs(title = "Model check: Linearity")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/08_space.png")
-)
-```
-\
-
-**Conclusion: **
-The data show strong evidence that Americans with more years in education think that the government spending for space exploration is too little. The p-value is < 0.0001. I.e. the probability to observe a mean difference of 1.61 or more if in fact H0 is true is less than 0.01%.\
-The results of the confidence interval and hypothesis tests agree with each other. I.e a "Reject H0" result corresponds to a confidence interval that does not include the value "zero".\
-\
-\
-\
-\
+# histogram
+p2 <- train_select2 %>% 
+  ggplot(aes(x = residuals))+
+  geom_histogram(binwidth = 0.1, fill = "darkgrey", col = "black")+
+  labs(title = "Model check: Normal distribution")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
 
 
-### 5. ANOVA Test
-#### Research question 5:  Number of children by social classes
-
-As final example we want to research the number of children per respondent in different social classes using the GSS survey for year 2012. We assume that the average number of children differs between the social classes. To proof this claim we will conduct an ANOVA test (Analysis of Variance).
-
-We will use the following variables:\
-
-- numerical variable `childs`: Number of children, response variable\
-- categorical variable `class` (5 levels): Subjective class identification, explanatory variable\
-
-Tasks:\
-
-Does the data provide strong evidence that there is a difference in the average number of children per respondent between social classes. In case that the ANOVA test rejects the Null Hypothesis (there is a difference at least in one pair), identify which pairs of social classes are significantly different in their means. Apply a **hypothesis test (ANOVA test)** with a significance level of 5%.\
-\
-\
-
-**Data exploration - Variable `class`**\
-
-Distribution of respondent from each social class:\
+# Homoscedasticity check
+p3 <- train_select2 %>% 
+  ggplot(aes(x = fitted, y = abs(residuals)))+
+  geom_point(size = 1, color = "black", alpha = 0.3)+
+  geom_smooth(method = "loess", linetype = 1, se = F, color = "red")+
+  geom_smooth(method = "lm", linetype = 1, se = F, color = "blue")+
+  labs(title = "Model check: Variability")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="70%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/10_child.png")
-)
+# Autocorrelation check: independence of residuals
+p4 <- train_select2 %>% 
+  ggplot(aes(x = thtr_rel_date, y = residuals))+
+  geom_point(size = 1, color = "black", alpha = 0.3)+
+  geom_smooth(method = "loess", linetype = 1, se = F, color = "red")+
+  geom_smooth(method = "lm", linetype = 1, se = F, color = "blue")+
+  labs(title = "Model check: Autocorrelation")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+
+(p1 + p2)/(p3 + p4)
+
 ```
 \
 \
 
-**Check conditions for ANOVA test**\
-\
-1. Independence\
-
-- within each group: random samples: OK\
-- between groups: non paired: OK\
-- n < 10% of population: OK
-
-\
-2. Approx. normal distribution\
-
-- Check for normal distribution and skewness\
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="90%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/03_child.png")
-)
-```
+```{r eval=FALSE, fig.asp=0.7, fig.width=7, message=FALSE, warning=FALSE, include=FALSE}
+# Linearity check: audience_score
+p1 <- train_select2 %>% 
+  ggplot(aes(x = audience_score, y = residuals))+
+  geom_point(size = 1, color = "black", alpha = 0.3)+
+  geom_smooth(method = "loess", linetype = 1, se = F, color = "red")+
+  geom_smooth(method = "lm", linetype = 1, se = F, color = "blue")+
+  labs(title = "Variable check: Linearity - audience_score")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="90%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/04_child.png")
-)
-```
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="40%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/05_child.png")
-)
-```
-\
-The skewness values are between -1.0 and +1.0, i.e. the distribution is moderately skewed. [Link](https://www.machinelearningplus.com/statistics/skewness-and-kurtosis/).
-However, there are no large numbers of extreme outliers. Therefore, we can assume that the variables will hold nearly normal distribution.\
-
-\
-3. Consistent variability (**homoscedasticity**)\
-
-- Summary statistics to compare standard deviations in each group
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/06_child.png")
-)
-```
-\
-
-- Boxplot to compare distributions in each group
+# Linearity check: critics_score
+p2 <- train_select2 %>% 
+  ggplot(aes(x = critics_score, y = residuals))+
+  geom_point(size = 1, color = "black", alpha = 0.3)+
+  geom_smooth(method = "loess", linetype = 1, se = F, color = "red")+
+  geom_smooth(method = "lm", linetype = 1, se = F, color = "blue")+
+  labs(title = "Variable check: Linearity - critics_score")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/07_child.png")
-)
-```
+# Variability check: genres
+train_select2 <- train_select2 %>% 
+  mutate(genre2 = factor(case_when(
+    genre == "Animation" ~ "Anima",
+    genre == "Science Fiction & Fantasy" ~ "SF",
+    genre == "Musical & Performing Arts" ~ "Musical",
+    genre == "Action & Adventure" ~ "Action",
+    genre == "Art House & International" ~ "Art",
+    genre == "Mystery & Suspense" ~ "Mystery",
+    .default = genre)
+  ))
 
-\
+p3 <- train_select2 %>% 
+  ggplot(aes(x = fct_reorder(genre2, residuals) , y = residuals))+
+  geom_point(position = position_dodge(width = 2), color = "darkgrey", size = 4, alpha = 0.7)+
+  geom_boxplot()+
+  labs(title = "Variable check: Variability - genre")+
+  xlab("genre")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))+
+  coord_flip()
 
-- From summary statistic and from the boxplot we can assume that the variation is sufficiently consistent (sd range 1.60 to 1.92)\
-\
+# Linearity check: log(runtime)
+p4 <- train_select2 %>% 
+  ggplot(aes(x = log(runtime), y = residuals))+
+  geom_point(size = 1, color = "black", alpha = 0.3)+
+  geom_smooth(method = "loess", linetype = 1, se = F, color = "red")+
+  geom_smooth(method = "lm", linetype = 1, se = F, color = "blue")+
+  labs(title = "Variable check: Linearity - log(runtime)")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
 
-All conditions are met, and we can proceed to the ANOVA test.\
-\
-\
-\
+(p1 + p2)/(p3 + p4)
 
-#### Inference - ANOVA Test and Multiple Comparison Test
-
-Null hypothesis (H0): There is no strong evidence that the average number of children per respondent differs between social classes.\
-\
-Alternative hypothesis (Ha): There is strong evidence that the average number of children per respondent differs at least between two social classes.\
-
-This can be formulated as:\
-
-- H0: mue_1 = mue_2 = ... = mue_k (no difference between true means)
-- Ha: mue_i != mue_j (difference between at least two true means)\
-- Significance level: alpha = 0.05 (5%)\
-\
-
-mue: population mean (true mean)\
-mean: sample mean (estimate of true mean)\
-k: number of classes
-\
-\
-
-**ANOVA Test**
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="60%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/08_child.png")
-)
 ```
 \
-**Conclusion: ** The ANOVA test delivers a p-value of 0.004 which is less than alpha 0.05. Therefore, we reject the Null Hypothesis. I.e. there is strong evidence that the average number of children per respondent differs at least in one pair of social classes.\
+
+The conditions are largely met with some limitations;
+
+- *Linearity*: A wavy non-linear component remains due to larger residuals on the left side of the x-axis.\
+- *Constant variability (homoscedasticity)*: The residuals are related to the x-axis and show some funnel effect from right to left.\
+\
 \
 
-**Multiple comparison test (t-test)**
+
+#### Summary Modeling
+
+The best model was selected by a step-by-step forward selection approach using adjusted R-squared measure. The model selection was further optimized by removing less significant predictors and for the best prediction accuracy.\ 
 
 
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="50%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/09_child.png")
-)
+**The model**
+
+\[
+  \begin{aligned}
+  \widehat{imdb\_rating} = b0\\
+  &+ b1 \times (critics\_score) + b2 \times (audience\_score) +
+  b3 \times (genreAnima) + b4 \times (genreArt)\\
+  &+ b5 \times (genreComedy) + b6 \times (genreDrama) + b7 \times (genreDocu) 
+  + b8 \times  (genreHorror)\\
+  &+ b9 \times (genreMusical) + b10 \times (genreMystery) + b11 \times (genreOther) +
+  b12 \times (genreSF)\\
+  &+ b13 \times (runtime\_log)
+  \end{aligned}
+\]
+
+
+```{r echo=FALSE, layout="1-body-outset"}
+kable(tidy(summary(m_final))[1:14,])
 ```
 \
-**Conclusion: **  The multiple pairwise t-test identifies the pairs of classes with strong evidence of difference in the number of children. In this case we test against the corrected alpha value (Bonferroni correction, alpha_star = 0.0083). For the following pairs we don't have strong evidence that there is a difference in the average number of children per class:\
+
+Overall the linear model is a reasonable estimate for the given dataset. However, movies with lower IMDb ratings show a higher variability in critics and audience scores. For movies with mid or high ratings the variability is much smaller.\
+\
 \
 
-- Middle Class - Working Class (p-value 0.40 > 0.0083) => Fail to reject H0\
-- Upper Class - Lower Class (p-value 0.25 > 0.0083) => Fail to reject H0\
-- Upper Class - Working Class (p-value 0.55 > 0.0083) => Fail to reject H0\
-- Upper Class - Middle Class (p-value 0.36 > 0.0083) => Fail to reject H0\
+**Answer the research questions**
+
+**a) Can the Internet Movie Database (IMDb) rating be explained by title_type, genre, or runtime?**
+
+The IMDb rating increases by 0.47 points per unit of log(runtime), i.e. the longer the movie the better the rating on average, when all other variables are hold constant.
+
+Furthermore, the the IMDb rating increases by 0.32 points for genre "documentary", increases by 0.17 points for genre "mystery", decreases by 0.21 points for genre "comedy", and decreases by 0.28 points for genre "animation" on average, when all other variables are hold constant.
+\
 \
 
-Only in the pairs "Working Class - Lower Class" and "Middle Class - Lower Class" we do have strong evidence that there is a difference in the average number of children per class.\
+**b) Can the Internet Movie Database (IMDb) rating be explained by other rating measures, such as "Tomatomeasure" critics score or audience score?**
+
+The IMDb rating increases by 0.03 points per unit audience score (scale 1 -100) and increases by 0.01 points per unit critics score (scale 1-100) on average, when all other variables are hold constant. I.e. audience score have a 3-time stronger relationship with IMDb rating than critics scores. 
+\
+\
+
+**c) Can the Internet Movie Database (IMDb) rating be explained by Academy awards or nominations?**
+
+Academy awards or nominations for best movie have a minor effect (increase by 0.08) on the IMDb rating but are not significant. Academy awards of best actor, actress or director have almost no impact and are not significant.
+\
+\
+
+**Note**
+
+The model describes only existing relationships between independent variables and IMDb rating. We cannot draw causation from these findings. Furthermore, we cannot use the model to make predictions for movie ratings that are outside of the time frame (1970 -2014). We also cannot infer the model to the popularity of movies in the general public, but only to data that are collected with the same variables and measures.
+\
+\
+\
+
+## 5. Prediction
+
+As final step, we tested the model with a test dataset. The test dataset was separated from the original movies dataset, earlier in this project. Utilizing the final model we predicted predict the response variable (imdb_rating_hat) and compared it with its true value.
+
+As measure of accuracy we used the Root Mean Square Error (RMSE). Finally,  we looked into residual plots to get some insight into their distribution and possible remaining patterns.
+\
+
+**Test dataset**
+
+```{r echo=FALSE, fig.asp=0.7, fig.width=7, message=FALSE, warning=FALSE}
+# Test data set (relationship)
+
+# Distribution imdb_rating
+p1 <- test_select %>% 
+  ggplot(aes(x = imdb_rating)) +
+  geom_histogram(binwidth = 0.5, fill = "darkgrey", col="black")+
+  labs(title = "Test Data: Distribution",
+       subtitle = "Sample size n = 72")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+
+# Relationship imdb_rating ~ audience_score
+p2 <- test_select %>% 
+  ggplot(aes(x = audience_score, y = imdb_rating))+
+  geom_point(size = 2, color = "black", alpha = 0.5)+
+  geom_smooth(method = "lm", se = F, color = "blue")+
+  geom_smooth(method = "loess", se = F, color = "red")+
+  labs(title = "IMDb Rating vs Audience Score",
+       subtitle = "")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+
+# Relationship imdb_rating ~ critics_score
+p3 <- test_select %>% 
+  ggplot(aes(x = critics_score, y = imdb_rating))+
+  geom_point(size = 2, color = "black", alpha = 0.5)+
+  geom_smooth(method = "lm", se = F, color = "blue")+
+  geom_smooth(method = "loess", se = F, color = "red")+
+  labs(title = "IMDb Rating vs Critics Score",
+       subtitle = "")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+
+
+# Relationship imdb_rating ~ genre
+p4 <- test_select %>% 
+  ggplot(aes(y = imdb_rating, x = fct_reorder(genre, imdb_rating)))+
+  geom_boxplot()+
+  labs(title = "IMDb Rating vs Genre",
+       subtitle = "")+
+  xlab("genre")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))+
+  coord_flip()
+
+(p1 + p4)/(p2 + p3)
+
+```
+\
+The test dataset has a sample size of 72 data points and are randomly distributed.\
+\
+\
+
+#### Prediction and evaluation
+
+**Root Mean Square Error (RMSE) comparison**
+
+```{r include=FALSE}
+# Predict from training data
+train_predict <- train_select %>% 
+  mutate(data.frame(predict(m_final, newdata = train_select, interval = "prediction")))
+
+train_predict <- train_predict %>% 
+  mutate(res = imdb_rating - fit,
+         interval = (imdb_rating >= lwr & imdb_rating <= upr))
+
+# Accuracy measure of model is mean of absolute percent error
+rmse_train <- sqrt(sum(train_predict$res^2)/nrow(train_predict))
+
+# print(paste0("RMSE training = ", round(rmse_train, 3)))
+```
+
+```{r include=FALSE}
+# Predict from training data
+test_predict <- test_select %>% 
+  mutate(data.frame(predict(m_final, newdata = test_select, interval = "prediction")))
+
+test_predict <- test_predict %>% 
+  mutate(res = imdb_rating - fit,
+         interval = (imdb_rating >= lwr & imdb_rating <= upr))
+
+# Accuracy measure of model is mean of absolute percent error
+rmse_test <- sqrt(sum(test_predict$res^2)/nrow(test_predict))
+
+# print(paste0("RMSE test = ", round(rmse_test, 3)))
+
+```
+The RMSE for the test dataset is `r round(rmse_test,3)` and the RMSE of the training dataset is `r round(rmse_train,3)`. I.e. about 0.1 points larger than the RMSE of the training data set. This is expected because the model was fitted to the training dataset and not to the test dataset, hence the training RMSE is smaller.\
+\
+\
+
+**Two examples: Interpretation of prediction and prediction interval**
+
+Example 1: highest `imdb_rating`
+
+```{r echo=FALSE, layout="1-body-outset"}
+# Two examples: highest and lowest rating
+kable(test_predict %>% 
+  filter(imdb_rating == max(imdb_rating)) %>% 
+  select(audience_score,
+         critics_score,
+         genre,
+         runtime,
+         imdb_rating,
+         fit,
+         res,
+         lwr,
+         upr,
+         interval))
+```
+\
+\[
+  \begin{aligned}
+  \widehat{imdb\_rating\_9.0} = b0\\
+  &+ b1 \times (97) + b2 \times (97) + b3 \times (0) + b4 \times (0) + b5 \times (0) + b6 \times (0) + b7 \times (0)\\ 
+  &+ b8 \times  (0) + b9 \times (0) + b10 \times (1) + b11 \times (0) + b12 \times (0) + b13 \times (202\_log)
+  \end{aligned}
+\]
+
+We are 95% sure that the average `imdb_rating` is between 7.7 and 9.3 points, for an `audience_score` of 97, `critics_score` of 97, `genre` "Mystery & Suspense" and `runtime` of 202 minutes. The true value is 9.0 points which is inside the interval and is a good prediction.\
+\
+
+Example 2: lowest `imdb_rating`
+
+```{r echo=FALSE, layout="1-body-outset"}
+# Two examples: highest and lowest rating
+kable(test_predict %>% 
+  filter(imdb_rating == min(imdb_rating)) %>% 
+  select(audience_score,
+         critics_score,
+         genre,
+         runtime,
+         imdb_rating,
+         fit,
+         res,
+         lwr,
+         upr,
+         interval))
+```
+\
+\[
+  \begin{aligned}
+  \widehat{imdb\_rating\_3.4} = b0\\
+  &+ b1 \times (10) + b2 \times (23) + b3 \times (0) + b4 \times (0) + b5 \times (1) + b6 \times (0) + b7 \times (0)\\ 
+  &+ b8 \times  (0) + b9 \times (0) + b10 \times (0) + b11 \times (0) + b12 \times (0) + b13 \times (85\_log)
+  \end{aligned}
+\]
+
+We are 95% sure that the average `imdb_rating` is between 3.6 and 5.2 points, for an `audience_score` of 23, `critics_score` of 10, `genre` "Comedy" and `runtime` of 85 minutes. The true value, however, is 3.4 points which is outside the interval and is a bad prediction.\
+\
+\
+
+**Number of data points that are outside of the prediction interval**
+
+
+```{r warning=FALSE, include=FALSE}
+total <- length(test_predict$fit)
+
+test_predict %>% 
+  group_by(interval) %>% 
+  summarise(n = n(),
+            percent = round(n/total *100, 1))
+```
+
+There are 6 points out of 72 (8.3%) that are outside the prediction interval, which is more than the expected rate of 5%. There are some effects that are not modeled correctly. On the other hand, about 92% were modeled correctly, which is a pretty good result.\
+\
+\
+
+**Relationship between predicted and true values**
+
+```{r echo=FALSE, fig.asp=0.7, fig.width=7, message=FALSE, warning=FALSE}
+
+# Fitted vs actual values
+test_predict %>% 
+  ggplot(aes(x = imdb_rating))+
+  geom_abline(slope = 1, intercept = 0, color = "black", size = 0.75, linetype = 6) +
+  geom_pointrange(aes(y = fit, ymin = lwr, ymax = upr, color = interval), size = 0.5)+
+  labs(title = "Predicted values vs true values - test data",
+       subtitle = "Predicted values with prediction interval (95% confidence), n = 72")+
+  ylim(3.,9.5)+
+  xlim(3.,9.5)+
+  xlab("imdb_rating (truth)")+
+  ylab("imdb_rating (predicted)")+
+  guides(color=guide_legend(title="In interval"))+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))+
+  annotate("text", y=3.7, x=8.5, label="under estimated", size = 4)+
+  annotate("text", y=9, x=4.7, label="over estimated", size = 4)+
+  theme(legend.title=element_text("Test"))
+```
+\
+
+In the ideal case all dots should be on the straight black line. However, the points, calculated from the model are offset from the ideal line. There are six points whose prediction intervals do not contain the true response value (red), predominantly in the lower range.\
+\
+\
+
+**Diagnostics or prediction accuracy**
+
+```{r echo=FALSE, fig.asp=0.5, fig.width=7, message=FALSE, warning=FALSE}
+# Distribution of residuals
+p1 <- test_predict %>% 
+  ggplot(aes(x = res))+
+  geom_histogram(binwidth = 0.2, fill="darkgrey", col="black") +
+  labs(title = "Residual distribution - predicted test data",
+       subtitle = "n = 72")+
+  xlab("residuals")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+
+# Linearity check
+p2 <- test_predict %>% 
+  ggplot(aes(x = fit, y = abs(res)))+
+  geom_point(size = 3, col = "black", alpha = 0.3)+
+  geom_smooth(method = "lm", se = F)+
+  geom_smooth(method = "loess", se = F, col = "red")+
+  ylim(0, 2.5)+
+  labs(title = "Residual variability of predictions",
+       subtitle = "Absolute values")+
+  xlab("imdb_rating (predicted)")+
+  ylab("abs(residuals)")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+
+p1 + p2
+```
+\
+
+Besides the few extreme values the distribution is nearly normal distributed. The residuals variability is slightly larger on the left (lower imdb ratings) due to some larger residuals. Some wavy pattern is still present. \
+\
+\
+
+
+#### Summary Prediction
+
+- We are 95% confident that 92% of the predicted data points contain the true response within their prediction interval, i.e. 92% of the predictions are correct.
+- The wavy downward trend in the residual distribution suggests that there is still some underlying non-linear component present which could not be modeled. Refinement with a more general non-linear approach may lead to further improvements.
+\
+\
+\
+
+
+## References:
+
+- [Data Analysis with R, Duke University](https://www.coursera.org/specializations/statistics) hosted on the Coursera platform\
+- [R for Data Science (2e)](https://r4ds.hadley.nz/)\
+\
+
+
+
+

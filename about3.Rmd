@@ -3,60 +3,78 @@ title: "Project 3: Step-by-Step Guide"
 output: html_document
 ---
 
+# LOGISTIC REGRESSION
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
-```{r load-packages, message=FALSE, warning=FALSE, include=FALSE}
+
+```{r load-packages, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(statsr)
 library(GGally)          # ------------------- extension of ggplot2
-library(data.table)      # ------------------- table calculation
 library(patchwork)       # ------------------- additional visualization tool
-library(moments)         # ------------------- package to calculate Skewness
 library(broom)           # ------------------- Convert stat obj. into tibbles
-library(modeldata)       # ------------------- Sampling data for modeling
 library(knitr)           # ------------------- support print of tables
+
+```
+\
+
+```{r}
+variables <- read.csv("~/R/StatRWeb/data/movies_variables_logit.csv", header = TRUE)
+
+# Training data
+train0 <- readRDS("~/R/StatRWeb/data/train0.Rdata")
+train_model <- readRDS("~/R/StatRWeb/data/train_model.Rdata")
+train_model2 <- readRDS("~/R/StatRWeb/data/train_model2.Rdata")
+
+# Test data
+test0 <- readRDS("~/R/StatRWeb/data/test0.Rdata")
+test1 <- readRDS("~/R/StatRWeb/data/test1.Rdata")
+
+# Model
+model_final <- readRDS("~/R/StatRWeb/data/model_final.Rdata")
+
+# Classification results
+class_metrics <- readRDS("~/R/StatRWeb/data/class_metrics.Rdata")
+
+# Support files
+probs1 <- readRDS("~/R/StatRWeb/data/probs1.Rdata")
+probs2 <- readRDS("~/R/StatRWeb/data/probs2.Rdata")
+probs3 <- readRDS("~/R/StatRWeb/data/probs3.Rdata")
 ```
 
 
-```{r include=FALSE}
-train_select <- readRDS("~/R/StatRWeb/data/train_select.Rdata")
-verify_select <- readRDS("~/R/StatRWeb/data/verify_select.Rdata")
-test_select <- readRDS("~/R/StatRWeb/data/test_select.Rdata")
-model_eval_best <- readRDS("~/R/StatRWeb/data/model_eval_best.Rdata")
-m_final <- readRDS("~/R/StatRWeb/data/m_final.Rdata")
-```
 
-
-# LINEAR REGRESSION
 \
 \
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="40%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/00_icon.jpg")
+```{r fig.align='center', fig.show='hold', out.width="30%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/02_icon.png")
 )
 ```
 \
 
 
-## 1. Introduction
+## Introduction
 
 
 **Objectives**
 
-The objective of the 3rd project in this course was to apply the learned contents of "Multiple linear regression and modeling". Skills learned are:\
+The objective of this project is to apply learned contents of "Logistic Regression and Modeling". Skills required for this project are:\
 
-`Exploratory Data Analysis`, `Variable Selection`, `Linear Regression`, `Regression`, `Model Selection`,  `Inference`, `Prediction`, `Statistical Thinking`, `R programming`\
+
+`Logistic Regression`, `Exploratory Data Analysis`, `Variable Selection`, `Modeling`, `Interpretation`, `Prediction`, `Classification`, `Statistical Thinking`, `R programming`\
 \
-\
+
 
 **Contents**
 
-The multiple linear regression modeling project was split into the sections:
+The logistic regression modeling project was split into the sections:
 
 - Part 1: Data inspections
 - Part 2: Research question
-- Part 3: Explanatory data analysis (variable selection)
+- Part 3: Explanatory data analysis
 - Part 4: Modeling
 - Part 5: Prediction
 
@@ -66,644 +84,672 @@ Code chunks and detailed descriptions can be found in the [**R-Markdown**](proje
 
 **Project Instruction**
 
-Your boss has just acquired data about how much audiences and critics like movies as well as many other variables about the movies. The dataset includes information from [Rotten Tomatos](https://www.rottentomatoes.com/) and [IMDB](https://www.imdb.com/).
+This project is a non-guided project and was not part of the course [**Data Analysis with R, Duke University**](https://www.coursera.org/specializations/statistics) hosted on the Coursera platform. The entire project was carried out by myself, from problem definition to answering the question. For this purpose, a multiple logistic regression model was implemented and tested in R.
 
-She is interested in learning what attributes make a movie popular. She is also interested in learning something new about movies. She wants your team to figure it all out.
+In project [Linear Regression](about2.html) we analyzed a movie dataset and answered the question what factors make a movie popular. The variable of interest was a continuous variable `imdb_rating` and we used the **multiple linear regression** method to answer this problem.
 
-As part of this project you will complete exploratory data analysis (EDA), modeling, and prediction.\
+For this project we modified the research question in a way that we must apply a **logistic regression** model. We, therefore, selected as the variable of interest the binary variable `audience_rating`.
+
+As part of this project, we completed exploratory data analysis (EDA), modeling, and prediction.\
 \
 \
+\
 
-**The Dataset**
+## 1. Data inspection
 
-The dataset was provided by the course [**Data Analysis with R, Duke University**](https://www.coursera.org/specializations/statistics) hosted on the Coursera platform.\
+The dataset was provided by the course [**Data Analysis with R, Duke University**](https://www.coursera.org/specializations/statistics) hosted on the Coursera platform. The dataset includes information from [Rotten Tomatos](https://www.rottentomatoes.com/) and [IMDB](https://www.imdb.com/).\
 
-The dataset is a sample set of 651 observations with 33 variables. The data were collected in the years from 1970 to 2014. The ratings were collected by [Rotten Tomatos] from the audience on voluntary basis and from selected groups of movie critics. So we can't claim that they were collected by random sampling. We, therefore, cannot infer the statistics to the general population, i.e. movie popularity for all people in the US. We can only infer the model on new data collected in the same time frame and under the same method as our sample dataset.\
-
-A meaningful research question had to be formulated and answered by multiple linear regression and modeling.\
+The dataset used here is a sample of 651 observations with 8 variables. The data were collected in the years from 1970 to 2014 from the audience on voluntary basis and from selected groups of movie critics. So we can't claim that they were collected by random sampling. We, therefore, cannot infer the statistics to the general population, i.e. movie popularity for all people in the US. We can only infer the model on new data collected in the same time frame and under the same method as our sample dataset.
+\
 \
 \
 
 ## 2. Research question
 
-Can the Internet Movie Database (IMDb) rating be explained by factors such as:
+1. Can the binary (audience) rating be explained by factors such as genre, other rating measures (e.g, IMDb and critics ratings), or nomination and awards (e.g. Academy Award-winning films)?\
 
-a. type, genre, run-time, release timing, 
-b. other rating measures (e.g, Tomato-measure from audience and critics), and
-c. nomination and awards (e.g. Academy Award-winning films)?
+2. What are the most influential predictors for audience rating?\
+\
+
+
+**Task**
+
+Build a logistic regression model to best fit the relationships between these variables optimized for a high prediction accuracy for new data.
+
+The logistic regression model has the following linear form:
+
+\[
+  \begin{aligned}
+  log(\frac{p}{1-p}) = \beta{_0}\ + \beta{_1} x{_1} + \beta{_2} x{_2} + \beta{_3} x{_3} + . . . + \beta{_k} x{_k}
+  \end{aligned}
+\]
+
+Where:\
+
+- A success is defined if outcome `audience_rating` = "Upright" or "1".\
+- $p$ is the probability of a success\ 
+- $odd = \frac{p}{1-p}$ is the probability of success vs the probability of failure\
+- $logit(p)$ is the logit function of $p$ equal to $log(\frac{p}{1-p})$
+- $\beta_i$ are the unknowns of the model\
+- $x_i$ are the independent variables.\
 \
 \
 \
 
 ## 3. Exploratory Data Analysis (EDA)
-\
 
-**Variable dependencies and relevance**
+**The variables**
 
-We identified the following variables of interest, which needed to be checked for linear relationship with the response variable, distribution and independence.\
+We identified seven potential independent variables of interest to be included in the modeling .\
 \
 
 Variable type                       | Variable name                   | Data type
 ------------------------------------|---------------------------------|------------- 
-Dependent variable (response)       | imdb_response                   | numerical
+Dependent variable (response)       | audience_rating                 | categorical
                                     |                                 |
-Independent variables (predictors)  | critics_score, audience_score   | numerical
-Independent variables (predictors)  | runtime, imdb_num_votes         | numerical
-Independent variables (predictors)  | title_type, mpaa_rating         | categorical                         
-Independent variables (predictors)  | critics_rating, audience_rating | categorical
-Independent variables (predictors)  | awards and nomination           | categorical
-Independent variables (predictors)  | thtr_rel, dvd_rel (dates)       | date  
+Independent variables (predictor)   | imdb_rating                     | numerical
+Independent variables (predictor)   | critics_score                   | numerical
+Independent variables (predictor)   | critics_rating                  | categorical
+Independent variables (predictor)   | genre                           | categorical
+Independent variables (predictor)   | mpaa_rating                     | categorical
+Independent variables (predictors)  | best_pic_nom, best_pic_win      | categorical  
 
-Ten non-relevant variables such as movie_title, studio, director, actors, and urls were dropped from the dataset.\
 \
 \
 
 **Split data into training and test data**
 
-For modeling (training) and testing (prediction) we split the dataset into three sub-sets:
-training data (70%) for model training, verification data (20%) to verify prediction accuracy during the training, and testing data (10%) to check the prediction accuracy of the final model.\
-\
-\
+For modeling (training) and testing (prediction) we split by the dataset into two sub-sets by stratified sampling:\
 
-**Check linear relationship of each predictor variable against response variable**
+- Training data (80%) for model training
+- Test data (20%) to check the prediction accuracy of the final model.\
 
-Each predictor variable was checked for distribution, outliers, linearity and correlation using histogram and boxplots  and single linear regression diagnostic plots.
-
-Summary plot for numerical variables:
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="92%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/01_image.png")
-)
-```
-
-
-Summary plots for categorical variables:
-
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="90%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/02_image.png")
-)
-knitr::include_graphics(c("~/R/StatRWeb/images/03_image.png")
-)
-```
-\
 \
 
-In total 6 extreme outliers and influencial points had to be removed from the dataset.
-Predictor `runtime` was truncated and log-transformed to meet a normal distribution. 
-Several predictors had to be dropped due to non-linearity or low correlation  with the response variable.\
-\
-\
+**audience_rating distribution (training and test data)**
 
-**Colinearity check (independence of variables)**
+```{r message=FALSE, warning=FALSE}
+sum_AR <- train0 %>% 
+  mutate(audience_rating = as.factor(ifelse
+                                     (audience_rating == 0, "Spilled (0)", "Upright (1)"))) %>% 
+  group_by(audience_rating) %>% 
+  summarise(n = n()) %>%
+  mutate(percentage = round(n/sum(n)*100,1))
 
+sum_AR_test <- test0 %>% 
+  mutate(audience_rating = as.factor(ifelse
+                                     (audience_rating == 0, "Spilled (0)", "Upright (1)"))) %>% 
+  group_by(audience_rating) %>% 
+  summarise(n = n()) %>%
+  mutate(percentage = round(n/sum(n)*100,1))
 
-Finally, we had to check for independence between the predictor variables (colinearity). Independence is sometimes difficult to avoid, decisions have to be made out of contaxt and from knowledge of the data
+plot1 <- train0 %>% 
+  ggplot(aes(x = as.factor(audience_rating), fill = as.factor(audience_rating)))+
+           geom_bar()+
+  labs(title = "Distribution Audience Rating",
+       subtitle = "Training Data",
+       fill = "Audience Rating")+
+  ylab("Number of rated movies")+
+  coord_cartesian(ylim = c(1, 330))+
+  scale_fill_discrete(labels = c("Spilled (0)", "Upright (1)"))+
+  annotate("text", x=1, y=237, label=paste("n = ", sum_AR[1,2]), size = 3.2)+
+  annotate("text", x=2, y=315, label=paste("n = ", sum_AR[2,2]), size = 3.2)+
+  annotate("text", x=1, y=150, label=paste(sum_AR[1,3], "%"), size = 3.2)+
+  annotate("text", x=2, y=150, label=paste(sum_AR[2,3], "%"), size = 3.2)+
+  xlab("Audience Rating")+
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(size=12))
 
-For example, `audience_score` and `critics_score` are highly correlated. Nevertheless, they were independently collected from two different groups, audience and critics. Therefore, both were included in the model.
+plot2 <- test0 %>% 
+  ggplot(aes(x = as.factor(audience_rating), fill = as.factor(audience_rating)))+
+           geom_bar()+
+  labs(title = "",
+       subtitle = "Test Data",
+       fill = "Audience Rating")+
+  ylab("")+
+  coord_cartesian(ylim = c(1, 330))+
+  scale_fill_discrete(labels = c("Spilled (0)", "Upright (1)"))+
+  annotate("text", x=1, y=67, label=paste("n = ", sum_AR_test[1,2]), size = 3.2)+
+  annotate("text", x=2, y=90, label=paste("n = ", sum_AR_test[2,2]), size = 3.2)+
+  annotate("text", x=1, y=30, label=paste(sum_AR_test[1,3], "%"), size = 3.2)+
+  annotate("text", x=2, y=30, label=paste(sum_AR_test[2,3], "%"), size = 3.2)+
+  xlab("Audience Rating")
 
-In contrast, `audience_rating` and `critics_rating` were dropped from the model, because they are just an categorical aggregation of `audience_score` and `critics_score` data, respectively.\
-\
-\
-
-**Selected variables (pre-selection)**
-
-Below the list of remaining important variables meeting the above conditions with information from **simple linear model** and diagnostic plots. As candidates for the model we selected 3 numerical predictors and 5 categorical predictors. In total 8 predictors.\
-
-
-```{r echo=FALSE, fig.align='center', fig.show='hold', out.width="100%"}
-knitr::include_graphics(c("~/R/StatRWeb/images/04_image.png")
-)
-```
-\
-\
-\
-
-## 4. Modeling
-
-Our modeling goals were:
-
-1. Finding the best model that fits the training dataset
-2. Optimizing the model for high prediction accuracy
-3. Avoiding over- or under-fitting, prefer the simplest and best model (parsimonious model)
-
-The modeling was conducted by a step-by-step **forward selection** approach. As criteria measure for variable selection we used `adjusted R-squared` that optimizes the prediction accuracy. 
-
-We run a prediction test with the verification dataset after each step and monitored its accuracy.\
-\
-\
-
-**Forward selection approach**
-
-We started with an empty model (model_null) and added variables one-at-a-time until we couldn't find any variables that improved the model as measured by adjusted R-squared. In this course we carried out each selection step manually step-by-step, resulting in 35 models.\
-
-After we demonstrated the manual step-by-step process we utilized as alternative  the integrated `step()-function` from R package `MASS` instead.  The `step()-function` selects the best model by forward, backward or bi-directional approach with one function call.\
-
-A list for the best models after each step is shown below, as well as a plot regarding improvements in fit, measured in adjusted R-squared (adjR2), and prediction accuracy, measured in Root Mean Square Error (RMSE).\
-
-```{r echo=FALSE, layout="1-body-outset"}
-kable(model_eval_best[,1:4])
+plot1 + plot2
+rm(plot1, plot2, sum_AR, sum_AR_test)
 ```
 \
 
-```{r echo=FALSE, fig.asp=0.6, fig.width=7, message=FALSE, warning=FALSE}
-p1 <- model_eval_best %>%
-  ggplot(aes(x = model, y = adjusted_R2, group = 1))+
-  geom_line()+
-  geom_point()+
-  ylim(0.76, 0.86)+
-  labs(title = "Model selection by adj. R-squared",
-       subtitle = "Higher is better")+
-  xlab("")+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))
-
-p2 <- model_eval_best %>%
-  ggplot(aes(x = model, y = RMSE, group = 1))+
-  geom_line()+
-  geom_point()+
-  ylim(0.45, 0.6)+
-  labs(title = "RMSE from verification data",
-       subtitle = "Lower is better")+
-  xlab("")+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))
-p1 + p2
-```
-\
-As result, model **m4_01** turned out to be the best model in respect of our goals (best fit, optimized prediction, simplest and best model)\
+The proportions of "Spilled (0)" versus "Upright (1)" in both datasets are roughly evenly distributed, which is important to avoid any bias between model fitting and final testing.\
 \
 \
 
+#### Relationships between dependent and selected independent variables
 
-**Check conditions**
+**`audience_rating` vs `imdb_rating`**
 
-To apply inference to new datasets, the multiple regression method depends on the following assumptions:
+```{r message=FALSE, warning=FALSE}
 
-1. the residuals are independent
-2. the residuals are nearly normal distributed (less important for larger datasets)
-3. the variability of the residuals is nearly constant
-4. residuals are independent
-5. each variable is linearly related to the response variable
-
-```{r echo=FALSE, fig.asp=0.7, fig.width=7, message=FALSE, warning=FALSE}
-train_select2 <- train_select
-train_select2$fitted <- m_final$fitted.values
-train_select2$residuals <- m_final$residuals
-
-# linearity of residuals
-p1 <- train_select2 %>% 
-  ggplot(aes(x = fitted, y = residuals))+
-  geom_point(size = 1, color = "black", alpha = 0.3)+
-  geom_smooth(method = "loess", linetype = 1, se = F, color = "red")+
-  geom_smooth(method = "lm", linetype = 1, se = F, color = "blue")+
-  labs(title = "Model check: Linearity")+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))
-
-
-# histogram
-p2 <- train_select2 %>% 
-  ggplot(aes(x = residuals))+
-  geom_histogram(binwidth = 0.1, fill = "darkgrey", col = "black")+
-  labs(title = "Model check: Normal distribution")+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))
-
-
-# Homoscedasticity check
-p3 <- train_select2 %>% 
-  ggplot(aes(x = fitted, y = abs(residuals)))+
-  geom_point(size = 1, color = "black", alpha = 0.3)+
-  geom_smooth(method = "loess", linetype = 1, se = F, color = "red")+
-  geom_smooth(method = "lm", linetype = 1, se = F, color = "blue")+
-  labs(title = "Model check: Variability")+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))
-
-
-# Autocorrelation check: independence of residuals
-p4 <- train_select2 %>% 
-  ggplot(aes(x = thtr_rel_date, y = residuals))+
-  geom_point(size = 1, color = "black", alpha = 0.3)+
-  geom_smooth(method = "loess", linetype = 1, se = F, color = "red")+
-  geom_smooth(method = "lm", linetype = 1, se = F, color = "blue")+
-  labs(title = "Model check: Autocorrelation")+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))
-
-(p1 + p2)/(p3 + p4)
-
-```
-\
-\
-
-```{r eval=FALSE, fig.asp=0.7, fig.width=7, message=FALSE, warning=FALSE, include=FALSE}
-# Linearity check: audience_score
-p1 <- train_select2 %>% 
-  ggplot(aes(x = audience_score, y = residuals))+
-  geom_point(size = 1, color = "black", alpha = 0.3)+
-  geom_smooth(method = "loess", linetype = 1, se = F, color = "red")+
-  geom_smooth(method = "lm", linetype = 1, se = F, color = "blue")+
-  labs(title = "Variable check: Linearity - audience_score")+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))
-
-
-# Linearity check: critics_score
-p2 <- train_select2 %>% 
-  ggplot(aes(x = critics_score, y = residuals))+
-  geom_point(size = 1, color = "black", alpha = 0.3)+
-  geom_smooth(method = "loess", linetype = 1, se = F, color = "red")+
-  geom_smooth(method = "lm", linetype = 1, se = F, color = "blue")+
-  labs(title = "Variable check: Linearity - critics_score")+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))
-
-
-# Variability check: genres
-train_select2 <- train_select2 %>% 
-  mutate(genre2 = factor(case_when(
-    genre == "Animation" ~ "Anima",
-    genre == "Science Fiction & Fantasy" ~ "SF",
-    genre == "Musical & Performing Arts" ~ "Musical",
-    genre == "Action & Adventure" ~ "Action",
-    genre == "Art House & International" ~ "Art",
-    genre == "Mystery & Suspense" ~ "Mystery",
-    .default = genre)
-  ))
-
-p3 <- train_select2 %>% 
-  ggplot(aes(x = fct_reorder(genre2, residuals) , y = residuals))+
-  geom_point(position = position_dodge(width = 2), color = "darkgrey", size = 4, alpha = 0.7)+
+plot1 <- train0 %>% 
+  mutate(audience_rating2 = ifelse(audience_rating == 0, "Spilled (0)", "Upright (1)")) %>% 
+  ggplot(aes(x = imdb_rating)) +
   geom_boxplot()+
-  labs(title = "Variable check: Variability - genre")+
-  xlab("genre")+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))+
+  labs(title = "",
+       subtitle = "Spread")+
+  facet_wrap(~as.factor(audience_rating2), nrow = 2)+
+  theme(axis.text.y=element_blank(), axis.ticks.y=element_blank())+
+  ylab("")
+  
+plot2 <- train0 %>% 
+  mutate(audience_rating2 = ifelse(audience_rating == 0, "Spilled (0)", "Upright (1)")) %>% 
+  ggplot(aes(x = imdb_rating))+
+  geom_histogram(fill = "darkgrey", color = "black")+
+  labs(title = "IMDb Rating by Audience Rating",
+       subtitle = "Distribution (training data)")+
+  facet_wrap(~as.factor(audience_rating2), nrow = 2)+
+  ylab("")
+
+plot2 + plot1
+```
+\
+Movies with lower IMDb ratings are more likely to be rated as "Spilled" and higher IMDd ratings are more likely to be rated as "Upright". This variable is of interest.
+\
+\
+
+**`audience_rating` vs `genre`**
+
+```{r}
+sum_spilled_ge <- train0 %>% 
+  mutate(audience_rating = as.factor(ifelse(audience_rating == 0, "Spilled (0)", "Upright (1)"))) %>% 
+  filter(audience_rating == "Spilled (0)") %>% 
+  group_by(genre) %>% 
+  summarise(n = n()) %>%
+  mutate(percentage = round(n/sum(n)*100,1))
+
+# sum(sum_spilled_ge$n)
+
+sum_upright_ge <- train0 %>% 
+  mutate(audience_rating = as.factor(ifelse(audience_rating == 0, "Spilled (0)", "Upright (1)"))) %>% 
+  filter(audience_rating == "Upright (1)") %>% 
+  group_by(genre) %>% 
+  summarise(n = n()) %>%
+  mutate(percentage = round(n/sum(n)*100,1))
+
+# sum(sum_upright_ge$n)
+
+plot1 <- train0 %>% 
+  ggplot(aes(x = fct_rev(genre))) +
+  geom_bar(position = "fill", aes(fill = as.factor(audience_rating)))+
+  labs(title = "Audience Rating by Genre",
+       subtitle = "Distribution (training data)",
+       fill = "Audience Rating")+
+  scale_fill_discrete(labels = c("Spilled (0)", "Upright (1)"))+
+  xlab("")+
+  ylab("proportion")+
+  theme(legend.position = "none")+
   coord_flip()
 
-# Linearity check: log(runtime)
-p4 <- train_select2 %>% 
-  ggplot(aes(x = log(runtime), y = residuals))+
-  geom_point(size = 1, color = "black", alpha = 0.3)+
-  geom_smooth(method = "loess", linetype = 1, se = F, color = "red")+
-  geom_smooth(method = "lm", linetype = 1, se = F, color = "blue")+
-  labs(title = "Variable check: Linearity - log(runtime)")+
+plot2 <- train0 %>% 
+  ggplot(aes(x = fct_rev(genre))) +
+  geom_bar(aes(fill = as.factor(audience_rating)))+
+  labs(fill = "")+
+  scale_fill_discrete(labels = c("Spilled (0)", "Upright (1)"))+
+  xlab("")+
+  ylab("count")+
+  theme(axis.text.y=element_blank(), axis.ticks.y=element_blank())+
+  theme(legend.position = "bottom")+
+  coord_flip()
+
+plot1 + plot2
+rm(plot1, plot2, sum_spilled_ge, sum_upright_ge)
+```
+
+\
+The proportions of audience rating are distinct for each type of genre. The variable may be influential and is of interest.
+\
+\
+
+**`audience_rating` vs `critics_rating`**
+
+```{r}
+sum_spilled_cr <- train0 %>% 
+  mutate(audience_rating = as.factor(ifelse(audience_rating == 0, "Spilled (0)", "Upright (1)"))) %>% 
+  filter(audience_rating == "Spilled (0)") %>% 
+  group_by(critics_rating) %>% 
+  summarise(n = n()) %>%
+  mutate(percentage = round(n/sum(n)*100,1))
+# sum(sum_spilled_ge$n)
+
+sum_upright_cr <- train0 %>% 
+  mutate(audience_rating = as.factor(ifelse(audience_rating == 0, "Spilled (0)", "Upright (1)"))) %>% 
+  filter(audience_rating == "Upright (1)") %>% 
+  group_by(critics_rating) %>% 
+  summarise(n = n()) %>%
+  mutate(percentage = round(n/sum(n)*100,1))
+# sum(sum_upright_ge$n)
+
+plot1 <- train0 %>% 
+  ggplot(aes(x = fct_rev(critics_rating))) +
+  geom_bar(position = "fill", aes(fill = as.factor(audience_rating)))+
+  labs(title = "Audience Rating by Critics Rating",
+       subtitle = "Distribution (training data)",
+       fill = "Audience Rating")+
+  scale_fill_discrete(labels = c("Spilled (0)", "Upright (1)"))+
+  xlab("")+
+  ylab("proportion")+
+  theme(legend.position = "none")+
+  coord_flip()
+
+plot2 <- train0 %>% 
+  ggplot(aes(x = fct_rev(critics_rating))) +
+  geom_bar(aes(fill = as.factor(audience_rating)))+
+  labs(fill = "")+
+  scale_fill_discrete(labels = c("Spilled (0)", "Upright (1)"))+
+  xlab("")+
+  ylab("count")+
+  theme(axis.text.y=element_blank(), axis.ticks.y=element_blank())+
+  theme(legend.position = "bottom")+
+  coord_flip()
+
+plot1 + plot2
+rm(plot1, plot2, sum_upright_cr, sum_spilled_cr)
+```
+\
+The proportions of audience ratings are closely related to the critics ratings. The variable is influential.\
+\
+\
+
+
+#### Check the assumption for logistic regression
+
+**Assumption for logistic regression**
+\
+
+In order to apply logistic regression the variables must meet the following 5 assumptions:\
+
+1. Dependent variable is binary (1 or 0)
+2. The data are independent. I.e not paired, not depending on order of selection.
+3. The independent variables should not correlate too strongly with each other (collinearity assumption)
+4. The independent numerical variables are linearly correlated to the log odds of the dependent variable 
+5. There should be no outliers
+\
+\
+
+*Assumption 1:* Dependent variable is binary **is met**. (binary response variable)\
+\
+*Assumption 2:* Data are independent of each other **is met**. (random sample)\
+\
+*Assumption 3:* Independent variables are not too strongly correlated **is met** after removal of a highly correlated variable.\
+
+The correlation coefficients between the independent variables:
+
+```{r message=FALSE, warning=FALSE}
+# Convert xi of type factors into numerical numbers 1, 2,...
+# and remove response variable from data frame
+train1 <- train0 %>% 
+  mutate(genre = as.numeric(genre),
+         mpaa_rating = as.numeric(mpaa_rating),
+         critics_rating = as.numeric(critics_rating),
+         best_pic_nom = as.numeric(best_pic_nom),
+         best_pic_win = as.numeric(best_pic_win)) %>% 
+  select(-ID,
+         -audience_rating)
+
+ggpairs(train1)
+```
+\
+Variable `critics_score` is highly correlated to two other variables and was removed.\
+
+```{r}
+# Drop correlated variable
+train3 <- train0 %>% 
+  select(-critics_score)
+```
+\
+\
+
+
+*Assumption 4:* Independent numerical variable is linearly correlated to the log-odds of the dependent variable **is met**.\
+
+```{r message=FALSE, warning=FALSE}
+# Plot of natural relationship 
+plot1 <- train3 %>% 
+  ggplot(aes(y = audience_rating, x = imdb_rating))+
+  geom_jitter(height = 0.02, alpha = 0.1, size = 3)+
+  geom_smooth(method = "glm",
+              method.args = list(family = "binomial"), se = FALSE, color = "blue")+
+    labs(title = "Logistic regression",
+       subtitle = "Audience rating vs. IMDb rating")+
+  xlab("imdb_rating (continuous)")+
+  ylab("audience_rating (binary)")+
   theme(plot.title.position = "plot",
         axis.title.y = element_text(hjust=1),
         axis.title.x = element_text(hjust=0))
 
-(p1 + p2)/(p3 + p4)
+# Plot of log-odds and imdb_rating
+plot2 <- ggplot()+
+  geom_point(data = probs1, aes(x = x_median, y = logit), 
+             size = 5, color = "darkgrey", alpha = 0.9)+
+  geom_smooth(data = probs1, aes(x = x_median, y = logit), method = "lm", se = F)+
+  labs(title = "Linearity check",
+       subtitle = "Logit(prob(audience_rating)) vs. IMDb rating")+
+  xlab("imdb_rating (3 buckets)")+
+  ylab("Logit (observed probability)")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
 
+plot1 + plot2
+rm(plot1, plot2)
+```
+\
+The relationship between `imdb_rating` and the observed `logit(p)` is approximately linear. 
+\
+\
+
+*Assumption 5:* Outliers have been removed. The assumption **is met**. 
+\
+
+We identified and removed three outliers by Cook's distance from a simple logistic model with variable imdb_rating.\
+\
+
+```{r}
+# Build logistic model with one variable 
+model <- glm(audience_rating ~ imdb_rating, 
+              data = train3,
+              family = "binomial")
+ # summary(model)
+ plot(model, which = c(4))
+```
+\
+\
+\
+\
+\
+
+## Part 4: Modeling
+
+**Model selection using a function from package MASS::stepAIC()**
+
+The model was calculated by a step-by-step forward selection approach. As measure for the model selection the function uses the AIC (Akaike Information Criterion) criteria. The lower the AIC value the better the model fit.
+
+```{r message=FALSE, warning=FALSE}
+# Build a full model
+m_full <- glm(audience_rating ~ .,
+              data = train_model, family = "binomial")
+
+# Build a null model
+m_null <- glm(audience_rating ~ 1, data = train_model, family = "binomial")
+
+library(MASS)
+model <- stepAIC(m_null, direction="forward", scope=list(upper = m_full,lower = m_null),trace = 0) 
+
+detach("package:MASS", unload = TRUE)  # - remove package because masking SELECT function
+# plot(model)
+
+summary(model)
+rm(m_full, m_null)
 ```
 \
 
-The conditions are largely met with some limitations;
-
-- *Linearity*: A wavy non-linear component remains due to larger residuals on the left side of the x-axis.\
-- *Constant variability (homoscedasticity)*: The residuals are related to the x-axis and show some funnel effect from right to left.\
+The model selected by the algorithm has 1 numerical variable and 1 categorical variable, with to levels. In total 3 variables. All variables are statistically significant.\
 \
 \
 
 
-#### Summary Modeling
 
-The best model was selected by a step-by-step forward selection approach using adjusted R-squared measure. The model selection was further optimized by removing less significant predictors and for the best prediction accuracy.\ 
+**Model diagnostics**
 
+To assess the quality of the model, we plotted the predicted outcome against the true outcome by grouping the predicted probabilities into buckets (e.g. 10%). For each bucket the mid-points and confidence intervals were calculated.
+\
 
-**The model**
+```{r message=FALSE, warning=FALSE}
+# Plot true response vs fitted values
+
+ggplot() +
+  geom_jitter(data = train_model2, aes(y = audience_rating, x = fitted), 
+              height = 0.03, alpha = 0.5, size = 2, color = "darkgrey")+
+  geom_abline(data = probs2, aes(x = x_median), 
+              slope = 1, color = "red", size = 0.5, linetype = 6 )+
+  geom_pointrange(data = probs2, aes(x = x_median, y = p, ymin = lwr, ymax = upr), size = 0.7, alpha = 0.5)+
+    labs(title = "True values vs predicted values - Training Data",
+       subtitle = "Observed values with 95% confidence interval (for 10 buckets)")+
+  xlab("Predicted Probability")+
+  ylab("Observed Probability (Truth)")+
+  theme(plot.title.position = "plot",
+        axis.title.y = element_text(hjust=1),
+        axis.title.x = element_text(hjust=0))
+```
+\
+The points plotted should fall close to the line y = x, since the predicted probabilities should be similar to the observed probabilities. The dashed line is within the confidence bound of 95% confidence intervals for most of the buckets. We can therefore conclude that the logistic fit of the final model is reasonable.
+\
+\
+
+**The final model**
+
+In the previous chapter we identified the best fitted model with 1 numerical predictor and 1 categorical predictors (`critics_rating` with 2 levels), in total 3 predictors:
 
 \[
   \begin{aligned}
-  \widehat{imdb\_rating} = b0\\
-  &+ b1 \times (critics\_score) + b2 \times (audience\_score) +
-  b3 \times (genreAnima) + b4 \times (genreArt)\\
-  &+ b5 \times (genreComedy) + b6 \times (genreDrama) + b7 \times (genreDocu) 
-  + b8 \times  (genreHorror)\\
-  &+ b9 \times (genreMusical) + b10 \times (genreMystery) + b11 \times (genreOther) +
-  b12 \times (genreSF)\\
-  &+ b13 \times (runtime\_log)
+  \widehat{logit(p)} = \hat{\beta_0} + \hat{\beta_1} \times (imdb\_rating) + \hat{\beta_2} \times (critics\_ratingFresh) + \hat{\beta_2} \times (critics\_ratingRotten) 
   \end{aligned}
 \]
+\
 
+Where $\beta_i$ are the estimates listed below:
 
 ```{r echo=FALSE, layout="1-body-outset"}
-kable(tidy(summary(m_final))[1:14,])
+
+kable(tidy(model_final)[1:4,])
+```
+\
+The categorical variable `critics_rating` has the following levels:\
+
+- `Certified Fresh`: Reference level
+- `Fresh`: estimate $\hat{\beta_2} = -1.729583$
+- `Rotten`: estimate $\hat{\beta_3} = -1.561766$
+
+\
+\
+
+**Interpretation of the model coefficients**
+\
+
+The model coefficients explain the change in the logit output per unit of change in $x_i$, all others hold constant.\
+
+Since logit values are not intuitive understandable it is better to explain the coefficient as "odds ratio (OR)", i.e. effect of change in odds. The odds ratios can be expressed by the exponent of the coefficient, $OR = \exp(\hat{\beta_i})$.
+\
+
+```{r}
+# Calculate the ODDs ratios
+options(scipen=0)
+
+df_model <- tidy(model_final) %>% 
+  filter(!term == "(Intercept)") %>% 
+  mutate(odds_ratio = round(exp(estimate),3),
+         significant = case_when(p.value < 0.05 ~ TRUE,
+                                 p.value >= 0.05 ~ FALSE)) %>% 
+  select(term, estimate, odds_ratio, significant)
+
+kable(df_model[1:3,])
 ```
 \
 
-Overall the linear model is a reasonable estimate for the given dataset. However, movies with lower IMDb ratings show a higher variability in critics and audience scores. For movies with mid or high ratings the variability is much smaller.\
+- For a one-unit increase of IMDb-rating, the odds of audience rating "Upright" increases by a factor of 45.9.\
+\
+- `critics_rating:Fresh` odds of being rated "Upright" by the audience are smaller by a factor of 0.18 than `critics_rating:Certified-Fresh` odds of being rated "Upright".\
+\
+- `critics_rating:Rotten` odds of being rated "Upright" by the audience are smaller by a factor of 0.21 than `critics_rating:Certified-Fresh` odds of being rated "Upright".\
 \
 \
 
 **Answer the research questions**
-
-**a) Can the Internet Movie Database (IMDb) rating be explained by title_type, genre, or runtime?**
-
-The IMDb rating increases by 0.47 points per unit of log(runtime), i.e. the longer the movie the better the rating on average, when all other variables are hold constant.
-
-Furthermore, the the IMDb rating increases by 0.32 points for genre "documentary", increases by 0.17 points for genre "mystery", decreases by 0.21 points for genre "comedy", and decreases by 0.28 points for genre "animation" on average, when all other variables are hold constant.
-\
 \
 
-**b) Can the Internet Movie Database (IMDb) rating be explained by other rating measures, such as "Tomatomeasure" critics score or audience score?**
-
-The IMDb rating increases by 0.03 points per unit audience score (scale 1 -100) and increases by 0.01 points per unit critics score (scale 1-100) on average, when all other variables are hold constant. I.e. audience score have a 3-time stronger relationship with IMDb rating than critics scores. 
-\
+*1. Can the binary (audience) rating be explained by attributes such as genre, other rating measures (e.g, IMDb and critics ratings), and nomination and awards (e.g. Academy Award-winning films)?*\ 
 \
 
-**c) Can the Internet Movie Database (IMDb) rating be explained by Academy awards or nominations?**
+The binary variable `audience_rating` can be well explained by attributes `imdb_rating` and  `critics_rating`. The variables are statistically significant.\
+\
 
-Academy awards or nominations for best movie have a minor effect (increase by 0.08) on the IMDb rating but are not significant. Academy awards of best actor, actress or director have almost no impact and are not significant.
+*2. What is the most influential predictor for audience rating?*\
+
+The overall most influential predictor for `audience_rating` is `imdb_rating`, i.e. low `imdb_rating` results in `audience_rating: Spilled` and high `imdb_rating` results in `audience_rating: Upright`. \
 \
 \
 
 **Note**
 
-The model describes only existing relationships between independent variables and IMDb rating. We cannot draw causation from these findings. Furthermore, we cannot use the model to make predictions for movie ratings that are outside of the time frame (1970 -2014). We also cannot infer the model to the popularity of movies in the general public, but only to data that are collected with the same variables and measures.
+The model describes only existing relationships between independent variables and Audience Rating. We cannot draw causation from these findings. Furthermore, we cannot use the model to make predictions for movie ratings that are outside of the time frame (1970 -2014). We also cannot infer the model to the popularity of movies in the general public, but only to data that are collected with the same variables and measures.
+\
+\
+
+#### Summary Modeling
+
+The best model was selected by a step-by-step forward selection approach using the AIC measure. 
+The most influential variables are `imdb_rating` and `critics_rating`. The assumptions for the logistic regression modeling were met.
+
+Overall, the logistic model is a reasonable estimate for `audience_rating` based on the given dataset. 
 \
 \
 \
 
 ## 5. Prediction
 
-As final step, we tested the model with a test dataset. The test dataset was separated from the original movies dataset, earlier in this project. Utilizing the final model we predicted predict the response variable (imdb_rating_hat) and compared it with its true value.
+**Fitting accuracy of the model using the test data**
 
-As measure of accuracy we used the Root Mean Square Error (RMSE). Finally,  we looked into residual plots to get some insight into their distribution and possible remaining patterns.
-\
+To assess the quality of the model fit for the testing data we will plot the bucketed predicted probabilities against the bucketed observed probabilities with confidence intervals, as we did in  section 4. Again, we split the data into 10 buckets by quantiles of 10%.\
 
-**Test dataset**
+```{r message=FALSE, warning=FALSE}
+# TEST DATA: Plot true response vs fitted values
 
-```{r echo=FALSE, fig.asp=0.7, fig.width=7, message=FALSE, warning=FALSE}
-# Test data set (relationship)
-
-# Distribution imdb_rating
-p1 <- test_select %>% 
-  ggplot(aes(x = imdb_rating)) +
-  geom_histogram(binwidth = 0.5, fill = "darkgrey", col="black")+
-  labs(title = "Test Data: Distribution",
-       subtitle = "Sample size n = 72")+
+ggplot() +
+  geom_jitter(data = test1, aes(y = audience_rating, x = pred), 
+              height = 0.03, alpha = 0.7, size = 2, color = "darkgrey")+
+  geom_abline(data = probs3, aes(x = x_median), 
+              slope = 1, color = "red", size = 0.5, linetype = 6 )+
+  geom_pointrange(data = probs3, aes(x = x_median, y = p, ymin = lwr, ymax = upr), size = 0.7, alpha = 0.5)+
+    labs(title = "True values vs predicted values - Test Data",
+       subtitle = "Observed values with 95% confidence interval (for 10 buckets)")+
+  xlab("Predicted Probability")+
+  ylab("Observed Probability (Truth)")+
   theme(plot.title.position = "plot",
         axis.title.y = element_text(hjust=1),
         axis.title.x = element_text(hjust=0))
-
-# Relationship imdb_rating ~ audience_score
-p2 <- test_select %>% 
-  ggplot(aes(x = audience_score, y = imdb_rating))+
-  geom_point(size = 2, color = "black", alpha = 0.5)+
-  geom_smooth(method = "lm", se = F, color = "blue")+
-  geom_smooth(method = "loess", se = F, color = "red")+
-  labs(title = "IMDb Rating vs Audience Score",
-       subtitle = "")+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))
-
-# Relationship imdb_rating ~ critics_score
-p3 <- test_select %>% 
-  ggplot(aes(x = critics_score, y = imdb_rating))+
-  geom_point(size = 2, color = "black", alpha = 0.5)+
-  geom_smooth(method = "lm", se = F, color = "blue")+
-  geom_smooth(method = "loess", se = F, color = "red")+
-  labs(title = "IMDb Rating vs Critics Score",
-       subtitle = "")+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))
-
-
-# Relationship imdb_rating ~ genre
-p4 <- test_select %>% 
-  ggplot(aes(y = imdb_rating, x = fct_reorder(genre, imdb_rating)))+
-  geom_boxplot()+
-  labs(title = "IMDb Rating vs Genre",
-       subtitle = "")+
-  xlab("genre")+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))+
-  coord_flip()
-
-(p1 + p4)/(p2 + p3)
-
 ```
 \
-The test dataset has a sample size of 72 data points and are randomly distributed.\
+\
+The dashed line is within the confidence bound of 95% confidence intervals for most of the buckets. The three data points in the right upper corner with confidence interval 0 are not located directly on the diagonal line but are very close to it. In other words, looking at the graph we are 95% confident that more than 70% of the data points are expressed correctly by the model. We can therefore conclude that the logistic fit and the predicted values for the test data are reasonable.\
 \
 \
 
-#### Prediction and evaluation
+**Classification accuracy of the model**
 
-**Root Mean Square Error (RMSE) comparison**
 
-```{r include=FALSE}
-# Predict from training data
-train_predict <- train_select %>% 
-  mutate(data.frame(predict(m_final, newdata = train_select, interval = "prediction")))
+Another way to assess the model performance is to look at their classification measures. A logistic regression will return predicted probabilities of the event occurrence. A threshold value, yet to be determined, is used as a criterion to divide the predicted probabilities into two classes {0, 1}.  If the outcome values are balanced the threshold value is usually set to 0.5. In this respect we can treat the logistic model as a classification problem.\ 
+\
 
-train_predict <- train_predict %>% 
-  mutate(res = imdb_rating - fit,
-         interval = (imdb_rating >= lwr & imdb_rating <= upr))
+To evaluate a classification performance a decision matrix from the outcome is commonly used. From the decision matrix the metrics `accuracy`, `error rate`, `precision`, `sensitivity` and `specificity` can be calculated.\
 
-# Accuracy measure of model is mean of absolute percent error
-rmse_train <- sqrt(sum(train_predict$res^2)/nrow(train_predict))
+The decision matrix (a.k.a. confusion matrix):
 
-# print(paste0("RMSE training = ", round(rmse_train, 3)))
+```{r echo=FALSE, fig.align='left', fig.show='hold', out.width="50%"}
+knitr::include_graphics(c("~/R/StatRWeb/images/01_decision_matrix.png")
+)
 ```
 
-```{r include=FALSE}
-# Predict from training data
-test_predict <- test_select %>% 
-  mutate(data.frame(predict(m_final, newdata = test_select, interval = "prediction")))
-
-test_predict <- test_predict %>% 
-  mutate(res = imdb_rating - fit,
-         interval = (imdb_rating >= lwr & imdb_rating <= upr))
-
-# Accuracy measure of model is mean of absolute percent error
-rmse_test <- sqrt(sum(test_predict$res^2)/nrow(test_predict))
-
-# print(paste0("RMSE test = ", round(rmse_test, 3)))
-
-```
-The RMSE for the test dataset is `r round(rmse_test,3)` and the RMSE of the training dataset is `r round(rmse_train,3)`. I.e. about 0.1 points larger than the RMSE of the training data set. This is expected because the model was fitted to the training dataset and not to the test dataset, hence the training RMSE is smaller.\
-\
 \
 
-**Two examples: Interpretation of prediction and prediction interval**
-
-Example 1: highest `imdb_rating`
-
-```{r echo=FALSE, layout="1-body-outset"}
-# Two examples: highest and lowest rating
-kable(test_predict %>% 
-  filter(imdb_rating == max(imdb_rating)) %>% 
-  select(audience_score,
-         critics_score,
-         genre,
-         runtime,
-         imdb_rating,
-         fit,
-         res,
-         lwr,
-         upr,
-         interval))
-```
-\
-\[
-  \begin{aligned}
-  \widehat{imdb\_rating\_9.0} = b0\\
-  &+ b1 \times (97) + b2 \times (97) + b3 \times (0) + b4 \times (0) + b5 \times (0) + b6 \times (0) + b7 \times (0)\\ 
-  &+ b8 \times  (0) + b9 \times (0) + b10 \times (1) + b11 \times (0) + b12 \times (0) + b13 \times (202\_log)
-  \end{aligned}
-\]
-
-We are 95% sure that the average `imdb_rating` is between 7.7 and 9.3 points, for an `audience_score` of 97, `critics_score` of 97, `genre` "Mystery & Suspense" and `runtime` of 202 minutes. The true value is 9.0 points which is inside the interval and is a good prediction.\
+*Accuracy*, most intuitive, but problematic for imbalanced classes in response (e.g. 1 out of 1000)\
+- *accuracy = (TP + TN) / (TP + FP + TN + FN)*
 \
 
-Example 2: lowest `imdb_rating`
-
-```{r echo=FALSE, layout="1-body-outset"}
-# Two examples: highest and lowest rating
-kable(test_predict %>% 
-  filter(imdb_rating == min(imdb_rating)) %>% 
-  select(audience_score,
-         critics_score,
-         genre,
-         runtime,
-         imdb_rating,
-         fit,
-         res,
-         lwr,
-         upr,
-         interval))
-```
-\
-\[
-  \begin{aligned}
-  \widehat{imdb\_rating\_3.4} = b0\\
-  &+ b1 \times (10) + b2 \times (23) + b3 \times (0) + b4 \times (0) + b5 \times (1) + b6 \times (0) + b7 \times (0)\\ 
-  &+ b8 \times  (0) + b9 \times (0) + b10 \times (0) + b11 \times (0) + b12 \times (0) + b13 \times (85\_log)
-  \end{aligned}
-\]
-
-We are 95% sure that the average `imdb_rating` is between 3.6 and 5.2 points, for an `audience_score` of 23, `critics_score` of 10, `genre` "Comedy" and `runtime` of 85 minutes. The true value, however, is 3.4 points which is outside the interval and is a bad prediction.\
-\
+*Error Rate:* Opposite of *accuracy*. Shows how often the outcomes are being misclassified.\
+- *error rate = (FP + FN) / (TP + FP + TN + FN)*
 \
 
-**Number of data points that are outside of the prediction interval**
+*Precision:* Ratio of true positive to the predicted positives. Used when the cost for false positive is high (i.e. avoid false classification of "Upright")\
+- *precision = TP / (TP + FP)*
+\
+
+*Sensitivity:* Concerned about positive outcomes, and when the cost of false positive is low (i.e avoid false classification of "Spilled")\
+- *sensitivity = TP / (TP + FN)*
+\
+
+*Specificity:* Concerned about negative outcomes and a high cost to a positive outcome. (i.e. in favor of outcome "Spilled", because outcome "Upright" is involved with high cost). \
+- *specificity = TN / (TN + FP)*
+\
+
+For our purpose we will focus on the *accuracy* and *precision* metric, since the classes are evenly distributed. Below the decision matrices for the training and test data.\
+\
 
 
-```{r warning=FALSE, include=FALSE}
-total <- length(test_predict$fit)
-
-test_predict %>% 
-  group_by(interval) %>% 
-  summarise(n = n(),
-            percent = round(n/total *100, 1))
+```{r echo=FALSE, fig.align='left', fig.show='hold', out.width="40%", fig.cap="Decision matrix of classification results"}
+knitr::include_graphics(
+  c("~/R/StatRWeb/images/03_conf_matrix_train.png",
+    "~/R/StatRWeb/images/04_conf_matrix_test.png"))
 ```
 
-There are 6 points out of 72 (8.3%) that are outside the prediction interval, which is more than the expected rate of 5%. There are some effects that are not modeled correctly. On the other hand, about 92% were modeled correctly, which is a pretty good result.\
-\
 \
 
-**Relationship between predicted and true values**
+The classification metrics for test and training data are as follows:
 
-```{r echo=FALSE, fig.asp=0.7, fig.width=7, message=FALSE, warning=FALSE}
+```{r}
+class_metrics <- class_metrics %>% 
+  mutate(change = ifelse(metrics != "error", round((train_data-test_data)/train_data,3), "---" )
+  )
 
-# Fitted vs actual values
-test_predict %>% 
-  ggplot(aes(x = imdb_rating))+
-  geom_abline(slope = 1, intercept = 0, color = "black", size = 0.75, linetype = 6) +
-  geom_pointrange(aes(y = fit, ymin = lwr, ymax = upr, color = interval), size = 0.5)+
-  labs(title = "Predicted values vs true values - test data",
-       subtitle = "Predicted values with prediction interval (95% confidence), n = 72")+
-  ylim(3.,9.5)+
-  xlim(3.,9.5)+
-  xlab("imdb_rating (truth)")+
-  ylab("imdb_rating (predicted)")+
-  guides(color=guide_legend(title="In interval"))+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))+
-  annotate("text", y=3.7, x=8.5, label="under estimated", size = 4)+
-  annotate("text", y=9, x=4.7, label="over estimated", size = 4)+
-  theme(legend.title=element_text("Test"))
+kable(class_metrics)
 ```
 \
+The classification performance for the test data are in line with the the performance for the training dataset. We don't see any large decline in performance in the test data due to overfitting or underfitting. 
 
-In the ideal case all dots should be on the straight black line. However, the points, calculated from the model are offset from the ideal line. There are six points whose prediction intervals do not contain the true response value (red), predominantly in the lower range.\
-\
-\
+*Accuracy:* The prediction for `audience_rating` is 86.1% accurate for all cases using the test data. This is a 2.3% reduction in accuracy than for the training data as expected.\
 
-**Diagnostics or prediction accuracy**
-
-```{r echo=FALSE, fig.asp=0.5, fig.width=7, message=FALSE, warning=FALSE}
-# Distribution of residuals
-p1 <- test_predict %>% 
-  ggplot(aes(x = res))+
-  geom_histogram(binwidth = 0.2, fill="darkgrey", col="black") +
-  labs(title = "Residual distribution - predicted test data",
-       subtitle = "n = 72")+
-  xlab("residuals")+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))
-
-# Linearity check
-p2 <- test_predict %>% 
-  ggplot(aes(x = fit, y = abs(res)))+
-  geom_point(size = 3, col = "black", alpha = 0.3)+
-  geom_smooth(method = "lm", se = F)+
-  geom_smooth(method = "loess", se = F, col = "red")+
-  ylim(0, 2.5)+
-  labs(title = "Residual variability of predictions",
-       subtitle = "Absolute values")+
-  xlab("imdb_rating (predicted)")+
-  ylab("abs(residuals)")+
-  theme(plot.title.position = "plot",
-        axis.title.y = element_text(hjust=1),
-        axis.title.x = element_text(hjust=0))
-
-p1 + p2
-```
-\
-
-Besides the few extreme values the distribution is nearly normal distributed. The residuals variability is slightly larger on the left (lower imdb ratings) due to some larger residuals. Some wavy pattern is still present. \
-\
-\
-
-
-#### Summary Prediction
-
-- We are 95% confident that 92% of the predicted data points contain the true response within their prediction interval, i.e. 92% of the predictions are correct.
-- The wavy downward trend in the residual distribution suggests that there is still some underlying non-linear component present which could not be modeled. Refinement with a more general non-linear approach may lead to further improvements.
+*Precision:* The prediction of `audience_rating: Upright` is 88.3% correct compared to the total "Upright" predicted cases using the test data. This is a 2.6% reduction in precision than for the training data as expected.
 \
 \
 \
 
-#### ------------------------------------------------------------------------------------------------------------------------------------------------------
-
-#### References:
-
-- [Data Analysis with R, Duke University](https://www.coursera.org/specializations/statistics) hosted on the Coursera platform\
-- [R for Data Science (2e)](https://r4ds.hadley.nz/)\
+#### Summary prediction
 \
 
-#### Contact:
+- The classification performance for the test data are in line with the the performance for the training data
+- The classification accuracy for the correct `audience_rating` is 86.1%.
+- The classification precision for the correct `audience_rating: Upright` is 88.3%.
+- The overall accuracy score of the model for the classification from the test data is "good".\
 
-- [LinkedIn](https://www.linkedin.com/in/hartmut-schaefer/)
 \
 \
+\
+
+## Summary and Outlook
+
+For the project we used a dataset about movie ratings from Rotten Tomatos and IMDb. 
+
+The task was to build a logistic regression model to identify the most influential of 7 variables that lead to the correct description of the binary variable audience rating ("Upright", "Spilled").
+
+For the modeling the  original sample dataset was split into training data (80%) and test data (20%). The assumptions required for logistic regression were checked, and correlated variables and outlieres were removed. The best fitting model was build by a step-by-step forward selection approach using the AIC criteria. Two influential variables were identified: "imdb_rating" and "ciricis_rating". Especially, "imdb_rating" has the biggest impact on the outcome: 
+
+I.e.: For a one-unit increase of IMDb-rating, the odds of audience rating "Upright" increases by a factor of 45.9. Whereas, for one unit increase of critics rating the odds of audience rating increases only by a factor of 0.2.
+
+Finally, the model was tested for prediction and classification with the separated test data. The classification performance for the test data were in line with the performance with the training data. The overall classification scores achieved were good, with an accuracy of 86.1% and a precision of 88.3%
+
+For future projects in logistic regression analysis the modeling could be further optimized by *cross-validation* approach for best fitting and prediction. Furthermore, one could use methods from *machine learning* to determine the threshold value for an optimized classification.\
+
+\
+\
+
+
+## References:
+
+\
+
+- [OpenIntro Statistics: Fourth Edition](https://www.openintro.org/book/os/), by David Diez, Mine Cetinkaya-Rundel, Christoph Barr
+
+- [Data Analysis with R Specialization](https://www.coursera.org/specializations/statistics), by Duke University on Coursera platform
+      
+      
+      
 
 
