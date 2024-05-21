@@ -93,6 +93,27 @@ b. other rating measures (e.g, Tomato-measure from audience and critics), and
 c. nomination and awards (e.g. Academy Award-winning films)?
 \
 \
+
+**Task**
+
+Build a multiple linear regression model to best fit the relationships between these variables optimized for a high prediction accuracy for new data.
+
+The multiple regression model has the following linear form:
+
+\[
+  \begin{aligned}
+  {y} = \beta{_0}\ + \beta{_1} x{_1} + \beta{_2} x{_2} + \beta{_3} x{_3} + . . . + \beta{_k} x{_k}
+  \end{aligned}
+\]
+
+Where:\
+
+- $y$ is the dependent or response variable\ 
+- $\beta_i$ are the unknown coefficient of the linear model\
+- $x_i$ are the independent variables\
+- $k$ is the number of independent variables
+\
+\
 \
 
 ## 3. Exploratory Data Analysis (EDA)
@@ -385,16 +406,18 @@ The best model was selected by a step-by-step forward selection approach using a
 
 \[
   \begin{aligned}
-  \widehat{imdb\_rating} = b0\\
-  &+ b1 \times (critics\_score) + b2 \times (audience\_score) +
-  b3 \times (genreAnima) + b4 \times (genreArt)\\
-  &+ b5 \times (genreComedy) + b6 \times (genreDrama) + b7 \times (genreDocu) 
-  + b8 \times  (genreHorror)\\
-  &+ b9 \times (genreMusical) + b10 \times (genreMystery) + b11 \times (genreOther) +
-  b12 \times (genreSF)\\
-  &+ b13 \times (runtime\_log)
+  \widehat{imdb\_rating} = \hat{\beta_0}\\
+  &+ \hat{\beta_1} \times (critics\_score) +  \hat{\beta_2} \times (audience\_score) +
+   \hat{\beta_3} \times (genreAnima) +  \hat{\beta_4} \times (genreArt)\\
+  &+  \hat{\beta_5} \times (genreComedy) +  \hat{\beta_6} \times (genreDrama) +  \hat{\beta_7} \times (genreDocu) 
+  +  \hat{\beta_8} \times  (genreHorror)\\
+  &+  \hat{\beta_9} \times (genreMusical) +  \hat{\beta_{10}} \times (genreMystery) +  \hat{\beta_{11}} \times (genreOther) +
+   \hat{\beta_{12}} \times (genreSF)\\
+  &+  \hat{\beta_{13}} \times (runtime\_log)
   \end{aligned}
 \]
+
+Where $\beta_i$ are the estimates listed below:
 
 
 ```{r echo=FALSE, layout="1-body-outset"}
@@ -559,12 +582,13 @@ kable(test_predict %>%
          upr,
          interval))
 ```
+
 \
 \[
   \begin{aligned}
-  \widehat{imdb\_rating\_9.0} = b0\\
-  &+ b1 \times (97) + b2 \times (97) + b3 \times (0) + b4 \times (0) + b5 \times (0) + b6 \times (0) + b7 \times (0)\\ 
-  &+ b8 \times  (0) + b9 \times (0) + b10 \times (1) + b11 \times (0) + b12 \times (0) + b13 \times (202\_log)
+  \widehat{imdb\_rating\_(9.0)} = \hat{\beta_{0}}\\
+  &+ \hat{\beta_{1}} \times (97) + \hat{\beta_{2}} \times (97) + \hat{\beta_{3}} \times (0) + \hat{\beta_{4}} \times (0) + \hat{\beta_{5}} \times (0) + \hat{\beta_{6}} \times (0) + \hat{\beta_{7}} \times (0)\\ 
+  &+ \hat{\beta_{8}} \times  (0) + \hat{\beta_{9}} \times (0) + \hat{\beta_{10}} \times (1) + \hat{\beta_{11}} \times (0) + \hat{\beta_{12}} \times (0) + \hat{\beta_{13}} \times (202\_log)
   \end{aligned}
 \]
 
@@ -591,11 +615,12 @@ kable(test_predict %>%
 \
 \[
   \begin{aligned}
-  \widehat{imdb\_rating\_3.4} = b0\\
-  &+ b1 \times (10) + b2 \times (23) + b3 \times (0) + b4 \times (0) + b5 \times (1) + b6 \times (0) + b7 \times (0)\\ 
-  &+ b8 \times  (0) + b9 \times (0) + b10 \times (0) + b11 \times (0) + b12 \times (0) + b13 \times (85\_log)
+  \widehat{imdb\_rating\_(3.4)} = \hat{\beta_{0}}\\
+  &+ \hat{\beta_{1}} \times (10) + \hat{\beta_{2}} \times (23) + \hat{\beta_{3}} \times (0) + \hat{\beta_{4}} \times (0) + \hat{\beta_{5}} \times (1) + \hat{\beta_{6}} \times (0) + \hat{\beta_{7}} \times (0)\\ 
+  &+ \hat{\beta_{8}} \times  (0) + \hat{\beta_{9}} \times (0) + \hat{\beta_{10}} \times (0) + \hat{\beta_{11}} \times (0) + \hat{\beta_{12}} \times (0) + \hat{\beta_{13}} \times (85\_log)
   \end{aligned}
 \]
+
 
 We are 95% sure that the average `imdb_rating` is between 3.6 and 5.2 points, for an `audience_score` of 23, `critics_score` of 10, `genre` "Comedy" and `runtime` of 85 minutes. The true value, however, is 3.4 points which is outside the interval and is a bad prediction.\
 \

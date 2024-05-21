@@ -1,0 +1,53 @@
+---
+title: "Untitled"
+author: "Hartmut Schaefer"
+date: "2024-05-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Definitions
+
+Inferential statistics makes propositions about a population, using data drawn from the population with some form of sampling. Some common forms of statistical proposition are:\
+
+* *point estimates*, e.g. sampling proportion $\hat{p}$ or sampling mean $\hat{x}$ for true proportion ${p}$ or true mean ${\mu}$, respectively\
+
+* *confidence interval (CI)* for the point estimate that contains the true parameter with probability at a stated confidence level:\
+
+  + for proportions:$\quad point\_estimate\quad \pm\quad {z^*} \times {SE}\quad$;\
+  $z^*$ is the z-statistics of the critical value for a stated confidence interval\
+  $SE$ is the standard error of the sample proportion\
+  
+  + for numerical:$\quad point\_estimate\quad \pm\quad {t^*} \times {SE}\quad$;\
+  $t^*$ is the t-statistics of the critical value for a stated confidence interval\
+  $SE$ is the standard error of the sampling mean\
+\
+* *hypothesis testing* of a null hypothesis against an alternative hypothesis for a statistical proposition, e.g.:
+
+
+  + $H_0$ (null hypothesis): $\quad \quad \quad \ \ \ \ p\quad=\quad$  0.5\
+  + $H_A$ (alternative hypothesis): $\quad p\quad\ne\quad$ 0.5\
+  \
+
+   or \
+
+  + $H_0$ (null hypothesis): $\quad \quad \quad \ \ \ \ \mu\quad=\quad$  0\
+  + $H_A$ (alternative hypothesis): $\quad \mu\quad\ne\quad$ 0\
+\
+\
+
+To infer propositions from the sample to the population the conditions for the **Central Limit Theorem** must be fulfilled:
+
+* The sampled observations are independent\
+* The sample size is sufficient large enough:
+
+  + for proportions: $\quad n \times p\ \gt\ 10\quad {and}\quad n \times (1-p)\ \gt\ 10$\
+  + for numerical: $\quad\ \  \ n\ \gt\ 30$\
+  
+\
+
