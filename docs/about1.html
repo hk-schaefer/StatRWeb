@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Project 1: Step-by-Step Guide</title>
+
+<script src="site_libs/header-attrs-2.22/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Portfolio: Statistics with R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about1.html">ABOUT Inference</a>
+</li>
+<li>
+  <a href="project1.html">Code: Inferential Stat</a>
+</li>
+<li>
+  <a href="about2.html">ABOUT Linear Regression</a>
+</li>
+<li>
+  <a href="project2.html">Code: Linear Reg.</a>
+</li>
+<li>
+  <a href="about3.html">ABOUT Logistic Regression</a>
+</li>
+<li>
+  <a href="project3.html">Code: Logistic Reg.</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Project 1: Step-by-Step Guide</h1>
+
+</div>
+
+
+<div id="inferential-statistics" class="section level1">
+<h1>INFERENTIAL STATISTICS</h1>
+<p><br />
+<br />
+<img src="images/00_inference.png" width="50%" style="display: block; margin: auto;" /><br />
+</p>
+<div id="objectives" class="section level2">
+<h2>Objectives</h2>
+<p>Objective of this project is to apply learned contents of
+“inferential statistics. Skills demonstrated are:<br />
+</p>
+<p><code>Central Limit Theorem</code>, <code>Confidence Interval</code>,
+<code>Hypothesis Testing</code>,
+<code>Inference Categorical Data</code>,
+<code>Inference Numerical Data</code>, <code>z-Test</code>,
+<code>Chi-square Test</code>, <code>t-test</code>, <code>F-test</code>,
+<code>ANOVA</code><br />
+<br />
+Code chunks and detailed descriptions can be found in the <a
+href="project1.html"><strong>R-Markdown</strong></a> file.<br />
+<br />
+<br />
+<br />
+</p>
+</div>
+<div id="definitions" class="section level2">
+<h2>Definitions</h2>
+<p>Inferential statistics makes propositions about a population, using
+data drawn from the population with some form of sampling. Some common
+forms of statistical proposition are:<br />
+</p>
+<ul>
+<li><p><em>point estimates</em>, e.g. sampling proportion <span
+class="math inline">\(\hat{p}\)</span> or sampling mean <span
+class="math inline">\(\hat{x}\)</span> for true proportion <span
+class="math inline">\({p}\)</span> or true mean <span
+class="math inline">\({\mu}\)</span>, respectively<br />
+</p></li>
+<li><p><em>confidence interval (CI)</em> for the point estimate that
+contains the true parameter with probability at a stated confidence
+level:<br />
+</p>
+<ul>
+<li><p>for proportions:<span class="math inline">\(\quad
+point\_estimate\quad \pm\quad {z^*} \times {SE}\quad\)</span>;<br />
+<span class="math inline">\(z^*\)</span> is the z-statistics of the
+critical value for a stated confidence interval<br />
+<span class="math inline">\(SE\)</span> is the standard error of the
+sample proportion<br />
+</p></li>
+<li><p>for numerical:<span class="math inline">\(\quad
+point\_estimate\quad \pm\quad {t^*} \times {SE}\quad\)</span>;<br />
+<span class="math inline">\(t^*\)</span> is the t-statistics of the
+critical value for a stated confidence interval<br />
+<span class="math inline">\(SE\)</span> is the standard error of the
+sampling mean<br />
+<br />
+</p></li>
+</ul></li>
+<li><p><em>hypothesis testing</em> of a null hypothesis against an
+alternative hypothesis for a statistical proposition, e.g.:</p>
+<ul>
+<li><span class="math inline">\(H_0\)</span> (null hypothesis): <span
+class="math inline">\(\quad \quad \quad \ \ \ \ p\quad=\quad\)</span>
+0.5<br />
+</li>
+<li><span class="math inline">\(H_A\)</span> (alternative hypothesis):
+<span class="math inline">\(\quad p\quad\ne\quad\)</span> 0.5<br />
+<br />
+</li>
+</ul>
+<p>or<br />
+</p>
+<ul>
+<li><span class="math inline">\(H_0\)</span> (null hypothesis): <span
+class="math inline">\(\quad \quad \quad \ \ \ \ \mu\quad=\quad\)</span>
+0<br />
+</li>
+<li><span class="math inline">\(H_A\)</span> (alternative hypothesis):
+<span class="math inline">\(\quad \mu\quad\ne\quad\)</span> 0<br />
+<br />
+<br />
+</li>
+</ul></li>
+</ul>
+<p>To infer propositions from the sample to the population the
+conditions for the <strong>Central Limit Theorem</strong> must be
+fulfilled. I.e. a sample will be nearly normal distributed if:</p>
+<ul>
+<li><p>The sampled observations are independent<br />
+</p></li>
+<li><p>The sample size is sufficient large enough:</p>
+<ul>
+<li>for proportions: <span class="math inline">\(\quad n \times p\ \gt\
+10\quad {and}\quad n \times (1-p)\ \gt\ 10\)</span><br />
+</li>
+<li>for numerical: <span class="math inline">\(\quad\ \  \ n\ \gt\
+30\)</span><br />
+</li>
+</ul></li>
+</ul>
+<p><br />
+<br />
+<br />
+</p>
+</div>
+<div id="part-1-the-data-set" class="section level2">
+<h2>Part 1: The data set</h2>
+<p>For this project the data set “General Social Survey (GSS) Cumulative
+File 1972-2012” was used provided through the course. This data set is a
+sample of selected indicators in the GSS with the goal of providing a
+convenient data resource for students learning statistical reasoning
+using the R language.The data set contains 114 variables and 57,061
+observations. <a
+href="https://d3c33hcgiwev3.cloudfront.net/_8abbe344133a7a8c98cfabe01a5075c2_gss.html?Expires=1711843200&amp;Signature=NA9UOEFUJSPiJ2yEK-jMs1r0FM6Mv8fO21UDJWkCAqVDAm5DRUMfD~xUJpTSQHU-AWefK9vtHT5T90ffPXmBPR1tpSYX~e~KVBX2LujrYxSzvIPngO-r8Ah1S8BRa9XL9NH-GIc9o5gigSf8beum93T1gfKMNTDmJncao9ebNAg_&amp;Key-Pair-Id=APKAJLTNE6QMUY6HBC5A">Link</a><br />
+</p>
+<p>Five meaningful research questions were formulated and answered
+covering the most important methods of inferential statistics. The
+samples were taken randomly and the size of each sample is above 1000
+and the inference statistic can be therefore generalized to the US
+population.<br />
+<br />
+<br />
+</p>
+</div>
+<div id="part-2-research-questions" class="section level2">
+<h2>Part 2: Research questions</h2>
+<p>Part I: Inference for categorical data<br />
+<br />
+Research question 1: Inference for a single proportion (z-test)<br />
+Research question 2: Inference for a difference of two proportions
+(z-test)<br />
+Research question 3: Testing for independence of many proportions
+(Chi-square test)<br />
+<br />
+</p>
+<p>Part II: Inference for numerical data<br />
+<br />
+Research question 4: Inference for a difference of two means
+(t-test)<br />
+Research question 5: Inference for differences of many means: ANOVA
+test<br />
+</p>
+<p><br />
+<br />
+<br />
+<br />
+</p>
+</div>
+<div id="part-3-categorical-data" class="section level2">
+<h2>Part 3: Categorical data</h2>
+<p><br />
+<br />
+</p>
+<div id="single-proportion" class="section level3">
+<h3>1. Single proportion</h3>
+<div id="research-question-1-attitude-towards-suicide"
+class="section level4">
+<h4>Research Question 1: Attitude towards suicide</h4>
+<p>One of the question in the GSS survey was the attitude towards
+suicide if someone has an incurable disease. Do the majority of
+Americans approve the view on suicide in this case?<br />
+</p>
+<ol style="list-style-type: lower-alpha">
+<li>Calculate the proportion and its <strong>confidence
+interval</strong> at a 95% confidence level.<br />
+</li>
+<li>Does the data provide strong evidence that the majority of people
+approve the view on suicide in this case. Apply a <strong>hypothesis
+test</strong> with a significance level of 5%.<br />
+</li>
+<li>Run the tests over all samples and identify a trend over the
+years.<br />
+<br />
+We will cary out a one-sided z-Test.<br />
+</li>
+</ol>
+<p><strong>Variable</strong></p>
+<p>Variable <code>suicide1</code>(2 levels): Suicide if incurable
+disease, single variable<br />
+</p>
+<p><br />
+</p>
+<p><strong>Data exploration</strong><br />
+</p>
+<p>Distribution of categories “approved” vs. “not approved” for all
+years.<br />
+</p>
+<p><img src="images/02_suicide1.png" width="70%" style="display: block; margin: auto;" /><br />
+<br />
+<br />
+</p>
+</div>
+<div id="a-inference---confidence-interval-for-proportion"
+class="section level4">
+<h4>1a) Inference - Confidence interval for proportion</h4>
+<p><strong>Condition check</strong>:<br />
+1. Independence of observations: Samples were taken randomly (see Part
+1) =&gt; OK<br />
+2. Success-failure condition (SF condition): Calculate the SF conditions
+(SF_CI) by using the sample proportion “p_hat”<br />
+</p>
+<p><img src="images/03_suicide1.png" width="60%" style="display: block; margin: auto;" /><br />
+Independence and SF conditions for all samples are met. We can,
+therefore, conclude the sample proportion p_hat is nearly normal
+distributed and we can apply the z-statistic to calculate the confidence
+level.<br />
+<br />
+</p>
+<p><strong>Confidence interval</strong></p>
+<p>For the confidence intervals we calculate the sample proportion
+(p_hat), the Standard error (SE), the critical z-value (z_star) given
+via the significance level, the margin of error (MOE) and the lower and
+upper boundary:</p>
+<p><img src="images/04_suicide1.png" width="60%" style="display: block; margin: auto;" /><br />
+</p>
+<p><strong>Conclusion: </strong> We are 95% confident that the true
+proportion of the American population who approved suicide in case of
+incurable disease was in 1977 between 36.7% and 41.6%, and in 2012
+between 56.3% and 61.7%.<br />
+<br />
+<br />
+</p>
+</div>
+<div id="b-inference---hypothesis-test" class="section level4">
+<h4>1b) Inference - Hypothesis Test</h4>
+<p>Null hypothesis (H0): There is no strong evidence that the American
+population approves suicide in case of incurable disease.</p>
+<p>Alternative hypothesis (Ha): There is strong evidence that the
+American population approves suicide in case of incurable disease.<br />
+</p>
+<p>This can be formulated as:<br />
+</p>
+<ul>
+<li>H0: p0 = 0.5 (there is no minority or majority to approve
+suicide)<br />
+</li>
+<li>Ha: p &gt; 0.5 (there is a majority to approve suicide)<br />
+</li>
+<li>Significance level: alpha = 0.05 (5%)<br />
+</li>
+</ul>
+<p><strong>Condition check</strong>:<br />
+1. Independence of observations: Samples were taken randomly (see Part
+1) =&gt; OK<br />
+2. Success-failure condition: Calculate the SF condition (SF_HT) by
+using the true proportion “p0 = 0.5” assuming that the Null-hypothesis
+is true.</p>
+<p><img src="images/05_suicide1.png" width="50%" style="display: block; margin: auto;" /><br />
+Independence and SF conditions for all samples are met. We can,
+therefore, conclude the sample proportion p_hat is nearly normal
+distributed and we can apply the z-statistic to calculate the confidence
+level.<br />
+<br />
+</p>
+<p><strong>Hypothesis test</strong><br />
+</p>
+<p>For the hypothesis test we calculate the Standard of Error (SE),
+z-Statistic (Z) and the p-value. The p-value tells us how likely the
+observations could have occurred under the null hypothesis. If the
+p-value is smaller than the given significance level (alpha=0.05) we
+will reject the null hypothesis in favor of the alternative
+hypothesis.</p>
+<p><img src="images/06_suicide.png" width="70%" style="display: block; margin: auto;" /><br />
+</p>
+<p><img src="images/07_suicide1.png" width="70%" style="display: block; margin: auto;" /><br />
+<strong>Conclusion: </strong> In 14 out of 21 samples the data show
+strong evidence that the majority of the population does approve suicide
+in case of incurable disease, with a type 1 error of 5%. I.e we may have
+made an error of 5% by rejecting the hypothesis but in fact the null
+hypothesis is true.<br />
+In 7 out of 21 samples the data do not show strong evidence that the
+majority of the population does approve suicide in case of incurable
+disease.<br />
+<br />
+<br />
+</p>
+</div>
+<div id="c-inference---trend" class="section level4">
+<h4>1c) Inference - Trend</h4>
+<p>Visualizing the trend of population attitude towards suicide between
+1977 and 2012:</p>
+<p><img src="images/08_suicide1.png" width="100%" style="display: block; margin: auto;" /><br />
+<br />
+<strong>Conclusion: </strong> Between 1977 to 1989, the majority of the
+population did not approved suicide, except in 1986. Whereas, from 1990
+onwards the majority did approve it. The approval rate for suicide
+increased overall from 39% to 69% between 1977 and 1994 then slightly
+decreased to 59% in 2012.<br />
+<br />
+The results of the confidence interval and hypothesis tests agree with
+each other. I.e a “Fail to reject H0/ no majority” result corresponds to
+a confidence interval whose lower boundary value is less or equal to
+50%.<br />
+<br />
+<br />
+<br />
+<br />
+</p>
+</div>
+</div>
+<div id="difference-of-two-proportions" class="section level3">
+<h3>2. Difference of two proportions</h3>
+<div
+id="research-question-2-success-in-life-through-hard-work---belief-by-race"
+class="section level4">
+<h4>Research Question 2: Success in life through hard work - belief by
+race</h4>
+<p>Another question in the GSS survey is about the belief that hard work
+leads to success in life. We want to find differences in belief between
+the White and Non-white population and do a statistical test on the
+difference of two proportions.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Calculate the proportion difference and <strong>confidence
+interval</strong> at a 95% confidence level<br />
+</li>
+<li>Does the data provide strong evidence that there is a difference in
+belief. Apply a <strong>hypothesis test</strong> with a significance
+level of 5%<br />
+</li>
+<li>Run the tests over all samples and identify a trend over the
+years.<br />
+<br />
+</li>
+</ol>
+<p><strong>Variables</strong></p>
+<p>Categorical variable <code>getahead</code> (4 levels): Opinion of how
+people get ahead, response variable<br />
+Categorical variable <code>race</code> (3 levels): Race of respondent,
+explanatory variable<br />
+<br />
+</p>
+<p><strong>Data exploration</strong><br />
+</p>
+<p><img src="images/03_getahead.png" width="80%" style="display: block; margin: auto;" /><br />
+</p>
+<p><strong>Group categorical levels to meaningful
+sub-categories</strong><br />
+</p>
+<ul>
+<li>race: grouping “Black” and “Other” -&gt; “Non-white”<br />
+</li>
+<li>getahead: grouping “Both Equally”, “Luck Or Help”, and “Other” -&gt;
+“Other”<br />
+</li>
+</ul>
+<p><img src="images/04_getahead.png" width="80%" style="display: block; margin: auto;" /><br />
+<br />
+</p>
+</div>
+<div id="a-inference---confidence-interval" class="section level4">
+<h4>2a) Inference - Confidence Interval</h4>
+<p><strong>Condition check</strong>:<br />
+1. Independence of observations: Samples were taken randomly (see Part
+1) =&gt; OK<br />
+2. Success-failure condition (SF condition): Calculate the SF conditions
+(SF_CI) by using the sample proportion “p_hat_white” and
+“p_hat_non_white”.</p>
+<p><img src="images/07_getahead.png" width="90%" style="display: block; margin: auto;" /><br />
+Independence and SF conditions for all samples are met. We can,
+therefore, conclude the sample proportions p_hat_white and
+p_hat_non_white are nearly normal distributed and we can apply the
+z-statistic to calculate the confidence level for the proportion
+difference.<br />
+<br />
+</p>
+<p><strong>Confidence interval</strong><br />
+</p>
+<p>For the confidence intervals we calculate the Standard error (SE),
+the critical z-value (z_star) given via the significance level, the
+margin of error (MOE) and the lower and upper boundary:</p>
+<p><img src="images/12_getahead.png" width="70%" style="display: block; margin: auto;" /><br />
+<strong>Conclusion: </strong> We are 95% confident that the true
+proportion difference between White and Non-white Americans who belief
+that hard work leads to success is between -9.0% and 2.2% in 2012. I.e.
+the true difference could be either negative or positive. Therefore,
+there is no clear winner. This will be covered more in the hypothesis
+test.<br />
+<br />
+<br />
+</p>
+</div>
+<div id="b-inference---hypothesis-test-1" class="section level4">
+<h4>2b) Inference - Hypothesis Test</h4>
+<p>Null hypothesis (H0): There is no strong evidence of a difference in
+belief between White and Non-white American population that hard work
+leads to success in life.<br />
+</p>
+<p>Alternative hypothesis (Ha): There is strong evidence of a difference
+in belief between White and Non-white American population that hard work
+leads to success in life.<br />
+</p>
+<p>This can be formulated as:<br />
+</p>
+<ul>
+<li>H0: p0_diff = p_white - p_non_white = 0 (there is no
+difference)<br />
+</li>
+<li>Ha: p_diff = p_white - p_non_white != 0 (there is a
+difference)<br />
+</li>
+<li>Significance level: alpha = 0.05 (5%)</li>
+</ul>
+<p>We will carry out a two-sided z-Test<br />
+<br />
+</p>
+<p><strong>Condition check</strong>:<br />
+1. Independence of observations: Samples were taken randomly (see Part
+1) =&gt; OK<br />
+2. Success-failure condition: Calculate the SF condition (SF_HT) by
+using the proportion “p_pool”, the weighted average of “p_hat_white” and
+“p_hat_non_white”.</p>
+<p><img src="images/13_getahead.png" width="70%" style="display: block; margin: auto;" /><br />
+</p>
+<p>Independence and SF conditions for all samples are met. We can,
+therefore, conclude the sample proportion p_hat_white and
+p_hat_non_white are nearly normal distributed and we can apply the
+z-statistic to calculate the confidence level.<br />
+<br />
+<br />
+</p>
+<p><strong>Hypothesis test</strong><br />
+</p>
+<p>For the hypothesis test we calculate the Standard of Error (SE),
+z-Statistic (Z) and the p-value.</p>
+<p><img src="images/09_getahead.png" width="70%" style="display: block; margin: auto;" />
+/</p>
+<p><img src="images/10_getahead.png" width="70%" style="display: block; margin: auto;" /><br />
+<strong>Conclusion: </strong> In 17 out of 24 the data show no strong
+evidence that there is a difference in belief between White and
+Non-white Americans that hard work leads to success. In other words, we
+have no strong evidence that being a white American increases or reduces
+the belief that hard work leads to success in life.<br />
+Only in 7 out of 24 the data show strong evidence that there is a
+difference in belief between White and Non-white Americans that hard
+work leads to success. In other words, we do have strong evidence that
+being a white American increases or reduces the belief that hard work
+leads to success in life<br />
+<br />
+<br />
+</p>
+</div>
+<div id="c-inference---trend-1" class="section level4">
+<h4>2c) Inference - Trend</h4>
+<p>Visualizing the trend of population attitude towards hard work
+between 1973 and 2012:</p>
+<p><img src="images/11_getahead.png" width="100%" style="display: block; margin: auto;" /><br />
+<strong>Conclusion: </strong> Overall, the White group believes more
+than the Non-White group, that hard work leads to success in life.
+However, in most cases (17 out of 24) the difference is not
+statistically significant, due to a large margin of error (+/-6.8%). The
+results of the confidence interval and hypothesis tests agree with each
+other. I.e a “Fail to reject H0” result corresponds to a confidence
+interval that does include 0.<br />
+<br />
+<br />
+<br />
+<br />
+</p>
+</div>
+</div>
+<div id="independence-test" class="section level3">
+<h3>3: Independence test</h3>
+<div id="resarch-question-3-political-party-vs.-education-degree"
+class="section level4">
+<h4>Resarch Question 3: Political party vs. education degree</h4>
+<p>In this example, we want to answer the question of whether there is a
+relationship between the preferred political party and the level of
+education. Both variables are categorical variables with multiple
+levels.</p>
+<p>To test for a relationship, we will conduct a <strong>Chi-square test
+for independence</strong>. An introduction to this test can be found <a
+href="https://leanpub.com/os">in the text book for this course,
+OpenIntro Statistics, 4th edition, page 240</a><br />
+</p>
+<p>We will use the following variables:<br />
+</p>
+<ul>
+<li>Categorical variable <code>partyid</code>(8 levels): Political party
+affiliation, response variable<br />
+</li>
+<li>Categorical variable <code>degree</code> (5 levels): Respondents
+highest degree, explanatory variable<br />
+</li>
+</ul>
+<p>The Hypothesis test can be formulated in the form:<br />
+</p>
+<ul>
+<li>H0: The political party preference <strong>is independent</strong>
+from the education degree<br />
+</li>
+<li>Ha: The political party preference <strong>is not
+independent</strong> from the education degree<br />
+</li>
+<li>Significance level: alpha = 5%<br />
+<br />
+<br />
+</li>
+</ul>
+<p><strong>Data exploration</strong><br />
+</p>
+<p><img src="images/03_party.png" width="80%" style="display: block; margin: auto;" /><br />
+</p>
+<p>The 8 levels in category <code>partyid</code> will be regrouped into
+the 3 major political parties: Republican, Democrat and Independent. The
+relationship between education degree and preferred political party is
+shown the the next plot.<br />
+</p>
+<p><img src="images/04_party.png" width="80%" style="display: block; margin: auto;" /><br />
+</p>
+<p><strong>Create a two-way table for independence test</strong></p>
+<p><img src="images/05_party.png" width="50%" style="display: block; margin: auto;" /><br />
+<br />
+</p>
+</div>
+<div id="inference---independence-test" class="section level4">
+<h4>3) Inference - Independence test</h4>
+<p><strong>Check conditions</strong><br />
+</p>
+<ol style="list-style-type: decimal">
+<li>Independence:<br />
+</li>
+</ol>
+<ul>
+<li>random sampling within each group: OK<br />
+</li>
+<li>random sampling between groups: OK<br />
+</li>
+<li>sample size &lt; 10% of population: OK<br />
+</li>
+<li>each case only contributes to one cell (assumed): OK<br />
+<br />
+</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Sample size:<br />
+</li>
+</ol>
+<ul>
+<li>each cell size &gt; 5: OK<br />
+</li>
+</ul>
+<p>All conditions are met and nearly normal distribution can be assumed.
+Chi-square test statistic can be applied.<br />
+<br />
+</p>
+<p><strong>Chi-square test</strong><br />
+</p>
+<p>The Hypotheses:<br />
+</p>
+<ul>
+<li>H0: The political party preference <strong>is independent</strong>
+from the education degree<br />
+</li>
+<li>Ha: The political party preference <strong>is not
+independent</strong> from the education degree<br />
+</li>
+<li>Significance level: alpha = 5%<br />
+</li>
+</ul>
+<p>Chi-square statistics:<br />
+</p>
+<ul>
+<li>X-squared = SUM ((observed - expected)^2 / expected)<br />
+</li>
+<li>The test statistics is comparing the observed values/proportions
+with expected values/proportions. The expected values are calculated
+from marginal proportions.<br />
+</li>
+</ul>
+<p><img src="images/06_party.png" width="60%" style="display: block; margin: auto;" /><br />
+<strong>Conclusion: </strong> The X-squared value is large (62.2) and
+the p-value is nearly zero. We can, therefore, reject H0 hypothesis.
+I.e. the political party preference depends on the degree of
+education.<br />
+<br />
+<br />
+</p>
+</div>
+</div>
+</div>
+<div id="part-4-numerical-data" class="section level2">
+<h2>Part 4: Numerical data</h2>
+<div id="difference-of-two-means" class="section level3">
+<h3>4. Difference of two means</h3>
+<div
+id="research-question-4-attitude-towards-space-exploration-spending-by-education"
+class="section level4">
+<h4>Research question 4: Attitude towards space exploration spending by
+education</h4>
+<p>One of the questions in the GSS survey deals with the attitude
+towards government spending on space exploration (too little, too much).
+We want to know if there is difference in the attitude due to average
+years of education in 2010 to 2012. We assume that people with more
+years of education may think that the gov. spending is too little. To
+proof this claim we will conduct a hypothesis test and calculate the
+confidence interval by t-statistic.</p>
+<p>We will use the following variables:<br />
+</p>
+<ul>
+<li>Categorical variable <code>natspac</code>(3 levels): Space
+exploration program, response variable<br />
+</li>
+<li>Numerical variable <code>educ</code>: Highest year of school
+completed, explanatory variable<br />
+</li>
+</ul>
+<p>Tasks:<br />
+</p>
+<ol style="list-style-type: lower-alpha">
+<li>Calculate a summary statistic and a <strong>confidence
+interval</strong> for the difference in means at a 95% confidence
+level<br />
+</li>
+<li>Does the data provide strong evidence that Americans with more years
+in education think that the government spending for space exploration is
+too little. Apply a <strong>hypothesis test</strong> with a significance
+level of 5%<br />
+<br />
+<br />
+</li>
+</ol>
+<p><strong>Data exploration - Variable
+<code>naspac</code></strong><br />
+</p>
+<p>Distribution of attitude towards space spending (too little, too
+much):<br />
+</p>
+<p><img src="images/03_space.png" width="70%" style="display: block; margin: auto;" /><br />
+</p>
+<p><strong>Data exploration - Variable <code>educ</code></strong><br />
+</p>
+<p>Summary statistics:<br />
+</p>
+<p><img src="images/09_space.png" width="70%" style="display: block; margin: auto;" /><br />
+</p>
+<p>Distribution of years of education by attitude space spending:<br />
+</p>
+<p><img src="images/04_space.png" width="90%" style="display: block; margin: auto;" /></p>
+<p>Check of normality or skewness of distribution:<br />
+</p>
+<p><img src="images/05_space.png" width="90%" style="display: block; margin: auto;" />
+The distributions indicate some left skew. We like to calculate the
+skewness and decide if we can use the samples for the statistical
+test.<br />
+</p>
+<p><img src="images/10_space.png" width="50%" style="display: block; margin: auto;" />
+The skewness values are between -0.5 and +0.5, i.e. approximately
+symmetric distribution. <a
+href="https://www.machinelearningplus.com/statistics/skewness-and-kurtosis/">Link</a>.<br />
+<br />
+<br />
+<br />
+</p>
+</div>
+<div id="a-inference---confidence-interval-1" class="section level4">
+<h4>4a) Inference - Confidence Interval</h4>
+<p><strong>Check conditions</strong><br />
+1. Independence:<br />
+</p>
+<ul>
+<li>random samples within each group: OK<br />
+</li>
+<li>samples between groups are not paired: OK<br />
+</li>
+<li>sample size &lt; 10% of population: OK<br />
+</li>
+</ul>
+<p><br />
+2. Sample size/ skewness<br />
+</p>
+<ul>
+<li>each sample size is &gt; 30: OK<br />
+</li>
+<li>skewness is between -0.5 and +0.5, i.e. approx. symmetric: OK<br />
+</li>
+</ul>
+<p>All conditions are met and nearly normal distribution can be assumed.
+t-statistic can be applied<br />
+<br />
+<br />
+</p>
+<p><strong>Calculate confidence interval</strong></p>
+<p><img src="images/07_space.png" width="70%" style="display: block; margin: auto;" /><br />
+</p>
+<p><strong>Conclusion: </strong> We are 95% confident that the true
+difference in mean for years in education is between 1.24 and 1.98
+years.<br />
+I.e. The American public who thinks that the spending for space
+exploration is too little attended in average 1.24 to 1.98 more years in
+education as their counterparts.<br />
+<br />
+<br />
+<br />
+</p>
+</div>
+<div id="b-inference---hypothesis-test-2" class="section level4">
+<h4>4b) Inference - Hypothesis Test</h4>
+<p>Null hypothesis (H0): There is no strong evidence that Americans with
+more years in education think that the government spending for space
+exploration is too little.<br />
+</p>
+<p>Alternative hypothesis (Ha): There is strong evidence that Americans
+with more years in education think that the government spending for
+space exploration is too little.<br />
+</p>
+<p>This can be formulated as:<br />
+</p>
+<ul>
+<li>H0: mue_diff = mue_too_little - mue_too_much = 0 (there is no
+difference)<br />
+</li>
+<li>Ha: mue_diff = mue_too_little - mue_too_much &gt; 0 (is greater than
+null)<br />
+</li>
+<li>Significance level: alpha = 0.05 (5%)<br />
+<br />
+mue: population mean (true mean)<br />
+mean: sample mean (estimate of true mean)<br />
+<br />
+</li>
+</ul>
+<p>We will carry out a one-sided t-Test<br />
+<br />
+</p>
+<p><strong>Check conditions</strong><br />
+</p>
+<p><br />
+1. Independence:<br />
+</p>
+<ul>
+<li>random samples within each group: OK<br />
+</li>
+<li>samples between groups are not paired: OK<br />
+</li>
+<li>sample size &lt; 10% of population: OK<br />
+</li>
+</ul>
+<p><br />
+2. Sample size/ skewness<br />
+</p>
+<ul>
+<li>each sample size is &gt; 30: OK<br />
+</li>
+<li>skewness is between -0.5 and +0.5, i.e. approx. symmetric: OK<br />
+</li>
+</ul>
+<p>All conditions are met and nearly normal distribution can be assumed.
+t-statistic can be applied<br />
+<br />
+</p>
+<p><strong>Hypothesis test</strong><br />
+</p>
+<p><img src="images/08_space.png" width="60%" style="display: block; margin: auto;" /><br />
+</p>
+<p><strong>Conclusion: </strong> The data show strong evidence that
+Americans with more years in education think that the government
+spending for space exploration is too little. The p-value is &lt;
+0.0001. I.e. the probability to observe a mean difference of 1.61 or
+more if in fact H0 is true is less than 0.01%.<br />
+The results of the confidence interval and hypothesis tests agree with
+each other. I.e a “Reject H0” result corresponds to a confidence
+interval that does not include the value “zero”.<br />
+<br />
+<br />
+<br />
+<br />
+</p>
+</div>
+</div>
+<div id="anova-test" class="section level3">
+<h3>5. ANOVA Test</h3>
+<div id="research-question-5-number-of-children-by-social-classes"
+class="section level4">
+<h4>Research question 5: Number of children by social classes</h4>
+<p>As final example we want to research the number of children per
+respondent in different social classes using the GSS survey for year
+2012. We assume that the average number of children differs between the
+social classes. To proof this claim we will conduct an ANOVA test
+(Analysis of Variance).</p>
+<p>We will use the following variables:<br />
+</p>
+<ul>
+<li>numerical variable <code>childs</code>: Number of children, response
+variable<br />
+</li>
+<li>categorical variable <code>class</code> (5 levels): Subjective class
+identification, explanatory variable<br />
+</li>
+</ul>
+<p>Tasks:<br />
+</p>
+<p>Does the data provide strong evidence that there is a difference in
+the average number of children per respondent between social classes. In
+case that the ANOVA test rejects the Null Hypothesis (there is a
+difference at least in one pair), identify which pairs of social classes
+are significantly different in their means. Apply a <strong>hypothesis
+test (ANOVA test)</strong> with a significance level of 5%.<br />
+<br />
+<br />
+</p>
+<p><strong>Data exploration - Variable <code>class</code></strong><br />
+</p>
+<p>Distribution of respondent from each social class:<br />
+</p>
+<p><img src="images/10_child.png" width="70%" style="display: block; margin: auto;" /><br />
+<br />
+</p>
+<p><strong>Check conditions for ANOVA test</strong><br />
+<br />
+1. Independence<br />
+</p>
+<ul>
+<li>within each group: random samples: OK<br />
+</li>
+<li>between groups: non paired: OK<br />
+</li>
+<li>n &lt; 10% of population: OK</li>
+</ul>
+<p><br />
+2. Approx. normal distribution<br />
+</p>
+<ul>
+<li>Check for normal distribution and skewness<br />
+</li>
+</ul>
+<p><img src="images/03_child.png" width="90%" style="display: block; margin: auto;" /></p>
+<p><img src="images/04_child.png" width="90%" style="display: block; margin: auto;" /></p>
+<p><img src="images/05_child.png" width="40%" style="display: block; margin: auto;" /><br />
+The skewness values are between -1.0 and +1.0, i.e. the distribution is
+moderately skewed. <a
+href="https://www.machinelearningplus.com/statistics/skewness-and-kurtosis/">Link</a>.
+However, there are no large numbers of extreme outliers. Therefore, we
+can assume that the variables will hold nearly normal
+distribution.<br />
+</p>
+<p><br />
+3. Consistent variability (<strong>homoscedasticity</strong>)<br />
+</p>
+<ul>
+<li>Summary statistics to compare standard deviations in each group</li>
+</ul>
+<p><img src="images/06_child.png" width="50%" style="display: block; margin: auto;" /><br />
+</p>
+<ul>
+<li>Boxplot to compare distributions in each group</li>
+</ul>
+<p><img src="images/07_child.png" width="60%" style="display: block; margin: auto;" /></p>
+<p><br />
+</p>
+<ul>
+<li>From summary statistic and from the boxplot we can assume that the
+variation is sufficiently consistent (sd range 1.60 to 1.92)<br />
+<br />
+</li>
+</ul>
+<p>All conditions are met, and we can proceed to the ANOVA test.<br />
+<br />
+<br />
+<br />
+</p>
+</div>
+<div id="inference---anova-test-and-multiple-comparison-test"
+class="section level4">
+<h4>Inference - ANOVA Test and Multiple Comparison Test</h4>
+<p>Null hypothesis (H0): There is no strong evidence that the average
+number of children per respondent differs between social classes.<br />
+<br />
+Alternative hypothesis (Ha): There is strong evidence that the average
+number of children per respondent differs at least between two social
+classes.<br />
+</p>
+<p>This can be formulated as:<br />
+</p>
+<ul>
+<li>H0: mue_1 = mue_2 = … = mue_k (no difference between true
+means)</li>
+<li>Ha: mue_i != mue_j (difference between at least two true
+means)<br />
+</li>
+<li>Significance level: alpha = 0.05 (5%)<br />
+<br />
+</li>
+</ul>
+<p>mue: population mean (true mean)<br />
+mean: sample mean (estimate of true mean)<br />
+k: number of classes<br />
+<br />
+</p>
+<p><strong>ANOVA Test</strong></p>
+<p><img src="images/08_child.png" width="60%" style="display: block; margin: auto;" /><br />
+<strong>Conclusion: </strong> The ANOVA test delivers a p-value of 0.004
+which is less than alpha 0.05. Therefore, we reject the Null Hypothesis.
+I.e. there is strong evidence that the average number of children per
+respondent differs at least in one pair of social classes.<br />
+<br />
+</p>
+<p><strong>Multiple comparison test (t-test)</strong></p>
+<p><img src="images/09_child.png" width="50%" style="display: block; margin: auto;" /><br />
+<strong>Conclusion: </strong> The multiple pairwise t-test identifies
+the pairs of classes with strong evidence of difference in the number of
+children. In this case we test against the corrected alpha value
+(Bonferroni correction, alpha_star = 0.0083). For the following pairs we
+don’t have strong evidence that there is a difference in the average
+number of children per class:<br />
+<br />
+</p>
+<ul>
+<li>Middle Class - Working Class (p-value 0.40 &gt; 0.0083) =&gt; Fail
+to reject H0<br />
+</li>
+<li>Upper Class - Lower Class (p-value 0.25 &gt; 0.0083) =&gt; Fail to
+reject H0<br />
+</li>
+<li>Upper Class - Working Class (p-value 0.55 &gt; 0.0083) =&gt; Fail to
+reject H0<br />
+</li>
+<li>Upper Class - Middle Class (p-value 0.36 &gt; 0.0083) =&gt; Fail to
+reject H0<br />
+<br />
+</li>
+</ul>
+<p>Only in the pairs “Working Class - Lower Class” and “Middle Class -
+Lower Class” we do have strong evidence that there is a difference in
+the average number of children per class.<br />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
